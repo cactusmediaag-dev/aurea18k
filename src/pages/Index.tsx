@@ -1,16 +1,40 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import AnnouncementBar from '@/components/AnnouncementBar';
+import Navbar from '@/components/Navbar';
+import HeroSection from '@/components/HeroSection';
+import TrustStrip from '@/components/TrustStrip';
+import CategoriesSection from '@/components/CategoriesSection';
+import BestSellersSection from '@/components/BestSellersSection';
+import BrandStorySection from '@/components/BrandStorySection';
+import PromiseSection from '@/components/PromiseSection';
+import BundleSection from '@/components/BundleSection';
+import ReviewsSection from '@/components/ReviewsSection';
+import InstagramSection from '@/components/InstagramSection';
+import EmailCaptureSection from '@/components/EmailCaptureSection';
+import Footer from '@/components/Footer';
+import CartDrawer from '@/components/CartDrawer';
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
+  const [cartOpen, setCartOpen] = useState(false);
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="min-h-screen">
+      <AnnouncementBar />
+      <Navbar onCartOpen={() => setCartOpen(true)} />
+      <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
+      <HeroSection />
+      <TrustStrip />
+      <CategoriesSection />
+      <BestSellersSection />
+      <BrandStorySection />
+      <PromiseSection />
+      <BundleSection />
+      <ReviewsSection />
+      <InstagramSection />
+      <EmailCaptureSection />
+      <Footer />
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
