@@ -176,9 +176,18 @@ export const CART_LINES_REMOVE_MUTATION = `
   }
 `;
 
+// Shopify may return checkoutUrl on a domain that's served by Lovable (e.g. aurea18k.com).
+// We rewrite to the permanent .myshopify.com domain as a safe fallback,
+// or to a dedicated checkout subdomain if configured.
+const CHECKOUT_HOST_OVERRIDE = SHOPIFY_STORE_PERMANENT_DOMAIN; // change to 'checkout.aurea18k.com' once DNS is ready
+
 function formatCheckoutUrl(checkoutUrl: string): string {
   try {
     const url = new URL(checkoutUrl);
+    // If the host is NOT a Shopify-served domain, rewrite it
+    if (!url.hostname.endsWith('.myshopify.com') && url.hostname !== CHECKOUT_HOST_OVERRIDE) {
+      url.hostname = CHECKOUT_HOST_OVERRIDE;
+    }
     url.searchParams.set('channel', 'online_store');
     return url.toString();
   } catch {
