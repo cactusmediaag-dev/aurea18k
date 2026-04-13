@@ -135,17 +135,7 @@ export const CART_QUERY = `
 `;
 
 function isShopifyCheckoutHost(hostname: string): boolean {
-  return hostname === CHECKOUT_CUSTOM_DOMAIN || hostname === SHOPIFY_STORE_PERMANENT_DOMAIN || hostname.endsWith('.myshopify.com');
-}
-
-export function hasInvalidCheckoutDomain(checkoutUrl: string | null): boolean {
-  if (!checkoutUrl) return true;
-  try {
-    const url = new URL(checkoutUrl);
-    return !isShopifyCheckoutHost(url.hostname);
-  } catch {
-    return true;
-  }
+  return hostname === SHOPIFY_STORE_PERMANENT_DOMAIN || hostname.endsWith('.myshopify.com');
 }
 
 export function normalizeCheckoutUrl(checkoutUrl: string | null): string | null {

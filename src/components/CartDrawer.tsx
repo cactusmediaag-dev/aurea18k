@@ -10,7 +10,7 @@ interface CartDrawerProps {
 }
 
 const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
-  const { items, isLoading, isSyncing, checkoutDomainInvalid, updateQuantity, removeItem, getCheckoutUrl, syncCart } = useCartStore();
+  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
   const freeShippingThreshold = 120;
@@ -20,20 +20,12 @@ const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
   useEffect(() => { if (open) syncCart(); }, [open, syncCart]);
 
   const handleCheckout = () => {
-    if (checkoutDomainInvalid) {
-      toast.error('Checkout ainda não está pronto', {
-        description: 'No Shopify, conecte checkout.aurea18k.com e crie o CNAME checkout → shops.myshopify.com.',
-      });
-      return;
-    }
-
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
       window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
       onOpenChange(false);
       return;
     }
-
     toast.error('Não foi possível abrir o checkout.');
   };
 
