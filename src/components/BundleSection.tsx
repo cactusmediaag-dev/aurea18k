@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const bundles = [
   {
     name: 'The Duo',
@@ -69,7 +71,7 @@ const BundleSection = () => (
             <div className="text-base text-warm-gray line-through">{b.original}</div>
             <div className="bg-gold-pale text-dark-green text-[10px] tracking-[0.15em] uppercase font-medium px-3 py-1">{b.save}</div>
           </div>
-          <button className="btn-aurea-dark">{b.cta}</button>
+          <Link to="/collections/bundles-sets" className="btn-aurea-dark block text-center no-underline">{b.cta}</Link>
         </div>
       ))}
     </div>

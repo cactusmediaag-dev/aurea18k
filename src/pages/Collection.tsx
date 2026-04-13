@@ -41,10 +41,16 @@ const COLLECTION_TITLES: Record<string, string> = {
   'kids': "Kids Collection",
 };
 
-// Map collection handles to Shopify search queries (tag-based)
+// Grouped queries for top-level categories
+const GROUPED_QUERIES: Record<string, string> = {
+  'womens': 'tag:womens-earrings OR tag:womens-necklaces OR tag:womens-bracelets OR tag:womens-chokers OR tag:everyday-essentials OR tag:statement-pieces OR tag:minimal-collection OR tag:layering-pieces',
+  'mens': 'tag:mens-chains OR tag:mens-bracelets OR tag:mens-stud-earrings OR tag:mens-scapular-necklaces OR tag:minimal-men OR tag:classic-collection',
+  'kids': 'tag:kids-earrings OR tag:kids-necklaces OR tag:kids-bracelets OR tag:kids-chokers OR tag:hypoallergenic-kids',
+};
+
 function getCollectionQuery(handle: string): string | undefined {
   if (handle === 'all') return undefined;
-  // Use tag-based filtering — collections in Shopify should use tags matching the handle
+  if (GROUPED_QUERIES[handle]) return GROUPED_QUERIES[handle];
   return `tag:${handle}`;
 }
 
@@ -122,8 +128,8 @@ const Collection = () => {
             <div className="text-center py-20">
               <p className="text-warm-gray text-lg font-light mb-2">No products found</p>
               <p className="text-warm-gray/60 text-sm">This collection is empty. Check back soon for new pieces.</p>
-              <Link to="/" className="inline-block mt-6 text-xs tracking-[0.15em] uppercase text-gold hover:text-dark-green transition-colors font-medium">
-                ← Back to Home
+              <Link to="/collections" className="inline-block mt-6 text-xs tracking-[0.15em] uppercase text-gold hover:text-dark-green transition-colors font-medium">
+                ← Browse Categories
               </Link>
             </div>
           ) : (

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import bannerDesktop from '@/assets/banner1-desktop.png';
 import bannerMobile from '@/assets/banner1-mobile.png';
 
@@ -64,8 +65,8 @@ const HeroSection = () => {
           {slide.subtitle}
         </p>
         <div className="flex gap-4 items-center flex-wrap">
-          <a href="#bestsellers" className="btn-aurea-primary">Shop the Collection</a>
-          <a href="#story" className="btn-aurea-ghost">Our Story</a>
+          <Link to="/collections/all" className="btn-aurea-primary">Shop the Collection</Link>
+          <Link to="/about" className="btn-aurea-ghost">Our Story</Link>
         </div>
       </div>
 

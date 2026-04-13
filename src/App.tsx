@@ -16,6 +16,7 @@ import Contact from "./pages/Contact.tsx";
 import FAQ from "./pages/FAQ.tsx";
 import ShippingReturns from "./pages/ShippingReturns.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Collections from "./pages/Collections.tsx";
 import Collection from "./pages/Collection.tsx";
 
 const queryClient = new QueryClient();
@@ -26,7 +27,7 @@ const AppContent = () => {
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/product/:handle" element={<ProductDetail />} />
-      <Route path="/collections" element={<Collection />} />
+      <Route path="/collections" element={<Collections />} />
       <Route path="/collections/:handle" element={<Collection />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/terms" element={<TermsConditions />} />
