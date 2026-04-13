@@ -1,9 +1,11 @@
-import { toast } from "sonner";
+import { toast } from 'sonner';
 
 const SHOPIFY_API_VERSION = '2025-07';
 const SHOPIFY_STORE_PERMANENT_DOMAIN = 'hd5ps3-wc.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = '9489803f917460e70c1b7208082219f4';
+const CHECKOUT_CUSTOM_DOMAIN = 'checkout.aurea18k.com';
+const CHECKOUT_HOST_OVERRIDE = SHOPIFY_STORE_PERMANENT_DOMAIN;
 
 export interface ShopifyProduct {
   node: {
@@ -60,8 +62,8 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
   });
 
   if (response.status === 402) {
-    toast.error("Shopify: Payment required", {
-      description: "Your store needs to be upgraded to a paid plan.",
+    toast.error('Shopify: Payment required', {
+      description: 'Your store needs to be upgraded to a paid plan.',
     });
     return;
   }
@@ -133,11 +135,25 @@ export const CART_QUERY = `
   }
 `;
 
+function isShopifyCheckoutHost(hostname: string): boolean {
+  return hostname === CHECKOUT_CUSTOM_DOMAIN || hostname === SHOPIFY_STORE_PERMANENT_DOMAIN || hostname.endsWith('.myshopify.com');
+}
+
+export function hasInvalidCheckoutDomain(checkoutUrl: string | null): boolean {
+  if (!checkoutUrl) return true;
+  try {
+    const url = new URL(checkoutUrl);
+    return !isShopifyCheckoutHost(url.hostname);
+  } catch {
+    return true;
+  }
+}
+
 export function normalizeCheckoutUrl(checkoutUrl: string | null): string | null {
   if (!checkoutUrl) return null;
   try {
     const url = new URL(checkoutUrl);
-    if (!url.hostname.endsWith('.myshopify.com') && url.hostname !== CHECKOUT_HOST_OVERRIDE) {
+    if (!isShopifyCheckoutHost(url.hostname)) {
       url.hostname = CHECKOUT_HOST_OVERRIDE;
     }
     url.searchParams.set('channel', 'online_store');
@@ -190,23 +206,8 @@ export const CART_LINES_REMOVE_MUTATION = `
   }
 `;
 
-// Shopify may return checkoutUrl on a domain that's served by Lovable (e.g. aurea18k.com).
-// We rewrite to the permanent .myshopify.com domain as a safe fallback,
-// or to a dedicated checkout subdomain if configured.
-const CHECKOUT_HOST_OVERRIDE = SHOPIFY_STORE_PERMANENT_DOMAIN; // change to 'checkout.aurea18k.com' once DNS is ready
-
 function formatCheckoutUrl(checkoutUrl: string): string {
-  try {
-    const url = new URL(checkoutUrl);
-    // If the host is NOT a Shopify-served domain, rewrite it
-    if (!url.hostname.endsWith('.myshopify.com') && url.hostname !== CHECKOUT_HOST_OVERRIDE) {
-      url.hostname = CHECKOUT_HOST_OVERRIDE;
-    }
-    url.searchParams.set('channel', 'online_store');
-    return url.toString();
-  } catch {
-    return checkoutUrl;
-  }
+  return normalizeCheckoutUrl(checkoutUrl) ?? checkoutUrl;
 }
 
 function isCartNotFoundError(userErrors: Array<{ field: string[] | null; message: string }>): boolean {
@@ -223,7 +224,7 @@ export interface CartItem {
   selectedOptions: Array<{ name: string; value: string }>;
 }
 
-export async function createShopifyCart(item: CartItem): Promise<{ cartId: string; checkoutUrl: string; lineId: string } | null> {
+export async function createShopifyCart(item: CartItem): Promise<{ cartId: string; checkoutUrl: string; lineId: string; domainMisconfigured: boolean } | null> {
   const data = await storefrontApiRequest(CART_CREATE_MUTATION, {
     input: { lines: [{ quantity: item.quantity, merchandiseId: item.variantId }] },
   });
@@ -232,7 +233,12 @@ export async function createShopifyCart(item: CartItem): Promise<{ cartId: strin
   if (!cart?.checkoutUrl) return null;
   const lineId = cart.lines.edges[0]?.node?.id;
   if (!lineId) return null;
-  return { cartId: cart.id, checkoutUrl: formatCheckoutUrl(cart.checkoutUrl), lineId };
+  return {
+    cartId: cart.id,
+    checkoutUrl: formatCheckoutUrl(cart.checkoutUrl),
+    lineId,
+    domainMisconfigured: hasInvalidCheckoutDomain(cart.checkoutUrl),
+  };
 }
 
 export async function addLineToShopifyCart(cartId: string, item: CartItem): Promise<{ success: boolean; lineId?: string; cartNotFound?: boolean }> {
