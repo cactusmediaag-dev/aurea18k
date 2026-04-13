@@ -45,7 +45,7 @@ const Footer = () => (
           {[
             { label: 'FAQ', href: '/faq' },
             { label: 'Shipping & Returns', href: '/shipping-returns' },
-            { label: 'Track Your Order', href: '/track-order' },
+            { label: 'Reviews', href: '/reviews' },
             { label: 'Contact Us', href: '/contact' },
           ].map((l) => (
             <li key={l.label}><Link to={l.href} className="no-underline text-[13px] text-cream-light/45 font-light hover:text-gold-light transition-colors tracking-[0.03em]">{l.label}</Link></li>
