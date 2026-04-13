@@ -2,7 +2,7 @@ import { useProducts } from '@/hooks/useProducts';
 import { useCartStore, ShopifyProduct } from '@/stores/cartStore';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const ProductCard = ({ product }: { product: ShopifyProduct }) => {
   const addItem = useCartStore(state => state.addItem);
@@ -73,9 +73,9 @@ const BestSellersSection = () => {
           <div className="aurea-section-label">Most Loved</div>
           <h2 className="aurea-section-title">Best <em>Sellers</em></h2>
         </div>
-        <a href="#" className="text-[11px] tracking-[0.18em] uppercase text-dark-green no-underline border-b border-gold pb-0.5 font-normal hover:text-gold transition-colors">
+        <Link to="/collections/all" className="text-[11px] tracking-[0.18em] uppercase text-dark-green no-underline border-b border-gold pb-0.5 font-normal hover:text-gold transition-colors">
           View All
-        </a>
+        </Link>
       </div>
 
       {isLoading ? (
