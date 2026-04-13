@@ -4,7 +4,6 @@ const SHOPIFY_API_VERSION = '2025-07';
 const SHOPIFY_STORE_PERMANENT_DOMAIN = 'hd5ps3-wc.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = '9489803f917460e70c1b7208082219f4';
-const CHECKOUT_CUSTOM_DOMAIN = 'checkout.aurea18k.com';
 const CHECKOUT_HOST_OVERRIDE = SHOPIFY_STORE_PERMANENT_DOMAIN;
 
 export interface ShopifyProduct {
@@ -136,17 +135,7 @@ export const CART_QUERY = `
 `;
 
 function isShopifyCheckoutHost(hostname: string): boolean {
-  return hostname === CHECKOUT_CUSTOM_DOMAIN || hostname === SHOPIFY_STORE_PERMANENT_DOMAIN || hostname.endsWith('.myshopify.com');
-}
-
-export function hasInvalidCheckoutDomain(checkoutUrl: string | null): boolean {
-  if (!checkoutUrl) return true;
-  try {
-    const url = new URL(checkoutUrl);
-    return !isShopifyCheckoutHost(url.hostname);
-  } catch {
-    return true;
-  }
+  return hostname === SHOPIFY_STORE_PERMANENT_DOMAIN || hostname.endsWith('.myshopify.com');
 }
 
 export function normalizeCheckoutUrl(checkoutUrl: string | null): string | null {
@@ -224,7 +213,7 @@ export interface CartItem {
   selectedOptions: Array<{ name: string; value: string }>;
 }
 
-export async function createShopifyCart(item: CartItem): Promise<{ cartId: string; checkoutUrl: string; lineId: string; domainMisconfigured: boolean } | null> {
+export async function createShopifyCart(item: CartItem): Promise<{ cartId: string; checkoutUrl: string; lineId: string } | null> {
   const data = await storefrontApiRequest(CART_CREATE_MUTATION, {
     input: { lines: [{ quantity: item.quantity, merchandiseId: item.variantId }] },
   });
@@ -237,7 +226,6 @@ export async function createShopifyCart(item: CartItem): Promise<{ cartId: strin
     cartId: cart.id,
     checkoutUrl: formatCheckoutUrl(cart.checkoutUrl),
     lineId,
-    domainMisconfigured: hasInvalidCheckoutDomain(cart.checkoutUrl),
   };
 }
 
