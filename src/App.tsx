@@ -37,6 +37,7 @@ const AppContent = () => {
       <Route path="/contact" element={<Contact />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/shipping-returns" element={<ShippingReturns />} />
+      <Route path="/cart/*" element={<Navigate to="/" replace />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
