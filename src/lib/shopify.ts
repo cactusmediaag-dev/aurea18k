@@ -129,9 +129,23 @@ export const STOREFRONT_QUERY = `
 
 export const CART_QUERY = `
   query cart($id: ID!) {
-    cart(id: $id) { id totalQuantity }
+    cart(id: $id) { id totalQuantity checkoutUrl }
   }
 `;
+
+export function normalizeCheckoutUrl(checkoutUrl: string | null): string | null {
+  if (!checkoutUrl) return null;
+  try {
+    const url = new URL(checkoutUrl);
+    if (!url.hostname.endsWith('.myshopify.com') && url.hostname !== CHECKOUT_HOST_OVERRIDE) {
+      url.hostname = CHECKOUT_HOST_OVERRIDE;
+    }
+    url.searchParams.set('channel', 'online_store');
+    return url.toString();
+  } catch {
+    return checkoutUrl;
+  }
+}
 
 export const CART_CREATE_MUTATION = `
   mutation cartCreate($input: CartInput!) {

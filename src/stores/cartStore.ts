@@ -9,6 +9,7 @@ import {
   removeLineFromShopifyCart,
   storefrontApiRequest,
   CART_QUERY,
+  normalizeCheckoutUrl,
 } from '@/lib/shopify';
 
 export type { CartItem, ShopifyProduct };
@@ -122,7 +123,7 @@ export const useCartStore = create<CartStore>()(
       },
 
       clearCart: () => set({ items: [], cartId: null, checkoutUrl: null }),
-      getCheckoutUrl: () => get().checkoutUrl,
+      getCheckoutUrl: () => normalizeCheckoutUrl(get().checkoutUrl),
 
       syncCart: async () => {
         const { cartId, isSyncing, clearCart } = get();
@@ -132,7 +133,11 @@ export const useCartStore = create<CartStore>()(
           const data = await storefrontApiRequest(CART_QUERY, { id: cartId });
           if (!data) return;
           const cart = data?.data?.cart;
-          if (!cart || cart.totalQuantity === 0) clearCart();
+          if (!cart || cart.totalQuantity === 0) {
+            clearCart();
+            return;
+          }
+          set({ checkoutUrl: normalizeCheckoutUrl(cart.checkoutUrl) });
         } catch (error) {
           console.error('Failed to sync cart:', error);
         } finally {
