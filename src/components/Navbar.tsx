@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ShoppingBag, Menu, X, ChevronDown } from 'lucide-react';
+import { Search, ShoppingBag, Menu, X, ChevronDown, User } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import SearchModal from '@/components/SearchModal';
 
@@ -97,6 +97,9 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
           <button onClick={() => setSearchOpen(true)} className="bg-transparent border-none cursor-pointer p-0">
             <Search className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
           </button>
+          <a href="https://hd5ps3-wc.myshopify.com/account" target="_blank" rel="noopener noreferrer" className="bg-transparent border-none cursor-pointer p-0">
+            <User className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
+          </a>
           <button onClick={onCartOpen} className="relative bg-transparent border-none cursor-pointer p-0">
             <ShoppingBag className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
             {totalItems > 0 && (
@@ -109,6 +112,9 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
 
         {/* Mobile controls */}
         <div className="flex md:hidden items-center gap-4">
+          <a href="https://hd5ps3-wc.myshopify.com/account" target="_blank" rel="noopener noreferrer" className="p-0">
+            <User className="w-5 h-5" />
+          </a>
           <button onClick={onCartOpen} className="relative bg-transparent border-none cursor-pointer p-0">
             <ShoppingBag className="w-5 h-5" />
             {totalItems > 0 && (
@@ -192,6 +198,7 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
           <Link to="/faq" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">FAQ</Link>
           <Link to="/shipping-returns" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Shipping & Returns</Link>
           <Link to="/contact" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Contact</Link>
+          <a href="https://hd5ps3-wc.myshopify.com/account" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">My Account</a>
         </div>
       )}
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
