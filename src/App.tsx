@@ -33,6 +33,7 @@ const AppContent = () => {
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/faq" element={<FAQ />} />
+      <Route path="/shipping-returns" element={<ShippingReturns />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
