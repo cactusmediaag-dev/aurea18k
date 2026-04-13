@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ShoppingBag, Menu, X, ChevronDown } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
+import SearchModal from '@/components/SearchModal';
 
 interface NavbarProps {
   onCartOpen: () => void;
@@ -47,6 +48,7 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const totalItems = useCartStore(state => state.items.reduce((sum, i) => sum + i.quantity, 0));
 
@@ -92,7 +94,9 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
 
         {/* Right icons — desktop */}
         <div className="hidden md:flex gap-6 items-center flex-shrink-0">
-          <Search className="w-5 h-5 opacity-70 hover:opacity-100 cursor-pointer transition-opacity" />
+          <button onClick={() => setSearchOpen(true)} className="bg-transparent border-none cursor-pointer p-0">
+            <Search className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
+          </button>
           <button onClick={onCartOpen} className="relative bg-transparent border-none cursor-pointer p-0">
             <ShoppingBag className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
             {totalItems > 0 && (
@@ -190,6 +194,7 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
           <Link to="/contact" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Contact</Link>
         </div>
       )}
+      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
     </nav>
   );
 };
