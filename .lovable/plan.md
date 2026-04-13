@@ -1,88 +1,68 @@
 
+Objetivo: corrigir o fluxo de checkout para que o botão do site sempre abra o checkout real da Shopify, e ajustar a configuração de domínio para não haver conflito entre Lovable e Shopify.
 
-# Roadmap — Aurea Jewels: Do desenvolvimento ao ar
+Diagnóstico já confirmado:
+- O carrinho está sendo criado corretamente via Storefront API.
+- A Shopify já está retornando uma `checkoutUrl`.
+- Hoje essa URL vem como `https://aurea18k.com/cart/c/...`.
+- Só que `aurea18k.com` está apontado para o Lovable no storefront, então essa rota cai no app do Lovable em vez de cair no checkout da Shopify.
+- Resultado: página vazia / 404 / tela de setup, mesmo com o checkout em si tendo sido criado corretamente.
 
-## Estado atual
+Plano de correção
 
-| Item | Status |
-|------|--------|
-| Loja Shopify | ✅ Claimed (hd5ps3-wc) |
-| Produtos no Shopify | ⚠️ Apenas 3 produtos |
-| Homepage com seções | ✅ Funcional |
-| Carrinho + Checkout Shopify | ✅ Implementado |
-| Produto individual (`/product/:handle`) | ✅ Implementado |
-| Páginas institucionais (FAQ, About, Contact, etc.) | ✅ Criadas |
-| Publicação | ✅ Publicado em aurea18k.lovable.app |
-| Domínio personalizado | ❌ Não configurado |
-| Páginas de coleções (`/collections/*`) | ❌ Não existem (links do menu quebrados) |
-| Instagram Feed (API real) | ❌ Placeholder com gradientes |
-| Busca de produtos | ❌ Ícone sem funcionalidade |
-| Track Order | ❌ Link no footer sem página |
+1. Corrigir a estratégia de domínio
+- Separar claramente os hosts:
+  - `aurea18k.com` e `www.aurea18k.com` = storefront no Lovable
+  - `checkout.aurea18k.com` (ou `shop.aurea18k.com`) = domínio público da Shopify para checkout
+- Não usar o mesmo host raiz (`aurea18k.com`) nas duas plataformas ao mesmo tempo.
 
----
+2. Configurar o domínio correto no Shopify
+- No Shopify Admin: `Settings > Domains`
+- Conectar um subdomínio novo, por exemplo `checkout.aurea18k.com`
+- No DNS do domínio, criar:
+  - `CNAME checkout -> shops.myshopify.com`
+- Se a Shopify pedir verificação extra, adicionar também o TXT que ela gerar.
+- Depois marcar esse subdomínio como domínio principal do target “online store” no Shopify.
+- O `hd5ps3-wc.myshopify.com` continua existindo como domínio permanente interno da loja; ele não é o domínio bonito do cliente.
 
-## Roadmap por prioridade
+3. Ajustar o frontend para o checkout
+- Manter o fluxo atual correto via `cartCreate` / `checkoutUrl`.
+- Centralizar a abertura do checkout para validar a URL antes de abrir.
+- Se a URL ainda vier com o domínio errado ou estiver apontando para um host do Lovable, exibir um erro claro em vez de abrir uma página vazia.
+- Opcionalmente deixar o código preparado para um host de checkout dedicado, evitando nova quebra se o domínio mudar.
 
-### FASE 1 — Crítico para ir ao ar
+4. Revisar toda a jornada de compra
+- Produto → add to cart
+- Cart drawer → checkout
+- Retorno do checkout → sync do carrinho
+- Validar comportamento tanto em preview quanto no domínio publicado
 
-**1. Criar página de coleções/listagem de produtos**
-- Rota `/collections/:collectionHandle` que filtra produtos do Shopify
-- Rota `/collections/all` que mostra todos os produtos
-- Isso resolve todos os links quebrados do mega menu (Women, Men, Kids, New Arrivals, Best Sellers, Bundles, Gift Ideas)
+5. Entrega prática para você
+- Deixar o site abrindo apenas checkout válido da Shopify
+- Te passar o checklist final exato de configuração no Shopify/DNS
+- Confirmar qual URL final deve aparecer ao cliente, por exemplo:
+  - `https://checkout.aurea18k.com/cart/c/...`
 
-**2. Conectar domínio personalizado (aurea18k.com)**
-- Em Project Settings → Domains, adicionar o domínio
-- Configurar registros DNS (A record → 185.158.133.1, TXT → verificação)
-- Aguardar propagação DNS e SSL automático
+Checklist de configuração no Shopify
+- [ ] Abrir `Shopify Admin > Settings > Domains`
+- [ ] Clicar em `Connect existing domain`
+- [ ] Informar `checkout.aurea18k.com`
+- [ ] No DNS, criar `CNAME checkout -> shops.myshopify.com`
+- [ ] Se solicitado, criar o TXT de verificação da Shopify
+- [ ] Aguardar validação
+- [ ] Definir `checkout.aurea18k.com` como domínio principal do target da loja online
+- [ ] Manter `aurea18k.com` no Lovable
+- [ ] Não apontar o domínio raiz para Shopify se ele já aponta para o Lovable
 
-**3. Catálogo de produtos no Shopify**
-- Com apenas 3 produtos, a loja ficará vazia
-- Criar os produtos restantes via Shopify Admin ou via chat
-- Organizar por coleções/tags no Shopify (women, men, kids, best-sellers, etc.)
+Detalhes técnicos
+- O problema não está no `cartCreate`; a evidência mostra resposta 200 com checkout criado.
+- O problema está no host da URL de checkout.
+- Hoje o código abre exatamente a URL que a Shopify retorna; isso está certo.
+- O que precisa mudar é a configuração de domínio da Shopify para que ela retorne um host servido pela própria Shopify, não pelo Lovable.
+- `hd5ps3-wc.myshopify.com` é o domínio permanente da loja e não costuma ser o domínio final de marca; o ideal é mascarar isso com um subdomínio seu.
 
-### FASE 2 — Funcionalidades importantes
-
-**4. Funcionalidade de busca**
-- O ícone de busca no header não faz nada
-- Implementar modal/overlay de busca usando a Storefront API com query
-
-**5. Instagram Feed real**
-- Atualmente usa placeholders com gradientes
-- Integrar via Instagram Basic Display API ou conector
-- Exibir posts reais de @aureajewels.18k
-
-**6. Remover/corrigir link "Track Your Order"**
-- Link no footer aponta para `/track-order` que não existe
-- Opções: remover o link, criar página com instruções, ou integrar com serviço de rastreio
-
-### FASE 3 — Polimento
-
-**7. SEO e Meta Tags**
-- Adicionar meta title, description e Open Graph em cada página
-- Favicon personalizado da Aurea
-
-**8. Verificação mobile completa**
-- Testar todo o fluxo: navegação → produto → carrinho → checkout
-- Garantir que o mega menu funciona bem em todos os tamanhos de tela
-
-**9. Performance e imagens**
-- Lazy loading nas imagens de produtos
-- Otimizar carregamento de fontes (Cormorant Garamond + Jost)
-
----
-
-## Resumo de ações imediatas
-
-```text
-Prioridade    O quê                              Quem faz
-─────────────────────────────────────────────────────────
-  1           Página de coleções                  Lovable (código)
-  2           Domínio aurea18k.com                Você (DNS) + Lovable (config)
-  3           Criar produtos no Shopify           Você (Shopify Admin)
-  4           Busca funcional                     Lovable (código)
-  5           Instagram feed real                 Lovable (código) + API key
-  6           Fix "Track Your Order"              Lovable (código)
-```
-
-Quer que eu comece pela **Fase 1** — criando a página de coleções e resolvendo os links quebrados do menu?
-
+Resultado esperado após a implementação
+- O cliente navega em `aurea18k.com`
+- Clica em checkout
+- Nova aba abre em `checkout.aurea18k.com/...`
+- O pagamento acontece na Shopify, sem página vazia e sem conflito de roteamento
