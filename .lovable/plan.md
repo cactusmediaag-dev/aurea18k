@@ -1,38 +1,42 @@
 
+Objetivo: parar de abrir a página vazia e fazer o checkout sair sempre para um host realmente servido pela Shopify.
 
-# Correção do Checkout — Remover bloqueio desnecessário
+Diagnóstico confirmado
+- O código já cria e sincroniza o carrinho corretamente pela Storefront API.
+- A Shopify ainda está devolvendo `checkoutUrl` com `https://aurea18k.com/cart/c/...`.
+- Como `aurea18k.com` hoje aponta para o Lovable, esse caminho `/cart/c/...` cai no app React e vira página vazia.
+- A tentativa de “trocar o host no frontend” não é suficiente sozinha, porque a Shopify continua tratando `aurea18k.com` como domínio canônico do checkout.
 
-## Problema
-O código atual tem duas lógicas conflitantes:
-1. `normalizeCheckoutUrl` — reescreve corretamente o host da URL de checkout para `hd5ps3-wc.myshopify.com`
-2. `hasInvalidCheckoutDomain` / `checkoutDomainInvalid` — bloqueia o botão de checkout e mostra um toast de erro pedindo para configurar um subdomínio
+Plano de correção
 
-A lógica 1 já resolve o problema. A lógica 2 impede que ela funcione.
+1. Ajustar a lógica do app
+- Remover a suposição de que reescrever a URL no frontend resolve tudo.
+- Validar o host retornado pela Shopify antes de abrir o checkout.
+- Se a Shopify devolver `aurea18k.com`, bloquear a abertura e mostrar uma mensagem clara dizendo que o domínio do checkout está configurado no lugar errado.
+- Manter o fallback para `hd5ps3-wc.myshopify.com` apenas como apoio, não como “solução mágica”.
 
-## Plano
+2. Corrigir a configuração no Shopify
+- Revisar `Settings > Domains` no Shopify.
+- Garantir que `aurea18k.com` não seja usado pela Shopify como domínio de checkout, já que esse host está servindo o site no Lovable.
+- Usar `hd5ps3-wc.myshopify.com` como destino real de checkout por agora.
+- Se a loja/plano permitir checkout em subdomínio próprio depois, configurar isso separadamente; se não permitir, deixar o checkout no `.myshopify.com`.
 
-### 1. Simplificar `normalizeCheckoutUrl` em `src/lib/shopify.ts`
-- Sempre reescrever o hostname para `hd5ps3-wc.myshopify.com` quando não for um host Shopify válido (já faz isso)
-- Remover a constante `CHECKOUT_CUSTOM_DOMAIN` (não é mais necessária)
-- Remover `hasInvalidCheckoutDomain` (não será mais usada)
+3. Corrigir a orientação dada no projeto
+- Atualizar o fluxo e os textos para refletir a regra real: o mesmo host não pode apontar por DNS para Lovable e Shopify ao mesmo tempo.
+- Parar de tratar `aurea18k.com` no Shopify como se pudesse coexistir no checkout sem proxy/reverse routing.
 
-### 2. Limpar `src/stores/cartStore.ts`
-- Remover o campo `checkoutDomainInvalid` do estado
-- Remover referências a `hasInvalidCheckoutDomain`
-- Manter `normalizeCheckoutUrl` no `getCheckoutUrl` e `syncCart`
+4. Validar ponta a ponta
+- Testar carrinho novo e carrinho já salvo no localStorage.
+- Confirmar que o clique em checkout nunca mais abre `aurea18k.com/cart/c/...`.
+- Confirmar que a aba nova abre somente um host válido da Shopify.
+- Validar retorno ao site e sincronização do carrinho após fechar/voltar da aba do checkout.
 
-### 3. Limpar `src/components/CartDrawer.tsx`
-- Remover a verificação `checkoutDomainInvalid` do `handleCheckout`
-- Remover o toast de erro sobre configuração de domínio
-- O botão de checkout passa a abrir direto a URL normalizada
+Como deve ficar no final
+- Site: `aurea18k.com` servido pelo Lovable.
+- Checkout: `hd5ps3-wc.myshopify.com/...` servido pela Shopify.
+- Sem página vazia no caminho `/cart/c/...` do domínio principal.
 
-## Resultado
-- Clique em checkout → abre `https://hd5ps3-wc.myshopify.com/cart/c/...?channel=online_store` em nova aba
-- Checkout funciona imediatamente, sem configuração de DNS
-- O cliente vê o checkout da Shopify e finaliza a compra
-
-## Detalhes técnicos
-- Nenhuma configuração externa necessária (sem DNS, sem subdomínio)
-- O domínio `.myshopify.com` é sempre servido pela Shopify
-- O parâmetro `channel=online_store` garante que o checkout não pede senha
-
+Detalhes técnicos
+- DNS roteia por host, não por caminho. Então `aurea18k.com` não pode entregar homepage pelo Lovable e `/cart/c/...` pela Shopify ao mesmo tempo sem uma camada extra de proxy.
+- O problema real está na configuração de domínio retornada pela Shopify, não na criação do carrinho.
+- A correção definitiva combina: proteção no frontend + ajuste do domínio canônico no Shopify.
