@@ -1,0 +1,178 @@
+import { useParams, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { storefrontApiRequest, ShopifyProduct } from '@/lib/shopify';
+import { useCartStore } from '@/stores/cartStore';
+import { toast } from 'sonner';
+import { Loader2, ShoppingBag } from 'lucide-react';
+import PageLayout from '@/components/PageLayout';
+
+const COLLECTION_TITLES: Record<string, string> = {
+  'all': 'All Jewelry',
+  'womens-earrings': "Women's Earrings",
+  'womens-necklaces': "Women's Necklaces",
+  'womens-bracelets': "Women's Bracelets",
+  'womens-chokers': "Women's Chokers",
+  'everyday-essentials': 'Everyday Essentials',
+  'statement-pieces': 'Statement Pieces',
+  'minimal-collection': 'Minimal Collection',
+  'layering-pieces': 'Layering Pieces',
+  'mens-chains': "Men's Chains",
+  'mens-bracelets': "Men's Bracelets",
+  'mens-stud-earrings': "Men's Stud Earrings",
+  'mens-scapular-necklaces': "Men's Scapular Necklaces",
+  'minimal-men': 'Minimal Men',
+  'classic-collection': 'Classic Collection',
+  'kids-earrings': 'Kids Earrings',
+  'kids-necklaces': 'Kids Necklaces',
+  'kids-bracelets': 'Kids Bracelets',
+  'kids-chokers': 'Kids Chokers',
+  'hypoallergenic-kids': 'Hypoallergenic Kids',
+  'best-sellers': 'Best Sellers',
+  'trending-now': 'Trending Now',
+  'under-50': 'Under $50',
+  'limited-drop': 'Limited Drop',
+  'gift-ready': 'Gift Ready Jewelry',
+  'his-hers-sets': 'His & Hers Sets',
+  'new-arrivals': 'New Arrivals',
+  'bundles-sets': 'Bundles & Sets',
+  'gift-ideas': 'Gift Ideas',
+  'womens': "Women's Collection",
+  'mens': "Men's Collection",
+  'kids': "Kids Collection",
+};
+
+// Map collection handles to Shopify search queries (tag-based)
+function getCollectionQuery(handle: string): string | undefined {
+  if (handle === 'all') return undefined;
+  // Use tag-based filtering — collections in Shopify should use tags matching the handle
+  return `tag:${handle}`;
+}
+
+const PRODUCTS_QUERY = `
+  query GetProducts($first: Int!, $query: String) {
+    products(first: $first, query: $query) {
+      edges {
+        node {
+          id title description handle
+          priceRange { minVariantPrice { amount currencyCode } }
+          images(first: 2) { edges { node { url altText } } }
+          variants(first: 5) {
+            edges {
+              node {
+                id title
+                price { amount currencyCode }
+                availableForSale
+                selectedOptions { name value }
+              }
+            }
+          }
+          options { name values }
+        }
+      }
+    }
+  }
+`;
+
+const Collection = () => {
+  const { handle = 'all' } = useParams<{ handle: string }>();
+  const addItem = useCartStore(state => state.addItem);
+  const isCartLoading = useCartStore(state => state.isLoading);
+
+  const query = getCollectionQuery(handle);
+  const title = COLLECTION_TITLES[handle] || handle.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+  const { data: products, isLoading } = useQuery<ShopifyProduct[]>({
+    queryKey: ['collection', handle],
+    queryFn: async () => {
+      const data = await storefrontApiRequest(PRODUCTS_QUERY, { first: 50, query });
+      return data?.data?.products?.edges || [];
+    },
+  });
+
+  const handleAddToCart = async (product: ShopifyProduct) => {
+    const variant = product.node.variants.edges[0]?.node;
+    if (!variant) return;
+    await addItem({
+      product,
+      variantId: variant.id,
+      variantTitle: variant.title,
+      price: variant.price,
+      quantity: 1,
+      selectedOptions: variant.selectedOptions || [],
+    });
+    toast.success('Added to cart', { description: product.node.title, position: 'top-center' });
+  };
+
+  return (
+    <PageLayout>
+      <div className="bg-cream-light min-h-[60vh]">
+        {/* Header */}
+        <div className="text-center py-14 border-b border-gold/15">
+          <div className="text-[10px] tracking-[0.3em] uppercase text-gold font-medium mb-2">Aurea Jewels</div>
+          <h1 className="font-serif text-4xl font-light text-dark-green tracking-wide">{title}</h1>
+        </div>
+
+        {/* Grid */}
+        <div className="max-w-7xl mx-auto px-12 py-14 max-sm:px-5">
+          {isLoading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-gold" />
+            </div>
+          ) : !products || products.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-warm-gray text-lg font-light mb-2">No products found</p>
+              <p className="text-warm-gray/60 text-sm">This collection is empty. Check back soon for new pieces.</p>
+              <Link to="/" className="inline-block mt-6 text-xs tracking-[0.15em] uppercase text-gold hover:text-dark-green transition-colors font-medium">
+                ← Back to Home
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-4 gap-8 max-lg:grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-2 max-sm:gap-4">
+              {products.map((product) => {
+                const image = product.node.images.edges[0]?.node;
+                const price = parseFloat(product.node.priceRange.minVariantPrice.amount).toFixed(2);
+                const variant = product.node.variants.edges[0]?.node;
+
+                return (
+                  <div key={product.node.id} className="group">
+                    <Link to={`/product/${product.node.handle}`} className="block no-underline">
+                      <div className="aspect-square bg-cream overflow-hidden mb-3 relative">
+                        {image ? (
+                          <img
+                            src={image.url}
+                            alt={image.altText || product.node.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="w-16 h-16 border-2 border-gold/30 rounded-full" />
+                          </div>
+                        )}
+                      </div>
+                      <h3 className="text-sm font-light text-warm-black tracking-wide mb-1 group-hover:text-gold transition-colors">
+                        {product.node.title}
+                      </h3>
+                      <div className="text-sm text-warm-black font-medium">${price}</div>
+                    </Link>
+                    {variant?.availableForSale && (
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        disabled={isCartLoading}
+                        className="mt-2 w-full flex items-center justify-center gap-2 py-2.5 text-[10px] tracking-[0.15em] uppercase border border-gold/30 bg-transparent text-warm-black hover:bg-dark-green hover:text-gold-light hover:border-dark-green transition-all cursor-pointer font-sans"
+                      >
+                        <ShoppingBag className="w-3.5 h-3.5" /> Add to Cart
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    </PageLayout>
+  );
+};
+
+export default Collection;
