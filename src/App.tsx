@@ -6,6 +6,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useCartSync } from "@/hooks/useCartSync";
 import Index from "./pages/Index.tsx";
 import ProductDetail from "./pages/ProductDetail.tsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
+import TermsConditions from "./pages/TermsConditions.tsx";
+import Accessibility from "./pages/Accessibility.tsx";
+import CookiePolicy from "./pages/CookiePolicy.tsx";
+import ReviewsPage from "./pages/Reviews.tsx";
+import About from "./pages/About.tsx";
+import Contact from "./pages/Contact.tsx";
+import FAQ from "./pages/FAQ.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -16,6 +24,14 @@ const AppContent = () => {
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/product/:handle" element={<ProductDetail />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/terms" element={<TermsConditions />} />
+      <Route path="/accessibility" element={<Accessibility />} />
+      <Route path="/cookie-policy" element={<CookiePolicy />} />
+      <Route path="/reviews" element={<ReviewsPage />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/faq" element={<FAQ />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

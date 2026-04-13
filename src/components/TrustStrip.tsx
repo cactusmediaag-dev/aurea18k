@@ -7,16 +7,21 @@ const TrustStrip = () => {
     'Secure Checkout',
   ];
 
+  // Double items for seamless loop
+  const doubled = [...items, ...items];
+
   return (
-    <div className="bg-dark-green py-4.5 px-12 flex justify-center gap-16 items-center flex-wrap max-md:gap-6 max-md:px-6">
-      {items.map((text) => (
-        <div key={text} className="flex items-center gap-3 text-gold-light">
-          <span className="text-[15px]">✦</span>
-          <span className="text-[11px] tracking-[0.15em] uppercase font-normal text-gold-light/90">
-            {text}
-          </span>
-        </div>
-      ))}
+    <div className="bg-dark-green py-4.5 overflow-hidden">
+      <div className="flex animate-marquee whitespace-nowrap">
+        {doubled.map((text, i) => (
+          <div key={i} className="flex items-center gap-3 text-gold-light mx-8 shrink-0">
+            <span className="text-[15px]">✦</span>
+            <span className="text-[11px] tracking-[0.15em] uppercase font-normal text-gold-light/90">
+              {text}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

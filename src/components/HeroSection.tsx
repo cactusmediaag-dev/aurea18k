@@ -53,7 +53,7 @@ const HeroSection = () => {
       )}
 
       {/* Content */}
-      <div className="relative z-10 max-w-[680px] px-12 text-left mr-auto ml-[8%] max-md:ml-[5%]" style={{ animation: 'heroFadeIn 1.2s ease-out forwards' }}>
+      <div className="relative z-10 max-w-[680px] px-12 text-left mr-auto ml-[8%] max-md:ml-[5%] max-md:flex max-md:flex-col max-md:justify-end max-md:pb-28 max-md:h-full" style={{ animation: 'heroFadeIn 1.2s ease-out forwards' }}>
         <div className="inline-block text-[10px] tracking-[0.35em] uppercase text-gold-light font-normal mb-6 border-l-2 border-gold pl-3.5">
           {slide.tag}
         </div>
@@ -78,15 +78,6 @@ const HeroSection = () => {
             className={`w-2 h-2 rounded-full border-none cursor-pointer transition-all duration-300 ${idx === currentSlide ? 'bg-gold w-6' : 'bg-cream-light/40'}`}
           />
         ))}
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 text-center hidden md:block">
-        <div className="w-px h-[60px] mx-auto mb-3" style={{
-          background: 'linear-gradient(to bottom, hsl(37 55% 50%), transparent)',
-          animation: 'scrollPulse 2s ease-in-out infinite',
-        }} />
-        <span className="text-[9px] tracking-[0.3em] uppercase text-cream-light/45">Scroll</span>
       </div>
     </section>
   );
