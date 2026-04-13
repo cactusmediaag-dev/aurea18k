@@ -10,6 +10,7 @@ import {
   storefrontApiRequest,
   CART_QUERY,
   normalizeCheckoutUrl,
+  hasInvalidCheckoutDomain,
 } from '@/lib/shopify';
 
 export type { CartItem, ShopifyProduct };
@@ -18,6 +19,7 @@ interface CartStore {
   items: CartItem[];
   cartId: string | null;
   checkoutUrl: string | null;
+  checkoutDomainInvalid: boolean;
   isLoading: boolean;
   isSyncing: boolean;
   addItem: (item: Omit<CartItem, 'lineId'>) => Promise<void>;
@@ -34,6 +36,7 @@ export const useCartStore = create<CartStore>()(
       items: [],
       cartId: null,
       checkoutUrl: null,
+      checkoutDomainInvalid: false,
       isLoading: false,
       isSyncing: false,
 
@@ -48,6 +51,7 @@ export const useCartStore = create<CartStore>()(
               set({
                 cartId: result.cartId,
                 checkoutUrl: result.checkoutUrl,
+                checkoutDomainInvalid: result.domainMisconfigured,
                 items: [{ ...item, lineId: result.lineId }],
               });
             }
@@ -122,7 +126,7 @@ export const useCartStore = create<CartStore>()(
         }
       },
 
-      clearCart: () => set({ items: [], cartId: null, checkoutUrl: null }),
+      clearCart: () => set({ items: [], cartId: null, checkoutUrl: null, checkoutDomainInvalid: false }),
       getCheckoutUrl: () => normalizeCheckoutUrl(get().checkoutUrl),
 
       syncCart: async () => {
@@ -137,7 +141,10 @@ export const useCartStore = create<CartStore>()(
             clearCart();
             return;
           }
-          set({ checkoutUrl: normalizeCheckoutUrl(cart.checkoutUrl) });
+          set({
+            checkoutUrl: normalizeCheckoutUrl(cart.checkoutUrl),
+            checkoutDomainInvalid: hasInvalidCheckoutDomain(cart.checkoutUrl),
+          });
         } catch (error) {
           console.error('Failed to sync cart:', error);
         } finally {

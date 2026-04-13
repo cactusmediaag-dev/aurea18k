@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { useEffect } from 'react';
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 import { Minus, Plus, Trash2, ExternalLink, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useCartStore } from '@/stores/cartStore';
 
 interface CartDrawerProps {
@@ -9,7 +10,7 @@ interface CartDrawerProps {
 }
 
 const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } = useCartStore();
+  const { items, isLoading, isSyncing, checkoutDomainInvalid, updateQuantity, removeItem, getCheckoutUrl, syncCart } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
   const freeShippingThreshold = 120;
@@ -19,22 +20,35 @@ const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
   useEffect(() => { if (open) syncCart(); }, [open, syncCart]);
 
   const handleCheckout = () => {
+    if (checkoutDomainInvalid) {
+      toast.error('Checkout ainda não está pronto', {
+        description: 'No Shopify, conecte checkout.aurea18k.com e crie o CNAME checkout → shops.myshopify.com.',
+      });
+      return;
+    }
+
     const checkoutUrl = getCheckoutUrl();
     if (checkoutUrl) {
-      window.open(checkoutUrl, '_blank');
+      window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
       onOpenChange(false);
+      return;
     }
+
+    toast.error('Não foi possível abrir o checkout.');
   };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-md flex flex-col h-full bg-cream-light border-l border-gold/25 p-0">
         <div className="bg-dark-green px-5 py-4 flex justify-between items-center flex-shrink-0">
-          <SheetHeader className="p-0">
+          <div className="p-0">
             <SheetTitle className="text-[11px] tracking-[0.15em] uppercase text-gold-light font-medium font-sans">
               Your Cart ({totalItems} {totalItems === 1 ? 'item' : 'items'})
             </SheetTitle>
-          </SheetHeader>
+            <SheetDescription className="sr-only">
+              Review the items in your cart and continue to Shopify checkout.
+            </SheetDescription>
+          </div>
         </div>
 
         <div className="flex flex-col flex-1 min-h-0 p-5">
