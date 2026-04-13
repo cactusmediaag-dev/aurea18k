@@ -38,22 +38,22 @@ const shopMenus = {
     { label: 'Trending Now', href: '/collections/trending-now' },
     { label: 'Under $50', href: '/collections/under-50' },
     { label: 'Limited Drop', href: '/collections/limited-drop' },
-    { label: 'Gift-Ready Jewelry', href: '/collections/gift-ready' },
+    { label: 'Gift Ready Jewelry', href: '/collections/gift-ready' },
     { label: 'His & Hers Sets', href: '/collections/his-hers-sets' },
   ],
 };
 
 const Navbar = ({ onCartOpen }: NavbarProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [shopOpen, setShopOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const totalItems = useCartStore(state => state.items.reduce((sum, i) => sum + i.quantity, 0));
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setActiveDropdown(null);
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setShopOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -61,84 +61,109 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-50 bg-cream-light/95 backdrop-blur-md border-b border-gold/25 px-12 flex items-center justify-between h-[72px] max-md:px-5 max-md:h-16">
-      {/* Desktop left nav */}
-      <div className="flex gap-9 items-center max-md:hidden" ref={dropdownRef}>
-        {/* Shop dropdown trigger */}
-        <div className="relative">
-          <button
-            className="text-xs tracking-[0.1em] uppercase text-warm-black font-normal hover:text-gold transition-colors bg-transparent border-none cursor-pointer flex items-center gap-1"
-            onMouseEnter={() => setActiveDropdown('shop')}
-          >
-            Shop <ChevronDown className="w-3 h-3" />
-          </button>
-          {activeDropdown === 'shop' && (
-            <div
-              className="absolute top-full left-0 mt-2 bg-cream-light border border-gold/25 shadow-lg p-8 min-w-[680px] z-50"
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
-              <div className="grid grid-cols-4 gap-8">
-                {Object.entries(shopMenus).map(([title, items]) => (
-                  <div key={title}>
-                    <div className="text-[10px] tracking-[0.25em] uppercase text-gold font-medium mb-4">{title}</div>
-                    <ul className="list-none space-y-2.5">
-                      {items.map((item) => (
-                        <li key={item.label}>
-                          <Link
-                            to={item.href}
-                            className="text-[12px] text-warm-black/70 font-light hover:text-gold transition-colors no-underline block"
-                            onClick={() => setActiveDropdown(null)}
-                          >
-                            {item.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+    <nav ref={navRef} className="sticky top-0 z-50 bg-cream-light/95 backdrop-blur-md border-b border-gold/25">
+      {/* Main bar */}
+      <div className="flex items-center justify-between h-[72px] px-12 max-md:px-5 max-md:h-16">
+        {/* Logo — left */}
+        <div className="flex-shrink-0">
+          <Link to="/" className="font-serif text-[26px] font-light tracking-[0.25em] text-dark-green no-underline block leading-none">AUREA</Link>
+          <div className="text-[8px] tracking-[0.3em] uppercase text-gold mt-0.5 font-sans font-normal">Jewels · 18K Gold Plated</div>
         </div>
-        <Link to="/collections/new-arrivals" className="text-xs tracking-[0.1em] uppercase text-warm-black font-normal hover:text-gold transition-colors no-underline">New Arrivals</Link>
-        <Link to="/collections/best-sellers" className="text-xs tracking-[0.1em] uppercase text-warm-black font-normal hover:text-gold transition-colors no-underline">Best Sellers</Link>
+
+        {/* Center nav — desktop */}
+        <div className="hidden md:flex items-center gap-9">
+          <button
+            className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors bg-transparent border-none cursor-pointer flex items-center gap-1"
+            onClick={() => setShopOpen(!shopOpen)}
+            onMouseEnter={() => setShopOpen(true)}
+          >
+            Shop <ChevronDown className={`w-3 h-3 transition-transform ${shopOpen ? 'rotate-180' : ''}`} />
+          </button>
+          <Link to="/collections/new-arrivals" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">New Arrivals</Link>
+          <Link to="/collections/best-sellers" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">Best Sellers</Link>
+          <Link to="/about" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">About</Link>
+          <Link to="/reviews" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">Reviews</Link>
+          <Link to="/contact" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">Contact</Link>
+        </div>
+
+        {/* Right icons — desktop */}
+        <div className="hidden md:flex gap-6 items-center flex-shrink-0">
+          <Search className="w-5 h-5 opacity-70 hover:opacity-100 cursor-pointer transition-opacity" />
+          <button onClick={onCartOpen} className="relative bg-transparent border-none cursor-pointer p-0">
+            <ShoppingBag className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
+            {totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 w-5 h-5 bg-gold rounded-full text-[10px] font-medium text-warm-black flex items-center justify-center font-sans">
+                {totalItems}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Mobile controls */}
+        <div className="flex md:hidden items-center gap-4">
+          <button onClick={onCartOpen} className="relative bg-transparent border-none cursor-pointer p-0">
+            <ShoppingBag className="w-5 h-5" />
+            {totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 w-5 h-5 bg-gold rounded-full text-[10px] font-medium text-warm-black flex items-center justify-center font-sans">
+                {totalItems}
+              </span>
+            )}
+          </button>
+          <button className="bg-transparent border-none p-0" onClick={() => { setMobileOpen(!mobileOpen); setMobileSubmenu(null); }}>
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
-      {/* Logo */}
-      <div className="absolute left-1/2 -translate-x-1/2 text-center">
-        <Link to="/" className="font-serif text-[26px] font-light tracking-[0.25em] text-dark-green no-underline block leading-none">AUREA</Link>
-        <div className="text-[8px] tracking-[0.3em] uppercase text-gold mt-0.5 font-sans font-normal">Jewels · 18K Gold Plated</div>
-      </div>
+      {/* Desktop mega menu — full width below header */}
+      {shopOpen && (
+        <div
+          className="hidden md:block absolute left-0 right-0 top-full bg-cream-light border-b border-gold/25 shadow-lg z-50"
+          onMouseLeave={() => setShopOpen(false)}
+        >
+          <div className="max-w-5xl mx-auto px-12 py-10">
+            <div className="grid grid-cols-4 gap-10">
+              {Object.entries(shopMenus).map(([title, items]) => (
+                <div key={title}>
+                  <div className="text-[11px] tracking-[0.25em] uppercase text-gold font-semibold mb-4">{title}</div>
+                  <ul className="list-none space-y-2.5 p-0 m-0">
+                    {items.map((item) => (
+                      <li key={item.label}>
+                        <Link
+                          to={item.href}
+                          className="text-[13px] text-warm-black/70 font-light hover:text-gold transition-colors no-underline block"
+                          onClick={() => setShopOpen(false)}
+                        >
+                          {item.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Bottom links */}
+          <div className="border-t border-gold/15 py-4 flex items-center justify-center gap-8">
+            <Link
+              to="/collections/all"
+              className="text-xs tracking-[0.2em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline"
+              onClick={() => setShopOpen(false)}
+            >
+              Shop All
+            </Link>
+            <Link
+              to="/collections"
+              className="text-xs tracking-[0.2em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline"
+              onClick={() => setShopOpen(false)}
+            >
+              View Categories
+            </Link>
+          </div>
+        </div>
+      )}
 
-      {/* Desktop right nav */}
-      <div className="flex gap-7 items-center max-md:hidden">
-        <Link to="/about" className="text-xs tracking-[0.1em] uppercase text-warm-black font-normal hover:text-gold transition-colors no-underline">About</Link>
-        <Link to="/reviews" className="text-xs tracking-[0.1em] uppercase text-warm-black font-normal hover:text-gold transition-colors no-underline">Reviews</Link>
-        <Link to="/contact" className="text-xs tracking-[0.1em] uppercase text-warm-black font-normal hover:text-gold transition-colors no-underline">Contact</Link>
-        <Search className="w-5 h-5 opacity-70 hover:opacity-100 cursor-pointer transition-opacity" />
-        <button onClick={onCartOpen} className="relative bg-transparent border-none cursor-pointer p-0">
-          <ShoppingBag className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
-          {totalItems > 0 && (
-            <span className="absolute -top-2 -right-2 w-5 h-5 bg-gold rounded-full text-[10px] font-medium text-warm-black flex items-center justify-center font-sans">
-              {totalItems}
-            </span>
-          )}
-        </button>
-      </div>
-
-      {/* Mobile */}
-      <button className="md:hidden bg-transparent border-none" onClick={() => { setMobileOpen(!mobileOpen); setMobileSubmenu(null); }}>
-        {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-      </button>
-      <button onClick={onCartOpen} className="md:hidden relative bg-transparent border-none cursor-pointer p-0">
-        <ShoppingBag className="w-5 h-5" />
-        {totalItems > 0 && (
-          <span className="absolute -top-2 -right-2 w-5 h-5 bg-gold rounded-full text-[10px] font-medium text-warm-black flex items-center justify-center font-sans">
-            {totalItems}
-          </span>
-        )}
-      </button>
-
+      {/* Mobile menu */}
       {mobileOpen && (
         <div className="absolute top-full left-0 right-0 bg-cream-light border-b border-gold/25 flex flex-col items-center gap-1 py-6 md:hidden z-50 max-h-[80vh] overflow-y-auto">
           <Link to="/" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Home</Link>
