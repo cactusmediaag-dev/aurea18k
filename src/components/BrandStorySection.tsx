@@ -1,3 +1,5 @@
+import brazilImg from '@/assets/made-in-brazil.jpg';
+
 const BrandStorySection = () => (
   <div id="story" className="bg-dark-green py-28 px-12 grid grid-cols-2 gap-20 items-center max-lg:grid-cols-1 max-lg:gap-10 max-sm:px-6 max-sm:py-16">
     <div>
@@ -10,14 +12,15 @@ const BrandStorySection = () => (
         <p className="mt-4">Every piece is crafted with 18K gold plating on hypoallergenic stainless steel — so you can wear it every day, from morning coffee to weekend plans, without irritation or compromise.</p>
       </div>
       <div className="mt-10">
-        <a href="#" className="btn-aurea-primary">Meet Aurea Jewels</a>
+        <a href="/about" className="btn-aurea-primary">Meet Aurea Jewels</a>
       </div>
     </div>
     <div className="flex items-center justify-center max-lg:hidden">
-      <div className="w-[340px] h-[440px] border border-gold/30 relative flex items-center justify-center" style={{ background: 'rgba(196,151,58,0.04)' }}>
+      <div className="w-[340px] h-[440px] border border-gold/30 relative flex items-center justify-center overflow-hidden" style={{ background: 'rgba(196,151,58,0.04)' }}>
         <div className="absolute -top-5 -left-5 right-5 bottom-5 border border-gold/15 pointer-events-none" />
-        <p className="font-serif text-[28px] italic text-gold-light text-center px-8 leading-[1.5] font-light">
-          "Luxury that doesn't<br />irritate your skin<br />— or your budget."
+        <img src={brazilImg} alt="Born in Brazil, Made for the World" className="absolute inset-0 w-full h-full object-cover opacity-40" />
+        <p className="font-serif text-[28px] italic text-gold-light text-center px-8 leading-[1.5] font-light relative z-10">
+          "Born in Brazil<br />Made for the World!"
         </p>
       </div>
     </div>
