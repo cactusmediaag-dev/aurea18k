@@ -1,47 +1,23 @@
 
 
-# Auditoria e Correção da Estrutura de Páginas
+# Adicionar Ícone de Conta (Login/Perfil) no Navbar e Footer
 
-## Problemas Encontrados
+## O que será feito
+Adicionar um ícone de usuário (User) no navbar entre o ícone de busca e o carrinho, e um link "My Account" no footer. Ambos redirecionam para a página de conta nativa do Shopify (`https://hd5ps3-wc.myshopify.com/account`), onde o cliente pode fazer login, ver pedidos e gerenciar perfil.
 
-1. **Link "View All" no BestSellersSection** aponta para `href="#"` — deveria ir para `/collections/all`
-2. **"Shop the Collection" no Hero** usa `href="#bestsellers"` (anchor tag `<a>`) — deveria ser `<Link>` para `/collections/all`
-3. **"Our Story" no Hero** usa `href="#story"` — deveria ser `<Link>` para `/about`
-4. **Botões do BundleSection** ("Build My Duo", etc.) não têm ação — deveriam linkar para `/collections/bundles-sets`
-5. **`/collections` sem handle** renderiza Collection com `handle='all'` mas não tem página de categorias dedicada — o link "View Categories" no mega menu aponta para `/collections` que mostra todos os produtos em vez de uma página de categorias
-6. **Index.tsx não usa PageLayout** — repete AnnouncementBar/Navbar/Footer manualmente em vez de usar o componente compartilhado
-7. **Coleções usam filtro por tag (`tag:handle`)** — funciona, mas as coleções de alto nível (`womens`, `mens`, `kids`) precisam de queries mais amplas para agrupar subcoleções
+## Arquivos modificados
 
-## Plano de Correção
+### 1. `src/components/Navbar.tsx`
+- Importar ícone `User` do lucide-react
+- Desktop: adicionar botão com ícone `User` entre Search e ShoppingBag, abrindo `https://hd5ps3-wc.myshopify.com/account` em nova aba
+- Mobile: adicionar o mesmo ícone antes do carrinho no mobile controls
+- Mobile menu: adicionar link "My Account" no menu mobile
 
-### 1. Corrigir links quebrados no Hero e BestSellers
-- `HeroSection.tsx`: trocar `<a href="#bestsellers">` por `<Link to="/collections/all">` e `<a href="#story">` por `<Link to="/about">`
-- `BestSellersSection.tsx`: trocar `<a href="#">View All</a>` por `<Link to="/collections/all">View All</Link>`
+### 2. `src/components/Footer.tsx`
+- Adicionar link "My Account" na coluna "Customer Care", abrindo a página de conta do Shopify em nova aba
 
-### 2. Conectar botões do BundleSection
-- Cada botão "Build My Duo/Stack/Set" vira um `<Link>` para `/collections/bundles-sets`
-
-### 3. Criar página de Categorias (`/collections` sem handle)
-- Nova rota `/collections` (sem `:handle`) renderiza uma página com cards linkando para as categorias principais: Women, Men, Kids, Best Sellers, New Arrivals, Bundles & Sets, Gift Ideas
-- Reutiliza o visual do CategoriesSection atual
-
-### 4. Melhorar queries das coleções agrupadas
-- `womens` → `tag:womens-earrings OR tag:womens-necklaces OR tag:womens-bracelets OR tag:womens-chokers`
-- `mens` → query similar agrupando subcoleções
-- `kids` → query similar
-- Manter `tag:handle` para coleções individuais
-
-### 5. Unificar Index com PageLayout
-- `Index.tsx` passa a usar `<PageLayout>` em vez de repetir Navbar/Footer/CartDrawer
-
-### 6. Validar todas as rotas no App.tsx
-- Confirmar que cada link no Navbar, Footer e componentes internos tem rota correspondente no router
-
-## Arquivos Modificados
-- `src/components/HeroSection.tsx` — links do hero
-- `src/components/BestSellersSection.tsx` — link "View All"
-- `src/components/BundleSection.tsx` — botões de bundle
-- `src/pages/Index.tsx` — usar PageLayout
-- `src/pages/Collection.tsx` — queries agrupadas + lógica para `/collections` sem handle (página de categorias)
-- `src/App.tsx` — separar rota `/collections` da rota `/collections/:handle` se necessário
+## Detalhes técnicos
+- URL da conta: `https://hd5ps3-wc.myshopify.com/account`
+- Usa `<a href="..." target="_blank" rel="noopener noreferrer">` por ser link externo (Shopify)
+- Ícone: `User` do lucide-react, mesmo estilo visual dos ícones existentes
 
