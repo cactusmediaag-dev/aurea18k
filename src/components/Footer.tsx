@@ -44,8 +44,7 @@ const Footer = () => (
         <ul className="list-none space-y-3">
           {[
             { label: 'FAQ', href: '/faq' },
-            { label: 'Shipping Policy', href: '/shipping' },
-            { label: 'Returns & Exchanges', href: '/returns' },
+            { label: 'Shipping & Returns', href: '/shipping-returns' },
             { label: 'Track Your Order', href: '/track-order' },
             { label: 'Contact Us', href: '/contact' },
           ].map((l) => (
@@ -58,7 +57,7 @@ const Footer = () => (
         <h4 className="text-[10px] tracking-[0.25em] uppercase text-cream-light/90 font-medium mb-5">Company</h4>
         <ul className="list-none space-y-3">
           {[
-            { label: 'About Aurea', href: '/about' },
+            { label: 'About Us', href: '/about' },
             { label: 'Reviews', href: '/reviews' },
             { label: 'Privacy Policy', href: '/privacy-policy' },
             { label: 'Terms & Conditions', href: '/terms' },

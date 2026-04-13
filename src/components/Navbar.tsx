@@ -71,7 +71,7 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
         </div>
 
         {/* Center nav — desktop */}
-        <div className="hidden md:flex items-center gap-9">
+        <div className="hidden md:flex items-center gap-7">
           <button
             className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors bg-transparent border-none cursor-pointer flex items-center gap-1"
             onClick={() => setShopOpen(!shopOpen)}
@@ -81,8 +81,12 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
           </button>
           <Link to="/collections/new-arrivals" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">New Arrivals</Link>
           <Link to="/collections/best-sellers" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">Best Sellers</Link>
-          <Link to="/about" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">About</Link>
+          <Link to="/collections/bundles-sets" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">Bundles & Sets</Link>
+          <Link to="/collections/gift-ideas" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">Gift Ideas</Link>
+          <Link to="/about" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">About Us</Link>
           <Link to="/reviews" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">Reviews</Link>
+          <Link to="/faq" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">FAQ</Link>
+          <Link to="/shipping-returns" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline whitespace-nowrap">Shipping & Returns</Link>
           <Link to="/contact" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">Contact</Link>
         </div>
 
@@ -143,22 +147,9 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
               ))}
             </div>
           </div>
-          {/* Bottom links */}
           <div className="border-t border-gold/15 py-4 flex items-center justify-center gap-8">
-            <Link
-              to="/collections/all"
-              className="text-xs tracking-[0.2em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline"
-              onClick={() => setShopOpen(false)}
-            >
-              Shop All
-            </Link>
-            <Link
-              to="/collections"
-              className="text-xs tracking-[0.2em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline"
-              onClick={() => setShopOpen(false)}
-            >
-              View Categories
-            </Link>
+            <Link to="/collections/all" className="text-xs tracking-[0.2em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline" onClick={() => setShopOpen(false)}>Shop All</Link>
+            <Link to="/collections" className="text-xs tracking-[0.2em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline" onClick={() => setShopOpen(false)}>View Categories</Link>
           </div>
         </div>
       )}
@@ -179,12 +170,7 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
               {mobileSubmenu === title && (
                 <div className="flex flex-col gap-2 py-2 bg-cream/50">
                   {items.map((item) => (
-                    <Link
-                      key={item.label}
-                      to={item.href}
-                      className="text-[11px] text-warm-black/70 no-underline py-1"
-                      onClick={() => setMobileOpen(false)}
-                    >
+                    <Link key={item.label} to={item.href} className="text-[11px] text-warm-black/70 no-underline py-1" onClick={() => setMobileOpen(false)}>
                       {item.label}
                     </Link>
                   ))}
@@ -193,9 +179,14 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
             </div>
           ))}
 
-          <Link to="/about" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">About</Link>
+          <Link to="/collections/new-arrivals" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">New Arrivals</Link>
+          <Link to="/collections/best-sellers" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Best Sellers</Link>
+          <Link to="/collections/bundles-sets" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Bundles & Sets</Link>
+          <Link to="/collections/gift-ideas" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Gift Ideas</Link>
+          <Link to="/about" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">About Us</Link>
           <Link to="/reviews" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Reviews</Link>
           <Link to="/faq" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">FAQ</Link>
+          <Link to="/shipping-returns" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Shipping & Returns</Link>
           <Link to="/contact" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Contact</Link>
         </div>
       )}
