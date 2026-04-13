@@ -5,9 +5,7 @@ import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { Loader2, ArrowLeft } from 'lucide-react';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import CartDrawer from '@/components/CartDrawer';
+import PageLayout from '@/components/PageLayout';
 
 const PRODUCT_BY_HANDLE_QUERY = `
   query GetProductByHandle($handle: String!) {
@@ -35,7 +33,6 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const addItem = useCartStore(state => state.addItem);
   const isLoading = useCartStore(state => state.isLoading);
-  const [cartOpen, setCartOpen] = useState(false);
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0);
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -80,11 +77,9 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cream-light">
-      <Navbar onCartOpen={() => setCartOpen(true)} />
-      <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
-
-      <div className="max-w-6xl mx-auto px-12 py-16 max-sm:px-6">
+    <PageLayout>
+      <div className="bg-cream-light">
+        <div className="max-w-6xl mx-auto px-12 py-16 max-sm:px-6">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-xs tracking-[0.1em] uppercase text-warm-gray mb-8 bg-transparent border-none cursor-pointer hover:text-dark-green transition-colors font-sans">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
@@ -160,10 +155,9 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
+        </div>
       </div>
-
-      <Footer />
-    </div>
+    </PageLayout>
   );
 };
 
