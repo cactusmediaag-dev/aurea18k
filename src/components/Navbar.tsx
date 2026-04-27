@@ -10,6 +10,7 @@ interface NavbarProps {
 
 const shopMenus = {
   Women: [
+    { label: "Women's Rings", href: '/collections/womens-rings' },
     { label: "Women's Earrings", href: '/collections/womens-earrings' },
     { label: "Women's Necklaces", href: '/collections/womens-necklaces' },
     { label: "Women's Bracelets", href: '/collections/womens-bracelets' },
