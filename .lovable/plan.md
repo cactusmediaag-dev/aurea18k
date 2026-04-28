@@ -1,133 +1,141 @@
+়
+# Checklist de Banners e Imagens — Aurea Jewels
 
-# Como linkar produtos a cada item de menu (Navbar + Categorias)
+Lista completa do que você precisa enviar para finalizar o visual do site. Formato: **Nome do arquivo · Onde aparece · Medida (px) · Texto sobreposto?**
 
-## Contexto: como o sistema funciona hoje
+---
 
-O site **não usa Collections nativas do Shopify** — usa um sistema baseado em **TAGS de produto**. Cada link do menu vai para `/collections/:handle`, e o handle vira uma tag que é buscada no Shopify via Storefront API.
+## 1. HERO — Página inicial (topo)
 
-```text
-Click em "Women's Earrings" no Navbar
-        ↓
-Navega para /collections/womens-earrings
-        ↓
-Collection.tsx pega handle = "womens-earrings"
-        ↓
-Monta query Shopify: tag:womens-earrings
-        ↓
-Mostra todos os produtos que têm essa tag
+```
+[ ] banner1-desktop.png        Hero slide 1 · Home (desktop)         2400 × 1200    Texto NO CÓDIGO (não na imagem)
+[ ] banner1-mobile.png         Hero slide 1 · Home (mobile)          1080 × 1600    Texto NO CÓDIGO
+[ ] banner2-desktop.png        Hero slide 2 · Home (desktop)         2400 × 1200    Texto NO CÓDIGO
+[ ] banner2-mobile.png         Hero slide 2 · Home (mobile)          1080 × 1600    Texto NO CÓDIGO
+```
+Obs: deixar o lado ESQUERDO da imagem mais "limpo" (área onde o título sobrepõe). Modelo + joia em destaque à direita/centro.
+
+---
+
+## 2. CATEGORIAS — Home (4 cards "Shop by Category")
+
+Hoje são gradientes. Substituir por foto vertical (3:4).
+
+```
+[ ] cat-womens.jpg             Card "Women's Collection"             900 × 1200     SEM texto
+[ ] cat-mens.jpg               Card "Men's Collection"               900 × 1200     SEM texto
+[ ] cat-kids.jpg               Card "Kids Collection"                900 × 1200     SEM texto
+[ ] cat-bestsellers.jpg        Card "Best Sellers"                   900 × 1200     SEM texto
 ```
 
-Ou seja: **o "link" entre menu e produto é a TAG**. Basta adicionar a tag certa em cada produto no Shopify Admin e ele aparece automaticamente na página correspondente.
+---
+
+## 3. BRAND STORY — Home ("Born in Brazil, Made for the World")
+
+```
+[ ] brand-story.jpg            Bloco da história (lateral)           800 × 1000     SEM texto
+```
+(Atualmente usa `made-in-brazil.jpg` com 40% de opacidade — pode mandar substituto melhor.)
 
 ---
 
-## Mapeamento completo: Menu → Tag necessária no produto
+## 4. BUNDLES — Home (3 cards "Bundle & Save")
 
-### Menu "Shop" (mega menu do Navbar)
+Hoje mostra ícones. Trocar por mini-foto de produto real em cada slot.
 
-**Women**
-- Women's Earrings → tag `womens-earrings`
-- Women's Necklaces → tag `womens-necklaces`
-- Women's Bracelets → tag `womens-bracelets`
-- Women's Chokers → tag `womens-chokers`
-- Everyday Essentials → tag `everyday-essentials`
-- Statement Pieces → tag `statement-pieces`
-- Minimal Collection → tag `minimal-collection`
-- Layering Pieces → tag `layering-pieces`
-
-**Men**
-- Men's Chains → tag `mens-chains`
-- Men's Bracelets → tag `mens-bracelets`
-- Men's Stud Earrings → tag `mens-stud-earrings`
-- Men's Scapular Necklaces → tag `mens-scapular-necklaces`
-- Minimal Men → tag `minimal-men`
-- Classic Collection → tag `classic-collection`
-
-**Kids**
-- Kids Earrings → tag `kids-earrings`
-- Kids Necklaces → tag `kids-necklaces`
-- Kids Bracelets → tag `kids-bracelets`
-- Kids Chokers → tag `kids-chokers`
-- Hypoallergenic Kids → tag `hypoallergenic-kids`
-
-**Collections**
-- Best Sellers → tag `best-sellers`
-- Trending Now → tag `trending-now`
-- Under $50 → tag `under-50`
-- Limited Drop → tag `limited-drop`
-- Gift Ready → tag `gift-ready`
-- His & Hers Sets → tag `his-hers-sets`
-
-### Links diretos do Navbar
-- New Arrivals → tag `new-arrivals`
-- Best Sellers → tag `best-sellers`
-- Bundles & Sets → tag `bundles-sets`
-- Gift Ideas → tag `gift-ideas`
-
-### Categorias agrupadas (homepage e /collections)
-Esses são **agrupamentos automáticos** — não precisam de tag própria, eles juntam várias tags filhas:
-- Women's Collection (`womens`) = junta TODAS as tags de Women acima
-- Men's Collection (`mens`) = junta TODAS as tags de Men acima
-- Kids Collection (`kids`) = junta TODAS as tags de Kids acima
-- Shop All (`all`) = mostra todos os produtos
+```
+[ ] bundle-earring.jpg         Ícone brinco nos 3 cards              400 × 400      SEM texto · fundo creme
+[ ] bundle-necklace.jpg        Ícone colar nos cards Stack/Set       400 × 400      SEM texto · fundo creme
+[ ] bundle-bracelet.jpg        Ícone pulseira nos cards Stack/Set    400 × 400      SEM texto · fundo creme
+[ ] bundle-ring.jpg            Ícone anel no card Full Set           400 × 400      SEM texto · fundo creme
+```
 
 ---
 
-## Passo a passo — como adicionar um produto a um menu
+## 5. INSTAGRAM — Home (grid 6 imagens)
 
-### Opção A: Pelo Shopify Admin (recomendado, você fazendo manualmente)
+Hoje são gradientes dourados. Substituir por fotos reais do feed.
 
-1. Acesse o Shopify Admin → **Products**
-2. Abra o produto que quer linkar
-3. Role até o card **Tags** (lado direito)
-4. Adicione a(s) tag(s) exata(s) da lista acima — escreva igualzinho, com hífen, minúsculo, em inglês
-5. Clique em **Save**
-6. Em ~30 segundos o produto já aparece na(s) página(s) correspondente(s) no site
-
-**Exemplo prático**: Um brinco feminino best-seller que serve como presente:
-- Tags: `womens-earrings`, `best-sellers`, `gift-ideas`, `everyday-essentials`
-- Ele vai aparecer em 4 páginas + automaticamente dentro de "Women's Collection"
-
-### Opção B: Em massa via CSV (para muitos produtos de uma vez)
-
-1. Shopify Admin → Products → **Export** → CSV
-2. Abra o CSV no Excel/Google Sheets
-3. Coluna **Tags** — adicione as tags separadas por vírgula (ex: `womens-necklaces, best-sellers, gift-ideas`)
-4. Salve e faça **Import** de volta no Shopify
-
-### Opção C: Eu posso fazer pelo Lovable
-
-Posso usar o conector Shopify para adicionar tags em produtos automaticamente. Você só me diz quais produtos vão em quais categorias, ou me dá uma lógica (ex: "todos os brincos da linha X são women's-earrings + best-sellers").
+```
+[ ] instagram-01.jpg           Grid Instagram                        800 × 800      SEM texto
+[ ] instagram-02.jpg           Grid Instagram                        800 × 800      SEM texto
+[ ] instagram-03.jpg           Grid Instagram                        800 × 800      SEM texto
+[ ] instagram-04.jpg           Grid Instagram                        800 × 800      SEM texto
+[ ] instagram-05.jpg           Grid Instagram                        800 × 800      SEM texto
+[ ] instagram-06.jpg           Grid Instagram                        800 × 800      SEM texto
+```
 
 ---
 
-## Regras de tagueamento (importante)
+## 6. PÁGINA ABOUT (Nossa História)
 
-1. **Múltiplas tags são aditivas**: um produto com tags `womens-earrings` + `gift-ideas` aparece nas duas páginas
-2. **Nomes de tag são case-insensitive no Shopify**, mas use sempre minúsculo com hífen para evitar confusão
-3. **Não use espaços** — use hífen (`best-sellers`, não `best sellers`)
-4. **As páginas agrupadoras (`womens`, `mens`, `kids`) funcionam sozinhas** assim que existirem produtos nas tags filhas
-5. **"All" não precisa de tag** — mostra tudo
-6. **Coleções nativas do Shopify NÃO são usadas** — não adianta colocar produto em uma "Collection" do Admin, tem que ser por **TAG**
-
----
-
-## Diagnóstico: como verificar se um menu está funcionando
-
-1. Abra o site → clique no item de menu
-2. Se aparecerem produtos = tag está correta e produtos têm essa tag
-3. Se aparecer "No products found" = nenhum produto tem aquela tag (ou tag escrita diferente)
-4. Verifique no Shopify Admin se a tag do produto bate **exatamente** com o handle da URL
+```
+[ ] about-hero.jpg             Topo da página About                  2000 × 900     SEM texto
+[ ] about-brazil.jpg           Bloco "Born in Brazil"                1200 × 900     SEM texto
+[ ] about-craft.jpg            Bloco artesanato/processo             1200 × 900     SEM texto
+[ ] about-founder.jpg          Foto da fundadora (opcional)          800 × 1000     SEM texto
+```
 
 ---
 
-## Próximos passos sugeridos
+## 7. PÁGINAS DE COLEÇÃO (banner topo de cada coleção)
 
-Posso fazer qualquer um desses agora (basta aprovar o plano e me dizer qual):
+Um por coleção principal. Aparece no topo de `/collections/:handle`.
 
-1. **Auditoria dos produtos**: usar a API do Shopify pra listar todos os produtos atuais e mostrar quais tags têm e quais menus estão vazios
-2. **Tagueamento em massa**: você me passa a lógica e eu aplico via API em todos os produtos
-3. **Imprimir um "mapa do site"**: documento com cada URL de menu + produtos atuais nela, pra você revisar
-4. **Adicionar suporte a Collections nativas do Shopify** (alternativa a tags) — mais trabalho, mas algumas pessoas preferem pelo controle visual no Admin
+```
+[ ] collection-womens.jpg      Topo Women                            2000 × 600     SEM texto (título via código)
+[ ] collection-mens.jpg        Topo Men                              2000 × 600     SEM texto
+[ ] collection-kids.jpg        Topo Kids                             2000 × 600     SEM texto
+[ ] collection-bestsellers.jpg Topo Best Sellers                     2000 × 600     SEM texto
+[ ] collection-newarrivals.jpg Topo New Arrivals                     2000 × 600     SEM texto
+[ ] collection-bundles.jpg     Topo Bundles & Sets                   2000 × 600     SEM texto
+[ ] collection-gifts.jpg       Topo Gift Ideas                       2000 × 600     SEM texto
+```
 
-Esse plano é apenas explicativo — não muda código por enquanto. Aprovando, eu executo a opção que você escolher.
+---
+
+## 8. EMAIL CAPTURE — Home (rodapé)
+
+```
+[ ] email-bg.jpg               Fundo da seção newsletter             2400 × 800     SEM texto · imagem suave (será escurecida)
+```
+
+---
+
+## 9. ANNOUNCEMENT / OG / FAVICON (institucionais)
+
+```
+[ ] logo-aurea.svg             Header e Footer                       vetor          —
+[ ] logo-aurea-white.svg       Versão clara (rodapé escuro)          vetor          —
+[ ] favicon.png                Aba do navegador                      512 × 512      —
+[ ] og-image.jpg               Compartilhamento redes sociais        1200 × 630     COM logo + tagline
+```
+
+---
+
+## RESUMO QUANTITATIVO
+
+```
+Hero (home) ............. 4 imagens
+Categorias .............. 4
+Brand Story ............. 1
+Bundles ................. 4
+Instagram ............... 6
+About ................... 4
+Coleções (topo) ......... 7
+Email capture ........... 1
+Institucional (logo/og).. 4
+─────────────────────────────
+TOTAL ................... 35 arquivos
+```
+
+## REGRAS GERAIS DE ENVIO
+
+- **Formato:** `.jpg` para fotos · `.png` para banners com transparência · `.svg` para logos
+- **Peso máximo:** 500 KB por imagem (otimizar antes de enviar)
+- **Cor:** sRGB
+- **Texto NA imagem:** evitar — todo título/CTA é renderizado pelo código (assim fica responsivo e editável)
+- **Nomes:** usar exatamente os nomes da lista (minúsculo, hífen)
+- **Entrega:** zip único ou pasta no Drive/Dropbox
+
+Quando enviar, é só me passar e eu já substituo nos componentes.
