@@ -165,6 +165,20 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
+
+        {recommendations.length > 0 && (
+          <div className="mt-20 pt-12 border-t border-gold/20">
+            <div className="aurea-section-label mb-2">Style it together</div>
+            <h2 className="font-serif text-2xl font-light text-dark-green mb-8">
+              Complete your look
+            </h2>
+            <div className="grid grid-cols-4 gap-6 max-md:grid-cols-2">
+              {recommendations.map(p => (
+                <SuggestionCard key={p.node.id} product={p} variant="compact" />
+              ))}
+            </div>
+          </div>
+        )}
         </div>
       </div>
     </PageLayout>
