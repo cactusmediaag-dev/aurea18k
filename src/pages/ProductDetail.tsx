@@ -10,7 +10,7 @@ import PageLayout from '@/components/PageLayout';
 const PRODUCT_BY_HANDLE_QUERY = `
   query GetProductByHandle($handle: String!) {
     productByHandle(handle: $handle) {
-      id title description handle
+      id title description handle productType tags
       priceRange { minVariantPrice { amount currencyCode } }
       images(first: 10) { edges { node { url altText } } }
       variants(first: 20) {
