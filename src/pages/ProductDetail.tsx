@@ -2,6 +2,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { storefrontApiRequest, ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
+import { useUIStore } from '@/stores/uiStore';
+import { useProducts } from '@/hooks/useProducts';
+import { getRecommendations } from '@/lib/recommendations';
+import SuggestionCard from '@/components/SuggestionCard';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { Loader2, ArrowLeft } from 'lucide-react';
@@ -10,7 +14,7 @@ import PageLayout from '@/components/PageLayout';
 const PRODUCT_BY_HANDLE_QUERY = `
   query GetProductByHandle($handle: String!) {
     productByHandle(handle: $handle) {
-      id title description handle
+      id title description handle productType tags
       priceRange { minVariantPrice { amount currencyCode } }
       images(first: 10) { edges { node { url altText } } }
       variants(first: 20) {
@@ -33,6 +37,8 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const addItem = useCartStore(state => state.addItem);
   const isLoading = useCartStore(state => state.isLoading);
+  const openCart = useUIStore(state => state.openCart);
+  const { data: pool = [] } = useProducts(50);
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0);
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -74,7 +80,11 @@ const ProductDetail = () => {
       selectedOptions: variant.selectedOptions || [],
     });
     toast.success('Added to cart', { description: product.node.title, position: 'top-center' });
+    // Open cart drawer so user immediately sees suggestions
+    setTimeout(() => openCart(), 250);
   };
+
+  const recommendations = getRecommendations(product, pool, 4);
 
   return (
     <PageLayout>
@@ -155,6 +165,20 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
+
+        {recommendations.length > 0 && (
+          <div className="mt-20 pt-12 border-t border-gold/20">
+            <div className="aurea-section-label mb-2">Style it together</div>
+            <h2 className="font-serif text-2xl font-light text-dark-green mb-8">
+              Complete your look
+            </h2>
+            <div className="grid grid-cols-4 gap-6 max-md:grid-cols-2">
+              {recommendations.map(p => (
+                <SuggestionCard key={p.node.id} product={p} variant="compact" />
+              ))}
+            </div>
+          </div>
+        )}
         </div>
       </div>
     </PageLayout>

@@ -1,15 +1,16 @@
-import { useState } from 'react';
 import AnnouncementBar from '@/components/AnnouncementBar';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
+import { useUIStore } from '@/stores/uiStore';
 
 interface PageLayoutProps {
   children: React.ReactNode;
 }
 
 const PageLayout = ({ children }: PageLayoutProps) => {
-  const [cartOpen, setCartOpen] = useState(false);
+  const cartOpen = useUIStore(s => s.cartOpen);
+  const setCartOpen = useUIStore(s => s.setCartOpen);
 
   return (
     <div className="min-h-screen">
