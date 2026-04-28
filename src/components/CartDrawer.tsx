@@ -46,7 +46,7 @@ const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
         <div className="flex flex-col flex-1 min-h-0 p-5">
           {items.length > 0 && remaining > 0 && (
             <div className="bg-gold-pale border border-gold/25 p-3 mb-4 text-xs text-dark-green font-normal">
-              🚚 Add <strong>${remaining.toFixed(2)}</strong> more for <strong>free shipping!</strong>
+              Unlock <strong>FREE shipping</strong> — add <strong>${remaining.toFixed(2)}</strong> more in pieces 🎁
               <div className="mt-2 h-[3px] bg-gold/20 rounded-sm overflow-hidden">
                 <div className="h-full rounded-sm transition-all duration-700" style={{ width: `${progress}%`, background: 'linear-gradient(to right, hsl(var(--dark-green)), hsl(var(--gold)))' }} />
               </div>
