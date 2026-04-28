@@ -37,6 +37,8 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const addItem = useCartStore(state => state.addItem);
   const isLoading = useCartStore(state => state.isLoading);
+  const openCart = useUIStore(state => state.openCart);
+  const { data: pool = [] } = useProducts(50);
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0);
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -78,7 +80,11 @@ const ProductDetail = () => {
       selectedOptions: variant.selectedOptions || [],
     });
     toast.success('Added to cart', { description: product.node.title, position: 'top-center' });
+    // Open cart drawer so user immediately sees suggestions
+    setTimeout(() => openCart(), 250);
   };
+
+  const recommendations = getRecommendations(product, pool, 4);
 
   return (
     <PageLayout>
