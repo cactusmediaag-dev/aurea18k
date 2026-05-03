@@ -21,6 +21,7 @@ const shopMenus = {
     { label: 'Layering Pieces', href: '/collections/layering-pieces' },
   ],
   Men: [
+    { label: "Men's Rings", href: '/collections/mens-rings' },
     { label: "Men's Chains", href: '/collections/mens-chains' },
     { label: "Men's Bracelets", href: '/collections/mens-bracelets' },
     { label: "Men's Stud Earrings", href: '/collections/mens-stud-earrings' },
