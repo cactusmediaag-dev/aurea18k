@@ -10,9 +10,17 @@ import {
   storefrontApiRequest,
   CART_QUERY,
   normalizeCheckoutUrl,
+  createCartWithLines,
+  addLinesToShopifyCart,
+  applyDiscountCodes,
 } from '@/lib/shopify';
 
 export type { CartItem, ShopifyProduct };
+
+export interface BundleAddInput {
+  items: Omit<CartItem, 'lineId'>[];
+  discountCode: string;
+}
 
 interface CartStore {
   items: CartItem[];
@@ -21,6 +29,7 @@ interface CartStore {
   isLoading: boolean;
   isSyncing: boolean;
   addItem: (item: Omit<CartItem, 'lineId'>) => Promise<void>;
+  addBundle: (input: BundleAddInput) => Promise<{ success: boolean; codeApplicable?: boolean }>;
   updateQuantity: (variantId: string, quantity: number) => Promise<void>;
   removeItem: (variantId: string) => Promise<void>;
   clearCart: () => void;
