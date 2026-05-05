@@ -1,19 +1,11 @@
-# Ajuste: Empty state do Bundle Builder
+## Plano: Tag em massa dos 52 produtos restantes ($29-$49)
 
-## Mudança única
+Agora que `update_product` está em "Always allow", vou disparar todas as 52 chamadas `shopify--update_product` **em paralelo numa única mensagem**, adicionando a tag `bundle-eligible` (preservando tags existentes) em todos os produtos da faixa $29-$49 que ainda não foram marcados.
 
-No arquivo `src/pages/BundleBuilder.tsx`, substituir a mensagem técnica do empty state (que menciona a tag `bundle-eligible` e Shopify) por uma mensagem amigável ao cliente final:
+### Etapas
+1. Listar produtos atualizados (paginar via `shopify--list_products`) para confirmar IDs e tags atuais dos 52 restantes.
+2. Disparar 52 `shopify--update_product` em paralelo, cada um com `tags` = tags existentes + `bundle-eligible`.
+3. Validar contagem final no Bundle Builder (`/bundle/duo`) — deve mostrar ~66 produtos elegíveis.
 
-**De:**
-> "No bundle-eligible products yet. Add the tag `bundle-eligible` to products in Shopify to make them appear here."
-
-**Para:**
-> "New bundle pieces coming soon. Check back shortly."
-
-Tags são uso interno — cliente não precisa saber.
-
-## Próximo passo (depende de você)
-
-Pra popular o Bundle Builder, basta adicionar a tag `bundle-eligible` nos produtos. Você pode:
-- **Fazer no Shopify admin** (Products → tag em massa)
-- **Me pedir no chat** ("adiciona bundle-eligible em todos os anéis", etc.) que eu faço via tools
+### Resultado esperado
+Todos os produtos na faixa $29-$49 ficam disponíveis no Bundle Builder (duo/stack/full) sem precisar de aprovação individual.
