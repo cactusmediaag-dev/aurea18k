@@ -284,3 +284,56 @@ export async function removeLineFromShopifyCart(cartId: string, lineId: string):
   if (userErrors.length > 0) return { success: false };
   return { success: true };
 }
+
+export interface BundleLineInput {
+  variantId: string;
+  quantity: number;
+}
+
+export async function createCartWithLines(lines: BundleLineInput[], discountCodes: string[] = []): Promise<{ cartId: string; checkoutUrl: string; lineIdsByVariant: Record<string, string> } | null> {
+  const data = await storefrontApiRequest(CART_CREATE_MUTATION, {
+    input: {
+      lines: lines.map(l => ({ quantity: l.quantity, merchandiseId: l.variantId })),
+      discountCodes,
+    },
+  });
+  if (data?.data?.cartCreate?.userErrors?.length > 0) {
+    console.error('createCartWithLines errors:', data.data.cartCreate.userErrors);
+    return null;
+  }
+  const cart = data?.data?.cartCreate?.cart;
+  if (!cart?.checkoutUrl) return null;
+  const lineIdsByVariant: Record<string, string> = {};
+  for (const edge of cart.lines.edges || []) {
+    lineIdsByVariant[edge.node.merchandise.id] = edge.node.id;
+  }
+  return { cartId: cart.id, checkoutUrl: formatCheckoutUrl(cart.checkoutUrl), lineIdsByVariant };
+}
+
+export async function addLinesToShopifyCart(cartId: string, lines: BundleLineInput[]): Promise<{ success: boolean; lineIdsByVariant?: Record<string, string>; cartNotFound?: boolean }> {
+  const data = await storefrontApiRequest(CART_LINES_ADD_MUTATION, {
+    cartId,
+    lines: lines.map(l => ({ quantity: l.quantity, merchandiseId: l.variantId })),
+  });
+  const userErrors = data?.data?.cartLinesAdd?.userErrors || [];
+  if (isCartNotFoundError(userErrors)) return { success: false, cartNotFound: true };
+  if (userErrors.length > 0) return { success: false };
+  const lineIdsByVariant: Record<string, string> = {};
+  for (const edge of data?.data?.cartLinesAdd?.cart?.lines?.edges || []) {
+    lineIdsByVariant[edge.node.merchandise.id] = edge.node.id;
+  }
+  return { success: true, lineIdsByVariant };
+}
+
+export async function applyDiscountCodes(cartId: string, codes: string[]): Promise<{ success: boolean; applicable?: boolean; cartNotFound?: boolean }> {
+  const data = await storefrontApiRequest(CART_DISCOUNT_CODES_UPDATE_MUTATION, {
+    cartId,
+    discountCodes: codes,
+  });
+  const userErrors = data?.data?.cartDiscountCodesUpdate?.userErrors || [];
+  if (isCartNotFoundError(userErrors)) return { success: false, cartNotFound: true };
+  if (userErrors.length > 0) return { success: false };
+  const discountCodes = data?.data?.cartDiscountCodesUpdate?.cart?.discountCodes || [];
+  const applicable = discountCodes.length === 0 ? true : discountCodes.every((d: { applicable: boolean }) => d.applicable);
+  return { success: true, applicable };
+}
