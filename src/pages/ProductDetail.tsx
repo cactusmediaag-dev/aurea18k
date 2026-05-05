@@ -7,9 +7,10 @@ import { useProducts } from '@/hooks/useProducts';
 import { getRecommendations } from '@/lib/recommendations';
 import SuggestionCard from '@/components/SuggestionCard';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
+import { getSwatchColor, isColorOption } from '@/lib/colorSwatch';
 
 const PRODUCT_BY_HANDLE_QUERY = `
   query GetProductByHandle($handle: String!) {
@@ -23,6 +24,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
             id title
             price { amount currencyCode }
             availableForSale
+            image { url altText }
             selectedOptions { name value }
           }
         }
