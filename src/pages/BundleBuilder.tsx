@@ -447,7 +447,7 @@ const BundleBuilder = () => {
               disabled={submitting}
               className="flex-1 border border-dark-green text-dark-green hover:bg-dark-green hover:text-gold-light transition-colors py-3 text-xs tracking-[0.15em] uppercase disabled:opacity-50"
             >
-              Editar
+              Edit
             </button>
             <button
               onClick={handleAddBundle}
