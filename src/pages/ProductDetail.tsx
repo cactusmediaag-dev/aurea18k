@@ -55,21 +55,9 @@ const ProductDetail = () => {
     enabled: !!handle,
   });
 
-  if (productLoading) return (
-    <div className="min-h-screen flex items-center justify-center bg-cream-light">
-      <Loader2 className="w-8 h-8 animate-spin text-gold" />
-    </div>
-  );
-
-  if (!data) return (
-    <div className="min-h-screen flex items-center justify-center bg-cream-light">
-      <p className="text-warm-gray">Product not found</p>
-    </div>
-  );
-
   const product = data;
-  const variant = product.node.variants.edges[selectedVariantIdx]?.node;
-  const images = product.node.images.edges;
+  const variant = product?.node.variants.edges[selectedVariantIdx]?.node;
+  const images = product?.node.images.edges ?? [];
 
   // Sync displayed image with selected variant's anchored image (Shopify-side)
   useEffect(() => {
@@ -81,6 +69,18 @@ const ProductDetail = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedVariantIdx]);
+
+  if (productLoading) return (
+    <div className="min-h-screen flex items-center justify-center bg-cream-light">
+      <Loader2 className="w-8 h-8 animate-spin text-gold" />
+    </div>
+  );
+
+  if (!data || !product) return (
+    <div className="min-h-screen flex items-center justify-center bg-cream-light">
+      <p className="text-warm-gray">Product not found</p>
+    </div>
+  );
   const handleAddToCart = async () => {
     if (!variant) return;
     await addItem({
