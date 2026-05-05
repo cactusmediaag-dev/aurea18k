@@ -7,9 +7,10 @@ import { useProducts } from '@/hooks/useProducts';
 import { getRecommendations } from '@/lib/recommendations';
 import SuggestionCard from '@/components/SuggestionCard';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
+import { getSwatchColor, isColorOption } from '@/lib/colorSwatch';
 
 const PRODUCT_BY_HANDLE_QUERY = `
   query GetProductByHandle($handle: String!) {
@@ -23,6 +24,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
             id title
             price { amount currencyCode }
             availableForSale
+            image { url altText }
             selectedOptions { name value }
           }
         }
@@ -69,6 +71,16 @@ const ProductDetail = () => {
   const variant = product.node.variants.edges[selectedVariantIdx]?.node;
   const images = product.node.images.edges;
 
+  // Sync displayed image with selected variant's anchored image (Shopify-side)
+  useEffect(() => {
+    const variantImageUrl = (variant as any)?.image?.url;
+    if (!variantImageUrl) return;
+    const matchIdx = images.findIndex(img => img.node.url === variantImageUrl);
+    if (matchIdx >= 0 && matchIdx !== selectedImage) {
+      setSelectedImage(matchIdx);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedVariantIdx]);
   const handleAddToCart = async () => {
     if (!variant) return;
     await addItem({
@@ -125,14 +137,34 @@ const ProductDetail = () => {
 
             <p className="text-[15px] text-warm-gray leading-[1.85] font-light mb-8">{product.node.description}</p>
 
-            {product.node.options.map((option, optIdx) => (
+            {product.node.options.map((option) => (
               option.values.length > 1 && (
                 <div key={option.name} className="mb-6">
                   <div className="text-xs tracking-[0.15em] uppercase text-warm-black font-medium mb-3">{option.name}</div>
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="flex gap-2.5 flex-wrap items-center">
                     {product.node.variants.edges.map((v, vIdx) => {
                       const optionValue = v.node.selectedOptions.find(o => o.name === option.name)?.value;
+                      if (!optionValue) return null;
                       const isSelected = vIdx === selectedVariantIdx;
+
+                      if (isColorOption(option.name)) {
+                        const swatch = getSwatchColor(optionValue);
+                        return (
+                          <button
+                            key={vIdx}
+                            onClick={() => setSelectedVariantIdx(vIdx)}
+                            title={optionValue}
+                            aria-label={optionValue}
+                            className={`relative w-9 h-9 rounded-full cursor-pointer transition-all border ${
+                              isSelected
+                                ? 'border-gold ring-2 ring-gold ring-offset-2 ring-offset-cream-light'
+                                : 'border-gold/30 hover:border-gold'
+                            }`}
+                            style={{ backgroundColor: swatch }}
+                          />
+                        );
+                      }
+
                       return (
                         <button
                           key={vIdx}
@@ -141,7 +173,7 @@ const ProductDetail = () => {
                             isSelected ? 'border-gold bg-dark-green text-gold-light' : 'border-gold/25 bg-transparent text-warm-black hover:border-gold'
                           }`}
                         >
-                          {optionValue || v.node.title}
+                          {optionValue}
                         </button>
                       );
                     })}
