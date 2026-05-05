@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Search, ShoppingBag, Menu, X, ChevronDown, User } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import SearchModal from '@/components/SearchModal';
+import logoHorizontal from '@/assets/logo-horizontal.png';
 
 interface NavbarProps {
   onCartOpen: () => void;
