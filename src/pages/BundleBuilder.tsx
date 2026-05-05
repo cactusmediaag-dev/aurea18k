@@ -138,8 +138,8 @@ const BundleBuilder = () => {
               </div>
             ) : eligibleProducts.length === 0 ? (
               <div className="border border-gold/25 bg-cream-light p-10 text-center">
-                <p className="text-warm-gray text-sm">
-                  No bundle-eligible products yet. Add the tag <code className="bg-cream px-2 py-0.5">bundle-eligible</code> to products in Shopify to make them appear here.
+                <p className="text-warm-gray text-sm font-light">
+                  New bundle pieces coming soon. Check back shortly.
                 </p>
               </div>
             ) : (
