@@ -18,6 +18,7 @@ import ShippingReturns from "./pages/ShippingReturns.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Collections from "./pages/Collections.tsx";
 import Collection from "./pages/Collection.tsx";
+import BundleBuilder from "./pages/BundleBuilder.tsx";
 
 const queryClient = new QueryClient();
 
