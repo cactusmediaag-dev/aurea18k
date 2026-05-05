@@ -1,0 +1,46 @@
+export type BundleType = 'duo' | 'stack' | 'full';
+
+export interface BundleConfig {
+  type: BundleType;
+  name: string;
+  itemCount: number;
+  discountPct: number;
+  discountCode: string;
+  tagline: string;
+  cta: string;
+}
+
+export const BUNDLE_CONFIGS: Record<BundleType, BundleConfig> = {
+  duo: {
+    type: 'duo',
+    name: 'The Duo',
+    itemCount: 2,
+    discountPct: 15,
+    discountCode: 'BUNDLEDUO15',
+    tagline: 'Pick any 2 pieces and save 15%',
+    cta: 'Shop The Duo',
+  },
+  stack: {
+    type: 'stack',
+    name: 'The Stack',
+    itemCount: 3,
+    discountPct: 20,
+    discountCode: 'BUNDLESTACK20',
+    tagline: 'Pick 3 pieces and save 20%',
+    cta: 'Shop The Stack',
+  },
+  full: {
+    type: 'full',
+    name: 'The Full Set',
+    itemCount: 4,
+    discountPct: 25,
+    discountCode: 'BUNDLEFULL25',
+    tagline: 'Pick 4 pieces and save 25%',
+    cta: 'Shop The Full Set',
+  },
+};
+
+export function getBundleConfig(type: string | undefined): BundleConfig | null {
+  if (!type) return null;
+  return BUNDLE_CONFIGS[type as BundleType] ?? null;
+}

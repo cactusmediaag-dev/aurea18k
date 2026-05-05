@@ -10,9 +10,17 @@ import {
   storefrontApiRequest,
   CART_QUERY,
   normalizeCheckoutUrl,
+  createCartWithLines,
+  addLinesToShopifyCart,
+  applyDiscountCodes,
 } from '@/lib/shopify';
 
 export type { CartItem, ShopifyProduct };
+
+export interface BundleAddInput {
+  items: Omit<CartItem, 'lineId'>[];
+  discountCode: string;
+}
 
 interface CartStore {
   items: CartItem[];
@@ -21,6 +29,7 @@ interface CartStore {
   isLoading: boolean;
   isSyncing: boolean;
   addItem: (item: Omit<CartItem, 'lineId'>) => Promise<void>;
+  addBundle: (input: BundleAddInput) => Promise<{ success: boolean; codeApplicable?: boolean }>;
   updateQuantity: (variantId: string, quantity: number) => Promise<void>;
   removeItem: (variantId: string) => Promise<void>;
   clearCart: () => void;
@@ -72,6 +81,77 @@ export const useCartStore = create<CartStore>()(
           }
         } catch (error) {
           console.error('Failed to add item:', error);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      addBundle: async ({ items, discountCode }) => {
+        if (items.length === 0) return { success: false };
+        const { cartId, clearCart } = get();
+        set({ isLoading: true });
+        try {
+          // Aggregate by variantId (cliente pode escolher mesma peça 2x)
+          const map = new Map<string, Omit<CartItem, 'lineId'>>();
+          for (const it of items) {
+            const existing = map.get(it.variantId);
+            if (existing) {
+              map.set(it.variantId, { ...existing, quantity: existing.quantity + it.quantity });
+            } else {
+              map.set(it.variantId, { ...it });
+            }
+          }
+          const aggregated = Array.from(map.values());
+          const lines = aggregated.map(i => ({ variantId: i.variantId, quantity: i.quantity }));
+
+          let resultCartId = cartId;
+          let lineIdsByVariant: Record<string, string> = {};
+
+          if (!cartId) {
+            const result = await createCartWithLines(lines, [discountCode]);
+            if (!result) return { success: false };
+            resultCartId = result.cartId;
+            lineIdsByVariant = result.lineIdsByVariant;
+            const newItems = aggregated.map(i => ({ ...i, lineId: lineIdsByVariant[i.variantId] || null }));
+            set({ cartId: result.cartId, checkoutUrl: result.checkoutUrl, items: newItems });
+          } else {
+            const addRes = await addLinesToShopifyCart(cartId, lines);
+            if (addRes.cartNotFound) {
+              clearCart();
+              // Retry as fresh cart
+              const result = await createCartWithLines(lines, [discountCode]);
+              if (!result) return { success: false };
+              resultCartId = result.cartId;
+              const newItems = aggregated.map(i => ({ ...i, lineId: result.lineIdsByVariant[i.variantId] || null }));
+              set({ cartId: result.cartId, checkoutUrl: result.checkoutUrl, items: newItems });
+            } else if (!addRes.success) {
+              return { success: false };
+            } else {
+              lineIdsByVariant = addRes.lineIdsByVariant || {};
+              const currentItems = get().items;
+              const merged = [...currentItems];
+              for (const it of aggregated) {
+                const idx = merged.findIndex(m => m.variantId === it.variantId);
+                if (idx >= 0) {
+                  merged[idx] = { ...merged[idx], quantity: merged[idx].quantity + it.quantity };
+                } else {
+                  merged.push({ ...it, lineId: lineIdsByVariant[it.variantId] || null });
+                }
+              }
+              set({ items: merged });
+            }
+          }
+
+          // Apply discount code (substitui todos os códigos atuais)
+          let codeApplicable = true;
+          if (resultCartId) {
+            const discRes = await applyDiscountCodes(resultCartId, [discountCode]);
+            codeApplicable = discRes.applicable !== false;
+          }
+          return { success: true, codeApplicable };
+        } catch (error) {
+          console.error('Failed to add bundle:', error);
+          return { success: false };
         } finally {
           set({ isLoading: false });
         }
