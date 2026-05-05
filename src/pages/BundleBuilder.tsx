@@ -116,12 +116,12 @@ const BundleBuilder = () => {
 
   const addPiece = (product: ShopifyProduct) => {
     if (selected.length >= config.itemCount) {
-      toast.error(`Você já escolheu ${config.itemCount} peças`);
+      toast.error(`You've already picked ${config.itemCount} pieces`);
       return;
     }
     const variant = product.node.variants.edges.find(v => v.node.availableForSale)?.node;
     if (!variant) {
-      toast.error('Sem estoque');
+      toast.error('Out of stock');
       return;
     }
     setSelected(prev => [
@@ -163,15 +163,15 @@ const BundleBuilder = () => {
       });
       if (result.success) {
         if (result.codeApplicable === false) {
-          toast.warning(`Bundle adicionado — mas ${config.discountCode} não pôde ser aplicado.`);
+          toast.warning(`Bundle added — but ${config.discountCode} couldn't be applied.`);
         } else {
-          toast.success(`${config.name} adicionado — ${config.discountPct}% de desconto aplicado!`);
+          toast.success(`${config.name} added — ${config.discountPct}% off applied!`);
         }
         setSelected([]);
         setPreviewOpen(false);
         openCart(true);
       } else {
-        toast.error('Algo deu errado ao adicionar seu bundle');
+        toast.error('Something went wrong adding your bundle');
       }
     } finally {
       setSubmitting(false);
@@ -226,7 +226,7 @@ const BundleBuilder = () => {
             ) : filteredProducts.length === 0 ? (
               <div className="border border-gold/25 bg-cream-light p-10 text-center">
                 <p className="text-warm-gray text-sm font-light">
-                  Nenhuma peça nessa categoria. Tente outro filtro.
+                  No pieces in this category. Try another filter.
                 </p>
               </div>
             ) : (
@@ -344,8 +344,8 @@ const BundleBuilder = () => {
                 {selected.length > 0 && (
                   <div className="flex justify-between text-dark-green font-medium">
                     <span>
-                      Você economiza ({config.discountPct}%)
-                      {!isComplete && <span className="text-[10px] text-warm-gray ml-1">estimado</span>}
+                      You save ({config.discountPct}%)
+                      {!isComplete && <span className="text-[10px] text-warm-gray ml-1">estimated</span>}
                     </span>
                     <span>−${discountAmount.toFixed(2)}</span>
                   </div>
@@ -364,8 +364,8 @@ const BundleBuilder = () => {
                 >
                   <Sparkles className="w-4 h-4 flex-shrink-0" />
                   <div className="flex-1 text-xs">
-                    <div className="font-medium">Adicione +1 peça e ganhe {nextTier.discountPct}% off</div>
-                    <div className="text-warm-gray text-[11px]">Upgrade pro {nextTier.name}</div>
+                    <div className="font-medium">Add +1 piece and get {nextTier.discountPct}% off</div>
+                    <div className="text-warm-gray text-[11px]">Upgrade to {nextTier.name}</div>
                   </div>
                   <ArrowRight className="w-4 h-4 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
                 </button>
@@ -398,7 +398,7 @@ const BundleBuilder = () => {
               Review your {config.name}
             </DialogTitle>
             <DialogDescription className="text-warm-gray">
-              Confirme suas peças antes de adicionar ao carrinho.
+              Confirm your pieces before adding to cart.
             </DialogDescription>
           </DialogHeader>
 
@@ -447,7 +447,7 @@ const BundleBuilder = () => {
               disabled={submitting}
               className="flex-1 border border-dark-green text-dark-green hover:bg-dark-green hover:text-gold-light transition-colors py-3 text-xs tracking-[0.15em] uppercase disabled:opacity-50"
             >
-              Editar
+              Edit
             </button>
             <button
               onClick={handleAddBundle}
@@ -456,10 +456,10 @@ const BundleBuilder = () => {
             >
               {submitting || isCartLoading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> Adicionando...
+                  <Loader2 className="w-4 h-4 animate-spin" /> Adding...
                 </>
               ) : (
-                'Confirmar'
+                'Confirm'
               )}
             </button>
           </div>
