@@ -71,8 +71,9 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
       <div className="flex items-center justify-between h-[72px] px-12 max-md:px-5 max-md:h-16">
         {/* Logo — left */}
         <div className="flex-shrink-0">
-          <Link to="/" className="font-serif text-[26px] font-light tracking-[0.25em] text-dark-green no-underline block leading-none">AUREA</Link>
-          <div className="text-[8px] tracking-[0.3em] uppercase text-gold mt-0.5 font-sans font-normal">Jewels · 18K Gold Plated</div>
+          <Link to="/" className="block">
+            <img src={logoHorizontal} alt="Aurea Jewels" className="h-10 md:h-12 w-auto" />
+          </Link>
         </div>
 
         {/* Center nav — desktop */}
