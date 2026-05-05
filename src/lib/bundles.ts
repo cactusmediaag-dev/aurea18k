@@ -44,3 +44,9 @@ export function getBundleConfig(type: string | undefined): BundleConfig | null {
   if (!type) return null;
   return BUNDLE_CONFIGS[type as BundleType] ?? null;
 }
+
+export function getNextTier(current: BundleType): BundleConfig | null {
+  if (current === 'duo') return BUNDLE_CONFIGS.stack;
+  if (current === 'stack') return BUNDLE_CONFIGS.full;
+  return null;
+}
