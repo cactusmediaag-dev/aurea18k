@@ -1,82 +1,112 @@
-# Bundle & Save — Populado via Tags do Shopify
+# Bundle Builder — Cliente monta o conjunto e ganha desconto
 
 ## Conceito
 
-Cada um dos 3 cards (`The Duo`, `The Stack`, `The Full Set`) vira um **produto real do Shopify** com preço fixo e desconto embutido (já calculado no preço de venda vs. `compareAtPrice`). Pra popular/atualizar os bundles, você só precisa **adicionar uma tag** ao produto no Shopify — sem mexer no código.
+Em vez de produtos-bundle prontos no Shopify, o cliente:
+1. Clica em "Shop The Duo" na home
+2. Vai pra uma página `/bundle/duo` (builder)
+3. Escolhe N peças entre os produtos elegíveis
+4. Vê o preço cheio + preço com desconto + economia em tempo real
+5. Adiciona tudo ao carrinho de uma vez **com desconto aplicado**
 
-### Saves atualizados
-- The Duo → **Save 15%**
-- The Stack → **Save 20%**
-- The Full Set → **Save 25%**
+## Regras de cada bundle
 
-## Como vai funcionar pra você (fluxo de uso)
+| Slot | Rota | Quantidade | Desconto |
+|------|------|------------|----------|
+| The Duo | `/bundle/duo` | 2 peças | 15% |
+| The Stack | `/bundle/stack` | 3 peças | 20% |
+| The Full Set | `/bundle/full` | 4 peças | 25% |
 
-1. Cria um produto no Shopify (ex: "Duo — Pearl Studs + Hoops")
-2. Define o `price` (com desconto) e o `compareAtPrice` (preço cheio)
-3. Adiciona **uma** das 3 tags:
-   - `bundle-duo` → aparece no card "The Duo"
-   - `bundle-stack` → aparece no card "The Stack"
-   - `bundle-full` → aparece no card "The Full Set"
-4. Pronto — o site puxa automaticamente
+## Como o desconto é aplicado (a parte crítica)
 
-Se houver mais de um produto com a mesma tag, o site mostra o **primeiro** (ou um featured, baseado em outra tag — ver abaixo).
+Existe **uma decisão técnica importante** aqui. Tenho 2 caminhos viáveis:
 
-## Como vai funcionar no site
+### Caminho A — Discount Code automático no checkout (recomendado)
+1. Crio 3 **Price Rules** no Shopify (BUNDLE_DUO_15, BUNDLE_STACK_20, BUNDLE_FULL_25)
+2. Cada Price Rule exige quantidade mínima de itens com tag `bundle-eligible`
+3. Crio 3 **Discount Codes** correspondentes (ex: `DUO15`, `STACK20`, `FULL25`)
+4. No builder, quando o cliente clica "Add Bundle to Cart":
+   - Adiciono os N itens ao carrinho Shopify
+   - Aplico o discount code via Storefront API (`cartDiscountCodesUpdate`)
+5. Desconto aparece automaticamente no checkout
 
-A `BundleSection.tsx` deixa de ser estática. Ela:
+✅ **Vantagem:** Desconto real, validado pelo Shopify, à prova de manipulação
+✅ Aparece corretamente no checkout, na fatura, nas analytics
+⚠️ Cliente verá o código aplicado no checkout (pode ser visto como "promo")
 
-1. Busca via Storefront API produtos com `tag:bundle-duo OR tag:bundle-stack OR tag:bundle-full`
-2. Agrupa por tipo de bundle
-3. Renderiza os 3 cards usando os dados reais (imagem, título, preço, compareAtPrice)
-4. O badge "Save X%" é **calculado automaticamente** a partir de `(compareAtPrice - price) / compareAtPrice`
-5. Botão "Build My Duo/Stack/Set" → leva pra `/product/:handle` do bundle (página de produto normal, com Add to Cart)
+### Caminho B — Mostrar desconto no UI, sem desconto real no Shopify
+- O builder mostra o preço com desconto
+- Mas no carrinho/checkout, vai o preço cheio
+- ❌ **Não recomendo** — quebra confiança do cliente
 
-### Layout dos cards (mantido)
-- Visual idêntico ao atual (ícones, cores, badge "Most Popular" no Stack)
-- Substituído: nome estático → `product.title`, preço estático → `product.price`, ícones genéricos → primeira imagem do produto (ou ícones se sem imagem)
+**Vou seguir com o Caminho A.**
+
+## Quais produtos são elegíveis?
+
+Você marca produtos no Shopify com a tag **`bundle-eligible`**. Só esses aparecem no builder.
+
+Opcionalmente, dá pra restringir por categoria:
+- `bundle-eligible` + `bundle-eligible-earrings` → só pode entrar em bundles do tipo brincos
+- Mas pra começar simples: **uma única tag `bundle-eligible`** e o cliente pode misturar qualquer coisa
 
 ## Estrutura técnica
 
-### 1. Hook novo: `src/hooks/useBundles.ts`
-Busca os 3 produtos bundle via Storefront API:
-```
-query: "tag:bundle-duo OR tag:bundle-stack OR tag:bundle-full"
-```
-Retorna `{ duo, stack, full }`.
+### 1. Price Rules + Discount Codes no Shopify
+Crio via tools do Shopify:
+- `BUNDLE_DUO_15` — 15% off, mínimo 2 itens com tag `bundle-eligible`
+- `BUNDLE_STACK_20` — 20% off, mínimo 3 itens com tag `bundle-eligible`
+- `BUNDLE_FULL_25` — 25% off, mínimo 4 itens com tag `bundle-eligible`
 
-### 2. Atualizar `STOREFRONT_QUERY` em `src/lib/shopify.ts`
-Adicionar campo `compareAtPrice` no `priceRange.maxVariantPrice` (ou via variants) — necessário pra calcular o save %.
+Cada um com `target_selection: entitled` apenas a produtos com a tag `bundle-eligible`.
 
-### 3. Refatorar `src/components/BundleSection.tsx`
-- Remove o array hardcoded
-- Usa `useBundles()`
-- Loading state: skeleton dos 3 cards
-- Empty state: se nenhum bundle existir com aquela tag, esconde o card (ou mostra placeholder "Em breve")
-- Stack continua sempre com badge "Most Popular"
+### 2. Nova rota: `/bundle/:type`
+Página `src/pages/BundleBuilder.tsx` com:
+- Header explicando o bundle ("Pick 2 pieces, save 15%")
+- Grid de produtos elegíveis (busca por `tag:bundle-eligible`)
+- Cada produto tem botão "Add to Bundle" (toggle)
+- Painel lateral fixo (sticky):
+  - Slots visuais: `[1] [2]` mostrando peças escolhidas (com X pra remover)
+  - Subtotal cheio (riscado)
+  - Total com desconto
+  - Economia (verde)
+  - Progresso: "Pick 1 more to unlock 15% off"
+  - Botão "Add Bundle to Cart" (disabled até completar)
 
-### 4. Convenção de tags (documentada)
-| Tag | Card | Save |
-|-----|------|------|
-| `bundle-duo` | The Duo | 15% |
-| `bundle-stack` | The Stack | 20% |
-| `bundle-full` | The Full Set | 25% |
+### 3. Suporte a discount code no carrinho
+Atualizar `src/lib/shopify.ts` e `src/stores/cartStore.ts`:
+- Nova mutation `cartDiscountCodesUpdate`
+- Action `applyDiscountCode(code: string)` no cartStore
+- Quando o builder finaliza, chama: adiciona itens + aplica código
 
-Opcional (se quiser controlar qual aparece quando há vários):
-- `bundle-featured` → tag adicional pra forçar prioridade
+### 4. Atualizar `BundleSection.tsx`
+- Remove a busca por produtos-bundle prontos
+- Volta pra layout estático elegante (como era antes)
+- Cards linkam pra `/bundle/duo`, `/bundle/stack`, `/bundle/full`
+- Saves: 15% / 20% / 25% (atualizados)
+- Variante de seleção: peças escolhidas mostradas como ícones (visual atual)
 
-## O que NÃO precisa fazer
+### 5. Limpar código antigo
+- Remover `useBundles.ts` (não vai mais buscar produtos com tag `bundle-duo` etc)
+- Remover do `STOREFRONT_QUERY` o `compareAtPrice` se não for usado em outro lugar — **manter**, é útil
 
-- ❌ Não precisa criar Automatic Discount no Shopify (o desconto já está no preço do produto bundle)
-- ❌ Não precisa Bundle Builder (cliente compra o bundle como um produto único)
-- ❌ Não precisa mexer no carrinho (é um SKU normal)
+## Como você popula (fluxo de uso)
 
-## Próximos passos depois da implementação
+1. No Shopify admin, em cada produto que pode entrar em bundles, adicione a tag **`bundle-eligible`**
+2. Pronto — esses produtos aparecerão automaticamente no builder
+3. As Price Rules ficam permanentes; não precisa criar nada de novo
 
-Eu te entrego o código pronto. Aí você:
-1. Cria os produtos bundle no Shopify (posso te ajudar a criar via chat usando `shopify--create_product` se quiser)
-2. Adiciona a tag correspondente
-3. Bundle aparece no site automaticamente
+## Edge cases tratados
 
-## Salvar na memória do projeto
+- Cliente tenta finalizar com peças incompletas → botão disabled
+- Cliente já tinha itens no carrinho → bundle é adicionado por cima, código aplicado ao subtotal
+- Produto fica out of stock → some do builder
+- Mesma peça selecionada 2x (Duo de brincos iguais) → permitido (quantity=2)
 
-Vou registrar a convenção de tags `bundle-duo` / `bundle-stack` / `bundle-full` + saves (15/20/25%) na memória pra futuras edições manterem consistência.
+## Pergunta antes de implementar
+
+**Sobre a elegibilidade — começa simples ou separa por categoria?**
+
+- **Simples:** Uma tag `bundle-eligible`, cliente mistura o que quiser
+- **Por categoria:** Tags adicionais `bundle-cat-rings`, `bundle-cat-earrings` etc, e cada bundle pode ter regras específicas
+
+Se não me responder, sigo com **simples** (recomendado pra primeira versão — você pode evoluir depois).
