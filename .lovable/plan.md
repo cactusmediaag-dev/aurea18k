@@ -1,39 +1,82 @@
-## Objetivo
-Substituir o logotipo textual "AUREA / Jewels · 18K Gold Plated" pelo arquivo `logo-horizontal.png` enviado, em todos os locais onde aparece o logo genérico.
+# Bundle & Save — Populado via Tags do Shopify
 
-## Locais identificados
-1. **Header (Navbar)** — `src/components/Navbar.tsx` (desktop + mobile, mesmo bloco de logo)
-2. **Footer** — `src/components/Footer.tsx` (coluna da esquerda, bloco com "AUREA" + tagline)
+## Conceito
 
-> O `index.html` (favicon/og-image) não está incluído neste escopo — só o logo visual nos componentes.
+Cada um dos 3 cards (`The Duo`, `The Stack`, `The Full Set`) vira um **produto real do Shopify** com preço fixo e desconto embutido (já calculado no preço de venda vs. `compareAtPrice`). Pra popular/atualizar os bundles, você só precisa **adicionar uma tag** ao produto no Shopify — sem mexer no código.
 
-## Passos
+### Saves atualizados
+- The Duo → **Save 15%**
+- The Stack → **Save 20%**
+- The Full Set → **Save 25%**
 
-### 1. Copiar o asset
-- `user-uploads://logo-horizontal.png` → `src/assets/logo-horizontal.png`
+## Como vai funcionar pra você (fluxo de uso)
 
-### 2. Navbar (`src/components/Navbar.tsx`)
-- Importar: `import logo from '@/assets/logo-horizontal.png'`
-- Substituir o bloco do logo (texto "AUREA" + sublinha "Jewels · 18K Gold Plated") por:
-  ```tsx
-  <Link to="/" className="block">
-    <img src={logo} alt="Aurea Jewels" className="h-10 md:h-11 w-auto" />
-  </Link>
-  ```
-- Altura: ~40px mobile / ~44px desktop, mantendo a altura do header (72px desktop / 64px mobile).
+1. Cria um produto no Shopify (ex: "Duo — Pearl Studs + Hoops")
+2. Define o `price` (com desconto) e o `compareAtPrice` (preço cheio)
+3. Adiciona **uma** das 3 tags:
+   - `bundle-duo` → aparece no card "The Duo"
+   - `bundle-stack` → aparece no card "The Stack"
+   - `bundle-full` → aparece no card "The Full Set"
+4. Pronto — o site puxa automaticamente
 
-### 3. Footer (`src/components/Footer.tsx`)
-- Importar o mesmo asset.
-- Substituir o bloco `<div className="font-serif ...">AUREA</div>` + tagline por:
-  ```tsx
-  <img src={logo} alt="Aurea Jewels" className="h-12 w-auto mb-5 brightness-0 invert opacity-90" />
-  ```
-- O footer tem fundo escuro (`warm-black`) e o logo tem cores escuras (verde/dourado sobre branco). Aplicar `brightness-0 invert` para deixar branco, OU manter o logo colorido se contrastar bem. **Decisão:** manter colorido sem filtro, pois o dourado e o verde-claro ficam visíveis no fundo escuro. Caso fique ilegível, ajustar com `bg-cream-light/5 p-3 rounded` como container.
+Se houver mais de um produto com a mesma tag, o site mostra o **primeiro** (ou um featured, baseado em outra tag — ver abaixo).
 
-## Notas técnicas
-- O PNG enviado tem fundo transparente (presumido — confirmar ao copiar). Se tiver fundo branco, considerar versão SVG futuramente.
-- A tagline "Jewels · 18K Gold Plated" some do header (já está embutida no logo).
-- Nenhuma mudança em rotas, links ou comportamento.
+## Como vai funcionar no site
 
-## Fora de escopo
-- Favicon (`public/`), meta og-image em `index.html`, e qualquer página interna que renderize "AUREA" como texto decorativo (ex: hero sections) — só substituir onde funciona como logo do header/footer.
+A `BundleSection.tsx` deixa de ser estática. Ela:
+
+1. Busca via Storefront API produtos com `tag:bundle-duo OR tag:bundle-stack OR tag:bundle-full`
+2. Agrupa por tipo de bundle
+3. Renderiza os 3 cards usando os dados reais (imagem, título, preço, compareAtPrice)
+4. O badge "Save X%" é **calculado automaticamente** a partir de `(compareAtPrice - price) / compareAtPrice`
+5. Botão "Build My Duo/Stack/Set" → leva pra `/product/:handle` do bundle (página de produto normal, com Add to Cart)
+
+### Layout dos cards (mantido)
+- Visual idêntico ao atual (ícones, cores, badge "Most Popular" no Stack)
+- Substituído: nome estático → `product.title`, preço estático → `product.price`, ícones genéricos → primeira imagem do produto (ou ícones se sem imagem)
+
+## Estrutura técnica
+
+### 1. Hook novo: `src/hooks/useBundles.ts`
+Busca os 3 produtos bundle via Storefront API:
+```
+query: "tag:bundle-duo OR tag:bundle-stack OR tag:bundle-full"
+```
+Retorna `{ duo, stack, full }`.
+
+### 2. Atualizar `STOREFRONT_QUERY` em `src/lib/shopify.ts`
+Adicionar campo `compareAtPrice` no `priceRange.maxVariantPrice` (ou via variants) — necessário pra calcular o save %.
+
+### 3. Refatorar `src/components/BundleSection.tsx`
+- Remove o array hardcoded
+- Usa `useBundles()`
+- Loading state: skeleton dos 3 cards
+- Empty state: se nenhum bundle existir com aquela tag, esconde o card (ou mostra placeholder "Em breve")
+- Stack continua sempre com badge "Most Popular"
+
+### 4. Convenção de tags (documentada)
+| Tag | Card | Save |
+|-----|------|------|
+| `bundle-duo` | The Duo | 15% |
+| `bundle-stack` | The Stack | 20% |
+| `bundle-full` | The Full Set | 25% |
+
+Opcional (se quiser controlar qual aparece quando há vários):
+- `bundle-featured` → tag adicional pra forçar prioridade
+
+## O que NÃO precisa fazer
+
+- ❌ Não precisa criar Automatic Discount no Shopify (o desconto já está no preço do produto bundle)
+- ❌ Não precisa Bundle Builder (cliente compra o bundle como um produto único)
+- ❌ Não precisa mexer no carrinho (é um SKU normal)
+
+## Próximos passos depois da implementação
+
+Eu te entrego o código pronto. Aí você:
+1. Cria os produtos bundle no Shopify (posso te ajudar a criar via chat usando `shopify--create_product` se quiser)
+2. Adiciona a tag correspondente
+3. Bundle aparece no site automaticamente
+
+## Salvar na memória do projeto
+
+Vou registrar a convenção de tags `bundle-duo` / `bundle-stack` / `bundle-full` + saves (15/20/25%) na memória pra futuras edições manterem consistência.
