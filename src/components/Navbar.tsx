@@ -170,21 +170,21 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="absolute top-full left-0 right-0 bg-cream-light border-b border-gold/25 flex flex-col items-center gap-1 py-6 md:hidden z-50 max-h-[80vh] overflow-y-auto">
-          <Link to="/" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Home</Link>
+        <div className="fixed top-16 left-0 right-0 bg-cream-light border-b border-gold/25 flex flex-col items-stretch gap-1 py-6 px-5 md:hidden z-50 h-[calc(100vh-4rem)] overflow-y-auto">
+          <Link to="/" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Home</Link>
 
           {Object.entries(shopMenus).map(([title, items]) => (
-            <div key={title} className="w-full text-center">
+            <div key={title} className="w-full">
               <button
-                className="text-xs tracking-[0.1em] uppercase text-warm-black bg-transparent border-none cursor-pointer py-2 flex items-center gap-1 mx-auto"
+                className="w-full text-xs tracking-[0.1em] uppercase text-warm-black bg-transparent border-none cursor-pointer py-2 flex items-center gap-1 text-left"
                 onClick={() => setMobileSubmenu(mobileSubmenu === title ? null : title)}
               >
                 {title} <ChevronDown className={`w-3 h-3 transition-transform ${mobileSubmenu === title ? 'rotate-180' : ''}`} />
               </button>
               {mobileSubmenu === title && (
-                <div className="flex flex-col gap-2 py-2 bg-cream/50">
+                <div className="flex flex-col gap-2 py-2 pl-3 bg-cream/50">
                   {items.map((item) => (
-                    <Link key={item.label} to={item.href} className="text-[11px] text-warm-black/70 no-underline py-1" onClick={() => setMobileOpen(false)}>
+                    <Link key={item.label} to={item.href} className="text-[11px] text-warm-black/70 no-underline py-1 text-left" onClick={() => setMobileOpen(false)}>
                       {item.label}
                     </Link>
                   ))}
@@ -193,16 +193,18 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
             </div>
           ))}
 
-          <Link to="/collections/new-arrivals" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">New Arrivals</Link>
-          <Link to="/collections/best-sellers" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Best Sellers</Link>
-          <Link to="/collections/bundles-sets" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Bundles & Sets</Link>
-          <Link to="/collections/gift-ideas" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Gift Ideas</Link>
-          <Link to="/about" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">About Us</Link>
-          <Link to="/reviews" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Reviews</Link>
-          <Link to="/faq" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">FAQ</Link>
-          <Link to="/shipping-returns" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Shipping & Returns</Link>
-          <Link to="/contact" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">Contact</Link>
-          <a href="https://hd5ps3-wc.myshopify.com/account" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2">My Account</a>
+          <Link to="/collections/new-arrivals" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">New Arrivals</Link>
+          <Link to="/collections/best-sellers" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Best Sellers</Link>
+          <Link to="/collections/bundles-sets" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Bundles & Sets</Link>
+          <Link to="/collections/gift-ideas" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Gift Ideas</Link>
+          <Link to="/about" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">About Us</Link>
+          <Link to="/reviews" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Reviews</Link>
+          <Link to="/faq" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">FAQ</Link>
+          <Link to="/shipping-returns" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Shipping & Returns</Link>
+          <Link to="/contact" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Contact</Link>
+          <a href="https://hd5ps3-wc.myshopify.com/account" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">My Account</a>
+          <Link to="/collections/all" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-gold font-medium no-underline py-2 text-left">Shop All</Link>
+          <Link to="/collections" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-gold font-medium no-underline py-2 text-left">View Categories</Link>
         </div>
       )}
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
