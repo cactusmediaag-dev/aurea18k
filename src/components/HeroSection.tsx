@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import bannerDesktop from '@/assets/banner1-desktop.png';
 import bannerMobile from '@/assets/banner1-mobile.png';
+import banner2Desktop from '@/assets/banner2-desktop.png';
+import banner2Mobile from '@/assets/banner2-mobile.png';
 
 const slides = [
   {
@@ -14,7 +16,7 @@ const slides = [
     tag: 'Best Sellers · 2026',
     title: <>Timeless<br /><em className="italic text-gold-light">Elegance</em><br />Redefined</>,
     subtitle: 'Hypoallergenic · Ships Worldwide · Free over $120',
-    image: null,
+    image: { desktop: banner2Desktop, mobile: banner2Mobile },
   },
 ];
 
