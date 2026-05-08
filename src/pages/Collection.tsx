@@ -5,6 +5,24 @@ import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 import { Loader2, ShoppingBag } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
+import bannerWomens from '@/assets/banner-womens.jpg';
+import bannerMens from '@/assets/banner-mens.jpg';
+import bannerKids from '@/assets/banner-kids.jpg';
+import bannerBestsellers from '@/assets/banner-bestsellers.jpg';
+import bannerNewArrivals from '@/assets/banner-newarrivals.jpg';
+import bannerBundles from '@/assets/banner-bundles.jpg';
+import bannerGifts from '@/assets/banner-gifts.jpg';
+
+function getCollectionBanner(handle: string): string | null {
+  if (handle === 'best-sellers') return bannerBestsellers;
+  if (handle === 'new-arrivals') return bannerNewArrivals;
+  if (handle === 'bundles-sets') return bannerBundles;
+  if (handle === 'gift-ideas') return bannerGifts;
+  if (handle.startsWith('womens') || handle === 'everyday-essentials' || handle === 'statement-pieces' || handle === 'minimal-collection' || handle === 'layering-pieces') return bannerWomens;
+  if (handle.startsWith('mens') || handle === 'minimal-men' || handle === 'classic-collection') return bannerMens;
+  if (handle.startsWith('kids') || handle === 'hypoallergenic-kids') return bannerKids;
+  return null;
+}
 
 const COLLECTION_TITLES: Record<string, string> = {
   'all': 'All Jewelry',
@@ -86,6 +104,7 @@ const Collection = () => {
 
   const query = getCollectionQuery(handle);
   const title = COLLECTION_TITLES[handle] || handle.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const banner = getCollectionBanner(handle);
 
   const { data: products, isLoading } = useQuery<ShopifyProduct[]>({
     queryKey: ['collection', handle],
@@ -112,11 +131,22 @@ const Collection = () => {
   return (
     <PageLayout>
       <div className="bg-cream-light min-h-[60vh]">
-        {/* Header */}
-        <div className="text-center py-14 border-b border-gold/15">
-          <div className="text-[10px] tracking-[0.3em] uppercase text-gold font-medium mb-2">Aurea Jewels</div>
-          <h1 className="font-serif text-4xl font-light text-dark-green tracking-wide">{title}</h1>
-        </div>
+        {/* Banner / Header */}
+        {banner ? (
+          <div className="w-full overflow-hidden">
+            <img
+              src={banner}
+              alt={title}
+              className="w-full h-auto block"
+              loading="eager"
+            />
+          </div>
+        ) : (
+          <div className="text-center py-14 border-b border-gold/15">
+            <div className="text-[10px] tracking-[0.3em] uppercase text-gold font-medium mb-2">Aurea Jewels</div>
+            <h1 className="font-serif text-4xl font-light text-dark-green tracking-wide">{title}</h1>
+          </div>
+        )}
 
         {/* Grid */}
         <div className="max-w-7xl mx-auto px-12 py-14 max-sm:px-5">
