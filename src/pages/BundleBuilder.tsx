@@ -60,6 +60,7 @@ const BundleBuilder = () => {
   const [submitting, setSubmitting] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [sheetCollapsed, setSheetCollapsed] = useState(false);
 
   // Receive pre-selected items from tier upgrade
   useEffect(() => {
