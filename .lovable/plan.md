@@ -1,50 +1,46 @@
-## Inscrição de e-mail no marketing do Shopify (Admin API)
+## Sticky bottom bar no Bundle Builder (mobile)
 
-### Objetivo
-Quando alguém envia o e-mail no formulário "Join the Inner Circle", o e-mail entra direto na lista de **email subscribers** do Shopify (com `emailMarketingConsent: SUBSCRIBED`), disparando o fluxo de double opt-in que você já tem ativo.
+### Problema
+No mobile, ao selecionar uma peça no `/bundle/:type`, nada aparece indicando o estado do bundle. O painel resumo existe mas fica empurrado lá pro fim da página, então o usuário não sabe que algo aconteceu nem como avançar.
 
-### Por que precisa de edge function
-A Storefront API (que roda no navegador) não permite mais marcar `acceptsMarketing`. Só a **Admin API** consegue — mas o token de Admin nunca pode ir pro frontend. Por isso, a chamada vai numa edge function backend que usa o `SHOPIFY_ACCESS_TOKEN` já armazenado nos secrets.
+### Solução
+Adicionar uma **barra fixa no rodapé** (visível só em mobile/tablet — `lg:hidden`) que aparece com animação slide-up assim que o usuário seleciona ≥1 peça.
 
-### Fluxo
+### Conteúdo da barra
+Linha única, compacta, dois lados:
 
-```text
-Usuário digita e-mail → submit
-        ↓
-Frontend chama supabase.functions.invoke('subscribe-newsletter', { email })
-        ↓
-Edge function valida e-mail (zod)
-        ↓
-Edge function chama Admin GraphQL: customerCreate
-  com emailMarketingConsent: { marketingState: SUBSCRIBED, marketingOptInLevel: CONFIRMED_OPT_IN }
-        ↓
-Shopify cria o customer + dispara e-mail de double opt-in (já configurado no admin)
-        ↓
-Frontend mostra toast "Check your inbox to confirm"
-```
+**Esquerda:**
+- Texto pequeno: `Your {config.name} · {selected.length}/{itemCount}`
+- Linha de preço:
+  - Se incompleto: `Subtotal ${subtotal} · est. save ${discountAmount}`
+  - Se completo: `Total ${total}` com `~~${subtotal}~~` riscado ao lado
 
-### Arquivos
+**Direita:**
+- Botão CTA dourado:
+  - Se incompleto: `Pick {remaining} more` (apenas scroll-to-top, sem ação destrutiva — ou desabilitado)
+  - Se completo + tem `nextTier`: dois botões empilhados ou um único `Review Bundle` principal + chip secundário "+1 = {nextTier.discountPct}% off"
+  - Se completo sem nextTier: `Review Bundle →`
 
-**1. Nova edge function**: `supabase/functions/subscribe-newsletter/index.ts`
-- CORS handler
-- Valida body com zod (`{ email: string().email() }`)
-- Chama Admin API: `https://hd5ps3-wc.myshopify.com/admin/api/2025-07/graphql.json`
-  - Mutation: `customerCreate(input: { email, emailMarketingConsent: { marketingState: SUBSCRIBED, marketingOptInLevel: CONFIRMED_OPT_IN } })`
-  - Header: `X-Shopify-Access-Token: ${Deno.env.get('SHOPIFY_ACCESS_TOKEN')}`
-- Trata erro `TAKEN` (e-mail já existe) como sucesso silencioso
-- Retorna `{ success: true, alreadySubscribed?: boolean }` ou erro 400/500
+Para manter simples no rodapé estreito do mobile, vou usar:
+- **Incompleto:** info à esquerda + botão `Review` desabilitado mostrando `{remaining} to go`
+- **Completo:** info à esquerda + botão `Review Bundle →` ativo (abre o mesmo dialog)
+- A sugestão de upgrade do tier (`+1 piece = X% off`) continua aparecendo dentro do painel principal — não duplica no rodapé pra não poluir.
 
-**2. Atualizar `src/components/EmailCaptureSection.tsx`**
-- Remover a chamada direta à Storefront API e o `generatePassword`
-- Trocar por `supabase.functions.invoke('subscribe-newsletter', { body: { email } })`
-- Mensagem de sucesso atualizada: "Check your inbox to confirm and grab 10% off."
+### Estilo
+- `fixed bottom-0 left-0 right-0 z-40 lg:hidden`
+- Background: `bg-cream-light` com `border-t border-gold/30` e `shadow-[0_-4px_20px_rgba(0,0,0,0.08)]`
+- Padding: `px-4 py-3` + safe-area (`pb-[max(12px,env(safe-area-inset-bottom))]`)
+- Animação de entrada: `animate-in slide-in-from-bottom-4 duration-300` (já temos tailwindcss-animate)
+- Renderiza condicionalmente: só quando `selected.length > 0`
 
-### Detalhes técnicos
-- Edge function deploy automático após criação
-- `verify_jwt = false` (default) — endpoint público, validação do e-mail feita server-side
-- Sem rate limiting elaborado (volume baixo de newsletter); se virar problema, adiciono depois com tabela no Supabase
-- Não loga e-mails no console pra evitar exposição de PII
+### Ajustes adicionais
+- Adicionar `pb-32 lg:pb-0` no container da seção pra que o conteúdo final (botão "Back to home" do painel mobile) não fique escondido atrás da barra fixa.
+- O painel resumo completo continua existindo no mobile (no fluxo normal da página) — a barra é um atalho/indicador, não substitui o painel detalhado. O usuário pode rolar até o painel se quiser ver os slots em detalhe ou remover peças.
 
-### O que NÃO muda
-- Toggle de "Dupla confirmação de marketing" no Shopify continua sendo o que dispara o e-mail de confirmação (mantenha ativo)
-- Cupom de 10% off precisa ser configurado por você no Shopify e incluído no template do e-mail de boas-vindas (também pelo admin do Shopify, em Settings → Notifications → Customer email templates)
+### Arquivo a editar
+- `src/pages/BundleBuilder.tsx` (única mudança)
+
+### Não muda
+- Layout desktop (`lg:` mantém sidebar sticky lateral igual)
+- Lógica de seleção, dialog de review, fluxo de checkout
+- Painel de resumo continua visível no mobile abaixo do grid de produtos
