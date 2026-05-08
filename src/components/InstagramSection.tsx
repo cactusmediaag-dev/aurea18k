@@ -1,6 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-
 const gradients = [
   'linear-gradient(135deg, #C8A86A 30%, #A88840 100%)',
   'linear-gradient(135deg, #B89878 20%, #987858 100%)',
@@ -10,32 +7,12 @@ const gradients = [
   'linear-gradient(135deg, #A8B880 30%, #88985E 100%)',
 ];
 
-type IGPost = {
-  id: string;
-  permalink: string;
-  caption: string;
-  mediaType: string;
-  imageUrl: string;
-  timestamp: string;
-};
-
 const PROFILE_URL = 'https://www.instagram.com/aureajewels.18k/';
 
+// Adicione as imagens em public/instagram/ e referencie aqui (ex.: '/instagram/photo-1.jpg')
+const STATIC_POSTS: (string | null)[] = [null, null, null, null, null, null];
+
 const InstagramSection = () => {
-  const { data } = useQuery<{ posts: IGPost[] }>({
-    queryKey: ['instagram-posts'],
-    queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke('get-instagram-posts');
-      if (error) return { posts: [] };
-      return data || { posts: [] };
-    },
-    staleTime: 60 * 60 * 1000,
-    retry: 1,
-  });
-
-  const posts = data?.posts ?? [];
-  const items = Array.from({ length: 6 }, (_, i) => posts[i] ?? null);
-
   return (
     <div className="py-20 text-center" style={{ background: '#FAF7F0' }}>
       <div className="px-12 pb-12">
@@ -48,18 +25,18 @@ const InstagramSection = () => {
         </div>
       </div>
       <div className="grid grid-cols-6 max-lg:grid-cols-3">
-        {items.map((post, i) => (
+        {STATIC_POSTS.map((src, i) => (
           <a
-            key={post?.id ?? i}
-            href={post?.permalink ?? PROFILE_URL}
+            key={i}
+            href={PROFILE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="aspect-square overflow-hidden cursor-pointer relative group block"
           >
-            {post ? (
+            {src ? (
               <img
-                src={post.imageUrl}
-                alt={post.caption?.slice(0, 100) || 'Aurea Jewels Instagram post'}
+                src={src}
+                alt={`Aurea Jewels Instagram post ${i + 1}`}
                 loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110"
               />
