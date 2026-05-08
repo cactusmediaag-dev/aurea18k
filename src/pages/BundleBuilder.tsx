@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, Link, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Loader2, X, Check, ArrowRight, Sparkles } from 'lucide-react';
+import { Loader2, X, Check, ArrowRight, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
 import { useBundleEligibleProducts } from '@/hooks/useBundleEligibleProducts';
 import { getBundleConfig, getNextTier, BundleType } from '@/lib/bundles';
@@ -60,6 +60,7 @@ const BundleBuilder = () => {
   const [submitting, setSubmitting] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [sheetCollapsed, setSheetCollapsed] = useState(false);
 
   // Receive pre-selected items from tier upgrade
   useEffect(() => {
@@ -178,6 +179,120 @@ const BundleBuilder = () => {
     }
   };
 
+  const BundleSummaryPanel = () => (
+    <div className="bg-cream-light border border-gold/25 p-6">
+      <div className="font-serif text-xl text-dark-green mb-4">Your {config.name}</div>
+
+      {/* Slots */}
+      <div className="space-y-2 mb-5">
+        {Array.from({ length: config.itemCount }).map((_, i) => {
+          const slot = selected[i];
+          return (
+            <div
+              key={i}
+              className={`flex items-center gap-3 p-2 border ${
+                slot ? 'border-dark-green bg-cream' : 'border-dashed border-gold/30 bg-cream/50'
+              }`}
+            >
+              <div className="w-12 h-12 bg-cream flex-shrink-0 overflow-hidden border border-gold/20">
+                {slot ? (
+                  slot.product.node.images.edges[0]?.node && (
+                    <img
+                      src={slot.product.node.images.edges[0].node.url}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  )
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gold/40 text-xs">
+                    {i + 1}
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                {slot ? (
+                  <>
+                    <div className="text-xs font-medium text-dark-green truncate">{slot.product.node.title}</div>
+                    <div className="text-[11px] text-warm-gray">${parseFloat(slot.price.amount).toFixed(0)}</div>
+                  </>
+                ) : (
+                  <div className="text-xs text-warm-gray italic">Pick piece {i + 1}</div>
+                )}
+              </div>
+              {slot && (
+                <button
+                  onClick={() => removePiece(slot.uid)}
+                  className="text-warm-gray hover:text-dark-green p-1"
+                  aria-label="Remove"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Progress */}
+      {!isComplete && (
+        <div className="text-xs text-warm-gray text-center mb-4">
+          Pick {remaining} more to unlock <strong className="text-dark-green">{config.discountPct}% off</strong>
+        </div>
+      )}
+
+      {/* Pricing */}
+      <div className="border-t border-gold/20 pt-4 space-y-1.5 text-sm">
+        <div className="flex justify-between text-warm-gray">
+          <span>Subtotal</span>
+          <span>${subtotal.toFixed(2)}</span>
+        </div>
+        {selected.length > 0 && (
+          <div className="flex justify-between text-dark-green font-medium">
+            <span>
+              You save ({config.discountPct}%)
+              {!isComplete && <span className="text-[10px] text-warm-gray ml-1">estimated</span>}
+            </span>
+            <span>−${discountAmount.toFixed(2)}</span>
+          </div>
+        )}
+        <div className="flex justify-between font-serif text-xl text-warm-black pt-2 border-t border-gold/20">
+          <span>Total</span>
+          <span>${total.toFixed(2)}</span>
+        </div>
+      </div>
+
+      {/* Upgrade tier */}
+      {isComplete && nextTier && (
+        <button
+          onClick={handleUpgrade}
+          className="w-full mt-4 bg-gold-pale border border-gold/40 hover:border-gold text-dark-green p-3 text-left flex items-center gap-3 transition-colors group"
+        >
+          <Sparkles className="w-4 h-4 flex-shrink-0" />
+          <div className="flex-1 text-xs">
+            <div className="font-medium">Add +1 piece and get {nextTier.discountPct}% off</div>
+            <div className="text-warm-gray text-[11px]">Upgrade to {nextTier.name}</div>
+          </div>
+          <ArrowRight className="w-4 h-4 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+        </button>
+      )}
+
+      <button
+        onClick={() => setPreviewOpen(true)}
+        disabled={!isComplete || submitting || isCartLoading}
+        className="btn-aurea-dark w-full mt-5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      >
+        {isComplete ? `Review Bundle` : `Pick ${remaining} more`}
+      </button>
+
+      <button
+        onClick={() => navigate('/')}
+        className="text-xs text-warm-gray hover:text-dark-green underline w-full text-center mt-3"
+      >
+        Back to home
+      </button>
+    </div>
+  );
+
   return (
     <PageLayout>
       {/* Hero */}
@@ -273,119 +388,9 @@ const BundleBuilder = () => {
             )}
           </div>
 
-          {/* Sticky panel */}
-          <aside className="lg:sticky lg:top-24 lg:self-start">
-            <div className="bg-cream-light border border-gold/25 p-6">
-              <div className="font-serif text-xl text-dark-green mb-4">Your {config.name}</div>
-
-              {/* Slots */}
-              <div className="space-y-2 mb-5">
-                {Array.from({ length: config.itemCount }).map((_, i) => {
-                  const slot = selected[i];
-                  return (
-                    <div
-                      key={i}
-                      className={`flex items-center gap-3 p-2 border ${
-                        slot ? 'border-dark-green bg-cream' : 'border-dashed border-gold/30 bg-cream/50'
-                      }`}
-                    >
-                      <div className="w-12 h-12 bg-cream flex-shrink-0 overflow-hidden border border-gold/20">
-                        {slot ? (
-                          slot.product.node.images.edges[0]?.node && (
-                            <img
-                              src={slot.product.node.images.edges[0].node.url}
-                              alt=""
-                              className="w-full h-full object-cover"
-                            />
-                          )
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gold/40 text-xs">
-                            {i + 1}
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        {slot ? (
-                          <>
-                            <div className="text-xs font-medium text-dark-green truncate">{slot.product.node.title}</div>
-                            <div className="text-[11px] text-warm-gray">${parseFloat(slot.price.amount).toFixed(0)}</div>
-                          </>
-                        ) : (
-                          <div className="text-xs text-warm-gray italic">Pick piece {i + 1}</div>
-                        )}
-                      </div>
-                      {slot && (
-                        <button
-                          onClick={() => removePiece(slot.uid)}
-                          className="text-warm-gray hover:text-dark-green p-1"
-                          aria-label="Remove"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Progress */}
-              {!isComplete && (
-                <div className="text-xs text-warm-gray text-center mb-4">
-                  Pick {remaining} more to unlock <strong className="text-dark-green">{config.discountPct}% off</strong>
-                </div>
-              )}
-
-              {/* Pricing — economia em tempo real */}
-              <div className="border-t border-gold/20 pt-4 space-y-1.5 text-sm">
-                <div className="flex justify-between text-warm-gray">
-                  <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
-                </div>
-                {selected.length > 0 && (
-                  <div className="flex justify-between text-dark-green font-medium">
-                    <span>
-                      You save ({config.discountPct}%)
-                      {!isComplete && <span className="text-[10px] text-warm-gray ml-1">estimated</span>}
-                    </span>
-                    <span>−${discountAmount.toFixed(2)}</span>
-                  </div>
-                )}
-                <div className="flex justify-between font-serif text-xl text-warm-black pt-2 border-t border-gold/20">
-                  <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
-                </div>
-              </div>
-
-              {/* Upgrade tier suggestion */}
-              {isComplete && nextTier && (
-                <button
-                  onClick={handleUpgrade}
-                  className="w-full mt-4 bg-gold-pale border border-gold/40 hover:border-gold text-dark-green p-3 text-left flex items-center gap-3 transition-colors group"
-                >
-                  <Sparkles className="w-4 h-4 flex-shrink-0" />
-                  <div className="flex-1 text-xs">
-                    <div className="font-medium">Add +1 piece and get {nextTier.discountPct}% off</div>
-                    <div className="text-warm-gray text-[11px]">Upgrade to {nextTier.name}</div>
-                  </div>
-                  <ArrowRight className="w-4 h-4 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
-                </button>
-              )}
-
-              <button
-                onClick={() => setPreviewOpen(true)}
-                disabled={!isComplete || submitting || isCartLoading}
-                className="btn-aurea-dark w-full mt-5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {isComplete ? `Review Bundle` : `Pick ${remaining} more`}
-              </button>
-
-              <button
-                onClick={() => navigate('/')}
-                className="text-xs text-warm-gray hover:text-dark-green underline w-full text-center mt-3"
-              >
-                Back to home
-              </button>
-            </div>
+          {/* Sticky panel — desktop only inline; mobile renders inline only when nothing selected */}
+          <aside className={`lg:sticky lg:top-24 lg:self-start ${selected.length > 0 ? 'max-lg:hidden' : ''}`}>
+            <BundleSummaryPanel />
           </aside>
         </div>
       </section>
@@ -467,42 +472,55 @@ const BundleBuilder = () => {
       </Dialog>
 
       {/* Sticky mobile bottom bar */}
+      {/* Mobile bottom sheet — full panel rendered as fixed sheet when items selected */}
       {selected.length > 0 && (
         <div
-          className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-cream-light border-t border-gold/30 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] animate-in slide-in-from-bottom-4 duration-300"
-          style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
+          className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-cream-light border-t border-gold/30 shadow-[0_-8px_32px_rgba(0,0,0,0.12)] rounded-t-lg animate-in slide-in-from-bottom-8 duration-300"
+          style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}
         >
-          <div className="px-4 pt-3 flex items-center gap-3">
-            <div className="flex-1 min-w-0">
-              <div className="text-[10px] tracking-[0.15em] uppercase text-warm-gray">
-                Your {config.name} · {selected.length}/{config.itemCount}
-              </div>
-              {isComplete ? (
-                <div className="flex items-baseline gap-2 mt-0.5">
-                  <span className="font-serif text-lg text-dark-green">${total.toFixed(2)}</span>
-                  <span className="text-xs text-warm-gray line-through">${subtotal.toFixed(2)}</span>
-                </div>
-              ) : (
-                <div className="text-xs text-warm-black mt-0.5 truncate">
-                  ${subtotal.toFixed(2)}
-                  <span className="text-dark-green ml-2">
-                    save ~${discountAmount.toFixed(2)}
-                  </span>
-                </div>
-              )}
+          {/* Grabber + collapse toggle */}
+          <button
+            onClick={() => setSheetCollapsed(c => !c)}
+            className="w-full flex flex-col items-center pt-2 pb-1 relative"
+            aria-label={sheetCollapsed ? 'Expand bundle summary' : 'Collapse bundle summary'}
+          >
+            <div className="w-10 h-1 bg-gold/40 rounded-full" />
+            <div className="absolute right-3 top-2 text-warm-gray">
+              {sheetCollapsed ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </div>
-            <button
-              onClick={() => isComplete && setPreviewOpen(true)}
-              disabled={!isComplete || submitting || isCartLoading}
-              className="btn-aurea-dark px-5 py-3 text-xs whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              {isComplete ? (
-                <>Review <ArrowRight className="w-3.5 h-3.5" /></>
-              ) : (
-                `${remaining} to go`
-              )}
-            </button>
-          </div>
+          </button>
+
+          {sheetCollapsed ? (
+            <div className="px-4 pb-3 flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] tracking-[0.15em] uppercase text-warm-gray">
+                  Your {config.name} · {selected.length}/{config.itemCount}
+                </div>
+                {isComplete ? (
+                  <div className="flex items-baseline gap-2 mt-0.5">
+                    <span className="font-serif text-lg text-dark-green">${total.toFixed(2)}</span>
+                    <span className="text-xs text-warm-gray line-through">${subtotal.toFixed(2)}</span>
+                  </div>
+                ) : (
+                  <div className="text-xs text-warm-black mt-0.5 truncate">
+                    ${subtotal.toFixed(2)}
+                    <span className="text-dark-green ml-2">save ~${discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); isComplete ? setPreviewOpen(true) : setSheetCollapsed(false); }}
+                disabled={submitting || isCartLoading}
+                className="btn-aurea-dark px-5 py-3 text-xs whitespace-nowrap disabled:opacity-50 flex items-center gap-2"
+              >
+                {isComplete ? (<>Review <ArrowRight className="w-3.5 h-3.5" /></>) : `${remaining} to go`}
+              </button>
+            </div>
+          ) : (
+            <div className="max-h-[75vh] overflow-y-auto px-3 pb-3">
+              <BundleSummaryPanel />
+            </div>
+          )}
         </div>
       )}
 
