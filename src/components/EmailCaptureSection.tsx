@@ -35,7 +35,6 @@ const EmailCaptureSection = () => {
         input: {
           email,
           password: generatePassword(),
-          acceptsMarketing: true,
         },
       });
 
