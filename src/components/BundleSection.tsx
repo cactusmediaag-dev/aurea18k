@@ -1,24 +1,28 @@
 import { Link } from 'react-router-dom';
 import { BUNDLE_CONFIGS } from '@/lib/bundles';
+import imgEarring from '@/assets/bundle-earring.jpg';
+import imgNecklace from '@/assets/bundle-necklace.jpg';
+import imgBracelet from '@/assets/bundle-bracelet.jpg';
+import imgRing from '@/assets/bundle-ring.jpg';
 
 const cards = [
   {
     cfg: BUNDLE_CONFIGS.duo,
     items: 'Pick any 2 pieces\nof your choice',
-    icons: ['◎', '◇'],
+    images: [imgEarring, imgNecklace],
     featured: false,
   },
   {
     cfg: BUNDLE_CONFIGS.stack,
     items: 'Pick any 3 pieces\nof your choice',
-    icons: ['◎', '◇', '○'],
+    images: [imgEarring, imgNecklace, imgBracelet],
     featured: true,
     badge: 'Most Popular',
   },
   {
     cfg: BUNDLE_CONFIGS.full,
     items: 'Pick any 4 pieces\nof your choice',
-    icons: ['◎', '◇', '○', '◈'],
+    images: [imgEarring, imgNecklace, imgBracelet, imgRing],
     featured: false,
   },
 ];
@@ -32,7 +36,7 @@ const BundleSection = () => (
     </div>
 
     <div className="grid grid-cols-3 gap-6 mt-14 max-lg:grid-cols-1">
-      {cards.map(({ cfg, items, icons, featured, badge }) => (
+      {cards.map(({ cfg, items, images, featured, badge }) => (
         <Link
           key={cfg.type}
           to={`/bundle/${cfg.type}`}
@@ -48,9 +52,9 @@ const BundleSection = () => (
             </div>
           )}
           <div className="flex gap-2 mb-5">
-            {icons.map((icon, i) => (
-              <div key={i} className="flex-1 aspect-square bg-cream border border-gold/25 flex items-center justify-center text-xl">
-                {icon}
+            {images.map((src, i) => (
+              <div key={i} className="flex-1 aspect-square bg-cream border border-gold/25 overflow-hidden">
+                <img src={src} alt="" loading="lazy" className="w-full h-full object-cover" />
               </div>
             ))}
           </div>
