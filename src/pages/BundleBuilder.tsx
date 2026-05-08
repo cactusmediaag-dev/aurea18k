@@ -472,42 +472,55 @@ const BundleBuilder = () => {
       </Dialog>
 
       {/* Sticky mobile bottom bar */}
+      {/* Mobile bottom sheet — full panel rendered as fixed sheet when items selected */}
       {selected.length > 0 && (
         <div
-          className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-cream-light border-t border-gold/30 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] animate-in slide-in-from-bottom-4 duration-300"
-          style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
+          className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-cream-light border-t border-gold/30 shadow-[0_-8px_32px_rgba(0,0,0,0.12)] rounded-t-lg animate-in slide-in-from-bottom-8 duration-300"
+          style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}
         >
-          <div className="px-4 pt-3 flex items-center gap-3">
-            <div className="flex-1 min-w-0">
-              <div className="text-[10px] tracking-[0.15em] uppercase text-warm-gray">
-                Your {config.name} · {selected.length}/{config.itemCount}
-              </div>
-              {isComplete ? (
-                <div className="flex items-baseline gap-2 mt-0.5">
-                  <span className="font-serif text-lg text-dark-green">${total.toFixed(2)}</span>
-                  <span className="text-xs text-warm-gray line-through">${subtotal.toFixed(2)}</span>
-                </div>
-              ) : (
-                <div className="text-xs text-warm-black mt-0.5 truncate">
-                  ${subtotal.toFixed(2)}
-                  <span className="text-dark-green ml-2">
-                    save ~${discountAmount.toFixed(2)}
-                  </span>
-                </div>
-              )}
+          {/* Grabber + collapse toggle */}
+          <button
+            onClick={() => setSheetCollapsed(c => !c)}
+            className="w-full flex flex-col items-center pt-2 pb-1 relative"
+            aria-label={sheetCollapsed ? 'Expand bundle summary' : 'Collapse bundle summary'}
+          >
+            <div className="w-10 h-1 bg-gold/40 rounded-full" />
+            <div className="absolute right-3 top-2 text-warm-gray">
+              {sheetCollapsed ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </div>
-            <button
-              onClick={() => isComplete && setPreviewOpen(true)}
-              disabled={!isComplete || submitting || isCartLoading}
-              className="btn-aurea-dark px-5 py-3 text-xs whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              {isComplete ? (
-                <>Review <ArrowRight className="w-3.5 h-3.5" /></>
-              ) : (
-                `${remaining} to go`
-              )}
-            </button>
-          </div>
+          </button>
+
+          {sheetCollapsed ? (
+            <div className="px-4 pb-3 flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] tracking-[0.15em] uppercase text-warm-gray">
+                  Your {config.name} · {selected.length}/{config.itemCount}
+                </div>
+                {isComplete ? (
+                  <div className="flex items-baseline gap-2 mt-0.5">
+                    <span className="font-serif text-lg text-dark-green">${total.toFixed(2)}</span>
+                    <span className="text-xs text-warm-gray line-through">${subtotal.toFixed(2)}</span>
+                  </div>
+                ) : (
+                  <div className="text-xs text-warm-black mt-0.5 truncate">
+                    ${subtotal.toFixed(2)}
+                    <span className="text-dark-green ml-2">save ~${discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); isComplete ? setPreviewOpen(true) : setSheetCollapsed(false); }}
+                disabled={submitting || isCartLoading}
+                className="btn-aurea-dark px-5 py-3 text-xs whitespace-nowrap disabled:opacity-50 flex items-center gap-2"
+              >
+                {isComplete ? (<>Review <ArrowRight className="w-3.5 h-3.5" /></>) : `${remaining} to go`}
+              </button>
+            </div>
+          ) : (
+            <div className="max-h-[75vh] overflow-y-auto px-3 pb-3">
+              <BundleSummaryPanel />
+            </div>
+          )}
         </div>
       )}
 
