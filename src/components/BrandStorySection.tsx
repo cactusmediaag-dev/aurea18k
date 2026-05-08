@@ -1,4 +1,4 @@
-import brazilImg from '@/assets/made-in-brazil.jpg';
+import brazilImg from '@/assets/brand-story.jpg';
 
 const BrandStorySection = () => (
   <div id="story" className="bg-dark-green py-28 px-12 grid grid-cols-2 gap-20 items-center max-lg:grid-cols-1 max-lg:gap-10 max-sm:px-6 max-sm:py-16">
