@@ -1,16 +1,13 @@
-const gradients = [
-  'linear-gradient(135deg, #C8A86A 30%, #A88840 100%)',
-  'linear-gradient(135deg, #B89878 20%, #987858 100%)',
-  'linear-gradient(135deg, #8A9878 30%, #6A7858 100%)',
-  'linear-gradient(135deg, #D4B870 30%, #B49850 100%)',
-  'linear-gradient(135deg, #9A8868 20%, #7A6848 100%)',
-  'linear-gradient(135deg, #A8B880 30%, #88985E 100%)',
-];
+import post1 from '@/assets/instagram/post-1.png';
+import post2 from '@/assets/instagram/post-2.png';
+import post3 from '@/assets/instagram/post-3.png';
+import post4 from '@/assets/instagram/post-4.png';
+import post5 from '@/assets/instagram/post-5.png';
+import post6 from '@/assets/instagram/post-6.png';
 
 const PROFILE_URL = 'https://www.instagram.com/aureajewels.18k/';
 
-// Adicione as imagens em public/instagram/ e referencie aqui (ex.: '/instagram/photo-1.jpg')
-const STATIC_POSTS: (string | null)[] = [null, null, null, null, null, null];
+const STATIC_POSTS = [post1, post2, post3, post4, post5, post6];
 
 const InstagramSection = () => {
   return (
@@ -33,19 +30,12 @@ const InstagramSection = () => {
             rel="noopener noreferrer"
             className="aspect-square overflow-hidden cursor-pointer relative group block"
           >
-            {src ? (
-              <img
-                src={src}
-                alt={`Aurea Jewels Instagram post ${i + 1}`}
-                loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110"
-              />
-            ) : (
-              <div
-                className="w-full h-full transition-transform duration-400 group-hover:scale-110"
-                style={{ background: gradients[i] }}
-              />
-            )}
+            <img
+              src={src}
+              alt={`Aurea Jewels Instagram post ${i + 1}`}
+              loading="lazy"
+              className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110"
+            />
             <div className="absolute inset-0 bg-dark-green/55 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-cream-light text-[22px]">
               ♡
             </div>
