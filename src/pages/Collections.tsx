@@ -1,15 +1,23 @@
 import { Link } from 'react-router-dom';
 import PageLayout from '@/components/PageLayout';
+import catWomens from '@/assets/cat-womens-collection.jpg';
+import catMens from '@/assets/cat-mens-collection.jpg';
+import catKids from '@/assets/cat-kids-collection.jpg';
+import catBestSellers from '@/assets/cat-best-sellers.jpg';
+import catNewArrivals from '@/assets/cat-new-arrivals.jpg';
+import catBundlesSets from '@/assets/cat-bundles-sets.jpg';
+import catGiftIdeas from '@/assets/cat-gift-ideas.jpg';
+import catShopAll from '@/assets/cat-shop-all.jpg';
 
 const categories = [
-  { name: "Women's Collection", description: 'Earrings, necklaces, bracelets & chokers', gradient: 'linear-gradient(145deg, #C8B89A 0%, #A8936A 100%)', slug: 'womens' },
-  { name: "Men's Collection", description: 'Chains, bracelets & stud earrings', gradient: 'linear-gradient(145deg, #7A8A6A 0%, #4A5E38 100%)', slug: 'mens' },
-  { name: "Kids Collection", description: 'Hypoallergenic pieces for little ones', gradient: 'linear-gradient(145deg, #B8A888 0%, #8A7850 100%)', slug: 'kids' },
-  { name: 'Best Sellers', description: 'Our most loved pieces', gradient: 'linear-gradient(145deg, #9EB08C 0%, #6A8A5A 100%)', slug: 'best-sellers' },
-  { name: 'New Arrivals', description: 'Fresh drops & latest designs', gradient: 'linear-gradient(145deg, #A89878 0%, #7A6A4A 100%)', slug: 'new-arrivals' },
-  { name: 'Bundles & Sets', description: 'Save more when you bundle', gradient: 'linear-gradient(145deg, #8A9A7A 0%, #5A7A4A 100%)', slug: 'bundles-sets' },
-  { name: 'Gift Ideas', description: 'Perfect presents for every occasion', gradient: 'linear-gradient(145deg, #C0A878 0%, #9A8058 100%)', slug: 'gift-ideas' },
-  { name: 'Shop All', description: 'Browse our entire collection', gradient: 'linear-gradient(145deg, #8A8A7A 0%, #5A5A4A 100%)', slug: 'all' },
+  { name: "Women's Collection", description: 'Earrings, necklaces, bracelets & chokers', image: catWomens, slug: 'womens' },
+  { name: "Men's Collection", description: 'Chains, bracelets & stud earrings', image: catMens, slug: 'mens' },
+  { name: 'Kids Collection', description: 'Hypoallergenic pieces for little ones', image: catKids, slug: 'kids' },
+  { name: 'Best Sellers', description: 'Our most loved pieces', image: catBestSellers, slug: 'best-sellers' },
+  { name: 'New Arrivals', description: 'Fresh drops & latest designs', image: catNewArrivals, slug: 'new-arrivals' },
+  { name: 'Bundles & Sets', description: 'Save more when you bundle', image: catBundlesSets, slug: 'bundles-sets' },
+  { name: 'Gift Ideas', description: 'Perfect presents for every occasion', image: catGiftIdeas, slug: 'gift-ideas' },
+  { name: 'Shop All', description: 'Browse our entire collection', image: catShopAll, slug: 'all' },
 ];
 
 const Collections = () => (
@@ -26,14 +34,19 @@ const Collections = () => (
             <Link
               key={cat.slug}
               to={`/collections/${cat.slug}`}
-              className="relative aspect-[3/4] overflow-hidden cursor-pointer group block no-underline"
-              style={{ background: 'hsl(var(--cream))' }}
+              className="relative aspect-[3/4] overflow-hidden cursor-pointer group block no-underline bg-cream"
             >
-              <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-105" style={{ background: cat.gradient }} />
-              <div className="absolute bottom-[30%] left-1/2 -translate-x-1/2 w-20 h-20 rounded-full border-2 border-white/40 opacity-50">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/25" />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 px-6 py-7" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%)' }}>
+              <img
+                src={cat.image}
+                alt={cat.name}
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div
+                className="absolute inset-0"
+                style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.14) 55%, transparent 100%)' }}
+              />
+              <div className="absolute bottom-0 left-0 right-0 px-6 py-7">
                 <div className="font-serif text-[22px] font-light text-cream-light tracking-[0.05em] mb-1">{cat.name}</div>
                 <div className="text-[10px] tracking-[0.2em] uppercase text-gold-light font-normal">{cat.description}</div>
               </div>
