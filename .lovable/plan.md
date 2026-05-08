@@ -1,72 +1,88 @@
-# Conectar Instagram à seção "Follow Along"
+# Passo a passo: pegar Token + ID do Instagram
 
-A Lovable não tem connector nativo de Instagram, então a integração é feita via **Instagram Graph API da Meta** + uma edge function da Lovable Cloud que busca os posts mais recentes.
-
-> Importante: a antiga **Instagram Basic Display API foi descontinuada em dez/2024**. A única forma oficial e estável hoje é a **Instagram Graph API**, que exige conta **Business** ou **Creator** (não funciona com conta pessoal).
+Tranquilo, vou te guiar do zero. Reserva ~15 min e segue na ordem.
 
 ---
 
-## O que você vai precisar fazer (lado Meta)
+## Etapa 1 — Conta Instagram precisa ser Profissional
 
-1. **Converter `@aureajewels.18k` em conta Business ou Creator** (no app do Instagram → Configurações → Tipo de conta). É grátis.
-2. **Vincular essa conta a uma Página do Facebook** (pode ser uma página nova só pra isso).
-3. Criar um app em https://developers.facebook.com/ → adicionar o produto **Instagram Graph API**.
-4. Gerar um **Long-Lived Access Token** com os escopos: `instagram_basic`, `pages_show_list`, `business_management`.
-5. Pegar o **Instagram Business Account ID** (via Graph Explorer: `me/accounts` → `instagram_business_account`).
+A API só funciona com conta **Business** ou **Creator** (não funciona com pessoal).
 
-Você me entrega 2 valores no final:
-- `INSTAGRAM_ACCESS_TOKEN` (long-lived, dura 60 dias)
-- `INSTAGRAM_BUSINESS_ACCOUNT_ID`
+No app do Instagram (celular):
+1. Vai no perfil → ☰ → **Configurações e privacidade**
+2. **Tipo de conta e ferramentas** → **Mudar para conta profissional**
+3. Categoria: "Joias e relógios" → tipo: **Empresa**
 
----
-
-## O que eu vou construir
-
-### 1. Ativar Lovable Cloud
-Necessário pra rodar a edge function que protege o token (token nunca vai pro browser).
-
-### 2. Edge function `get-instagram-posts`
-- Endpoint público (sem auth) que chama:
-  `GET https://graph.facebook.com/v21.0/{IG_BUSINESS_ID}/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp&limit=6&access_token={TOKEN}`
-- Retorna JSON limpo com os 6 posts mais recentes.
-- Cache de 1h (header `Cache-Control: s-maxage=3600`) pra não estourar limite da API.
-- Trata erros (token expirado, conta sem mídia) retornando array vazio pro front não quebrar.
-
-### 3. Atualizar `src/components/InstagramSection.tsx`
-- Buscar posts via React Query (`useQuery`) chamando a edge function.
-- Renderizar grid de 6 posts reais (foto/thumbnail de vídeo) mantendo o mesmo layout (`grid-cols-6` desktop, `grid-cols-3` mobile, aspect-square, hover com coração e dark-green/55).
-- Cada card linka pro `permalink` do post no Instagram (não mais pro perfil).
-- Fallback: se a API falhar ou ainda não tiver token, mantém os 6 gradientes atuais como placeholder.
-- Loading state suave (skeleton com mesmo gradiente do brand).
-
-### 4. Renovação do token
-Token long-lived dura 60 dias. Opções:
-- **Manual**: você me avisa quando faltar 1 semana e eu te passo o link do Graph Explorer pra gerar outro. Simples.
-- **Automática (recomendada depois)**: criar uma cron edge function que chama `GET /refresh_access_token` toda semana. Posso adicionar num passo seguinte.
+É grátis e dá pra reverter quando quiser.
 
 ---
 
-## Detalhes técnicos
+## Etapa 2 — Criar Página do Facebook e vincular
 
-**Secrets (Lovable Cloud):**
-- `INSTAGRAM_ACCESS_TOKEN`
-- `INSTAGRAM_BUSINESS_ACCOUNT_ID`
+A Meta exige a conta IG vinculada a uma Página do Facebook (mesmo vazia).
 
-**Arquivos:**
-- `supabase/functions/get-instagram-posts/index.ts` (novo)
-- `src/components/InstagramSection.tsx` (modificado)
-
-**Limites Meta:** 200 calls/hora por usuário. Com cache de 1h, ficamos folgados.
-
-**Privacidade:** só posts públicos da conta business são retornados. Stories/Reels privados não aparecem.
+1. Acessa https://www.facebook.com/pages/create
+2. Cria uma Página com nome **Aurea Jewels** (categoria: Joalheria)
+3. Pula tudo (foto, descrição) — não precisa
+4. Volta no app do Instagram → perfil → **Editar perfil** → **Informações da Página** → conecta a Página recém-criada
 
 ---
 
-## Próximo passo
+## Etapa 3 — Criar app no Meta for Developers
 
-Confirma que quer seguir por esse caminho que eu:
-1. Ativo a Lovable Cloud
-2. Crio a edge function e o componente
-3. Te peço os 2 secrets (`INSTAGRAM_ACCESS_TOKEN` e `INSTAGRAM_BUSINESS_ACCOUNT_ID`) via formulário seguro
+1. Vai em https://developers.facebook.com/apps/ (login com seu Facebook pessoal)
+2. **Criar app**
+3. Caso de uso: **Outro** → Avançar
+4. Tipo: **Empresa** → Avançar
+5. Nome do app: `Aurea Jewels Site`, email de contato → **Criar app**
 
-Se a conta `@aureajewels.18k` ainda for **pessoal**, me avisa — primeiro precisa virar Business no app do Instagram, senão a API não retorna nada.
+---
+
+## Etapa 4 — Adicionar produto Instagram + gerar Token
+
+1. No painel do app, menu da esquerda: **Adicionar produto**
+2. Acha **Instagram** → **Configurar**
+3. Vai pra aba **Acesso à API com Conta Profissional do Instagram** (ou similar — "Instagram API setup with Instagram login")
+4. Clica em **Gerar token** (ou "Generate token")
+5. Popup do Instagram abre → faz login com `@aureajewels.18k` → **Permitir tudo**
+6. **Copia o token** que aparece (string longa começando com `IGAA...`)
+
+➡️ Esse é o **Token de Acesso**. Salva num bloco de notas.
+
+---
+
+## Etapa 5 — Pegar o ID da conta
+
+Ainda na mesma tela do passo 4, logo abaixo do token aparece:
+
+- **ID da conta do Instagram** (número longo, ex: `17841401234567890`)
+
+➡️ Copia também esse número.
+
+**Se não aparecer ali**, alternativa:
+- Vai em https://developers.facebook.com/tools/explorer/
+- No topo, em **App Meta**, seleciona o app "Aurea Jewels Site"
+- Em **Token de acesso**, cola o token que você gerou
+- No campo de URL, digita: `me/accounts?fields=instagram_business_account{id,username}`
+- Clica **Enviar** → copia o `id` que aparecer
+
+---
+
+## Etapa 6 — Me manda os 2 valores
+
+Cola aqui no chat assim:
+
+```
+Token: IGAAxxxxxxxxxxxxxxxxxxxxxxxx
+ID: 17841401234567890
+```
+
+Aí eu salvo nos secrets seguros do servidor (nunca aparecem no site público) e ativo a integração. Os 6 quadradinhos da seção "Follow Along" vão começar a mostrar suas últimas 6 postagens reais, cada uma linkando direto pro post no Instagram.
+
+---
+
+## Travou?
+
+Me avisa em qual etapa empacou (1 a 5) e manda print se puder. Eu te desbloqueio.
+
+> ⚠️ Importante: o token dura **60 dias**. Quando faltar 1 semana eu te aviso e a gente gera um novo (leva 2 minutos). Mais pra frente dá pra automatizar isso também.
