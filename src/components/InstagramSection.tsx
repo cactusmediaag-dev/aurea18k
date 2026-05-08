@@ -28,6 +28,10 @@ const InstagramSection = () => {
             href={PROFILE_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => {
+              e.preventDefault();
+              window.open(PROFILE_URL, '_blank', 'noopener,noreferrer');
+            }}
             className="aspect-square overflow-hidden cursor-pointer relative group block"
           >
             <img
