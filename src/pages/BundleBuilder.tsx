@@ -190,7 +190,7 @@ const BundleBuilder = () => {
         </div>
       </section>
 
-      <section className="aurea-section pt-0">
+      <section className="aurea-section pt-0 pb-32 lg:pb-12">
         <div className="grid grid-cols-[1fr_360px] gap-10 max-lg:grid-cols-1">
           {/* Product grid */}
           <div>
@@ -465,6 +465,47 @@ const BundleBuilder = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Sticky mobile bottom bar */}
+      {selected.length > 0 && (
+        <div
+          className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-cream-light border-t border-gold/30 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] animate-in slide-in-from-bottom-4 duration-300"
+          style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
+        >
+          <div className="px-4 pt-3 flex items-center gap-3">
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] tracking-[0.15em] uppercase text-warm-gray">
+                Your {config.name} · {selected.length}/{config.itemCount}
+              </div>
+              {isComplete ? (
+                <div className="flex items-baseline gap-2 mt-0.5">
+                  <span className="font-serif text-lg text-dark-green">${total.toFixed(2)}</span>
+                  <span className="text-xs text-warm-gray line-through">${subtotal.toFixed(2)}</span>
+                </div>
+              ) : (
+                <div className="text-xs text-warm-black mt-0.5 truncate">
+                  ${subtotal.toFixed(2)}
+                  <span className="text-dark-green ml-2">
+                    save ~${discountAmount.toFixed(2)}
+                  </span>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => isComplete && setPreviewOpen(true)}
+              disabled={!isComplete || submitting || isCartLoading}
+              className="btn-aurea-dark px-5 py-3 text-xs whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {isComplete ? (
+                <>Review <ArrowRight className="w-3.5 h-3.5" /></>
+              ) : (
+                `${remaining} to go`
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+
     </PageLayout>
   );
 };
