@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, Link, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Loader2, X, Check, ArrowRight, Sparkles } from 'lucide-react';
+import { Loader2, X, Check, ArrowRight, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
 import { useBundleEligibleProducts } from '@/hooks/useBundleEligibleProducts';
 import { getBundleConfig, getNextTier, BundleType } from '@/lib/bundles';
