@@ -1,38 +1,50 @@
-## Instagram Section - Posts Estáticos
+## Inscrição de e-mail no marketing do Shopify (Admin API)
 
 ### Objetivo
-Substituir a integração dinâmica com a API do Instagram por imagens estáticas enviadas pelo usuário, mantendo o mesmo layout visual e links para o perfil @aureajewels.18k.
+Quando alguém envia o e-mail no formulário "Join the Inner Circle", o e-mail entra direto na lista de **email subscribers** do Shopify (com `emailMarketingConsent: SUBSCRIBED`), disparando o fluxo de double opt-in que você já tem ativo.
 
-### Como vai funcionar
+### Por que precisa de edge function
+A Storefront API (que roda no navegador) não permite mais marcar `acceptsMarketing`. Só a **Admin API** consegue — mas o token de Admin nunca pode ir pro frontend. Por isso, a chamada vai numa edge function backend que usa o `SHOPIFY_ACCESS_TOKEN` já armazenado nos secrets.
 
-1. **Usuário envia as imagens** — Até 6 fotos diretamente no chat (upload do Lovable).
-2. **Armazenamento no projeto** — As imagens serão salvas em `public/instagram/` para serem servidas como arquivos estáticos.
-3. **Atualização do componente** — `InstagramSection.tsx` será simplificado:
-   - Remover a chamada à API via `useQuery` e edge function
-   - Usar array estático de imagens locais
-   - Manter hover effects, link para o perfil e layout de grid 6 colunas
-   - Remover a edge function `get-instagram-posts` (não será mais necessária)
+### Fluxo
 
-### Fluxo técnico
-
-```
-Usuário envia 6 imagens no chat
+```text
+Usuário digita e-mail → submit
         ↓
-Salvar em public/instagram/photo-1.jpg ... photo-6.jpg
+Frontend chama supabase.functions.invoke('subscribe-newsletter', { email })
         ↓
-Atualizar InstagramSection.tsx com array de imagens locais
+Edge function valida e-mail (zod)
         ↓
-Cada imagem linka para https://instagram.com/aureajewels.18k
+Edge function chama Admin GraphQL: customerCreate
+  com emailMarketingConsent: { marketingState: SUBSCRIBED, marketingOptInLevel: CONFIRMED_OPT_IN }
+        ↓
+Shopify cria o customer + dispara e-mail de double opt-in (já configurado no admin)
+        ↓
+Frontend mostra toast "Check your inbox to confirm"
 ```
 
-### Detalhes de implementação
+### Arquivos
 
-- **Componente**: `src/components/InstagramSection.tsx`
-  - Remover import de `useQuery` e `supabase`
-  - Criar array `STATIC_POSTS` com paths das imagens
-  - Manter estrutura visual atual (grid 6 cols, hover overlay com ♡, aspect-square)
-- **Assets**: `public/instagram/photo-{1..6}.jpg`
-- **Cleanup**: Remover/supabase/functions/get-instagram-posts/ (edge function não será mais usada)
+**1. Nova edge function**: `supabase/functions/subscribe-newsletter/index.ts`
+- CORS handler
+- Valida body com zod (`{ email: string().email() }`)
+- Chama Admin API: `https://hd5ps3-wc.myshopify.com/admin/api/2025-07/graphql.json`
+  - Mutation: `customerCreate(input: { email, emailMarketingConsent: { marketingState: SUBSCRIBED, marketingOptInLevel: CONFIRMED_OPT_IN } })`
+  - Header: `X-Shopify-Access-Token: ${Deno.env.get('SHOPIFY_ACCESS_TOKEN')}`
+- Trata erro `TAKEN` (e-mail já existe) como sucesso silencioso
+- Retorna `{ success: true, alreadySubscribed?: boolean }` ou erro 400/500
 
-### Próximo passo
-Aguardando o usuário enviar as 6 imagens pelo chat para iniciar a implementação.
+**2. Atualizar `src/components/EmailCaptureSection.tsx`**
+- Remover a chamada direta à Storefront API e o `generatePassword`
+- Trocar por `supabase.functions.invoke('subscribe-newsletter', { body: { email } })`
+- Mensagem de sucesso atualizada: "Check your inbox to confirm and grab 10% off."
+
+### Detalhes técnicos
+- Edge function deploy automático após criação
+- `verify_jwt = false` (default) — endpoint público, validação do e-mail feita server-side
+- Sem rate limiting elaborado (volume baixo de newsletter); se virar problema, adiciono depois com tabela no Supabase
+- Não loga e-mails no console pra evitar exposição de PII
+
+### O que NÃO muda
+- Toggle de "Dupla confirmação de marketing" no Shopify continua sendo o que dispara o e-mail de confirmação (mantenha ativo)
+- Cupom de 10% off precisa ser configurado por você no Shopify e incluído no template do e-mail de boas-vindas (também pelo admin do Shopify, em Settings → Notifications → Customer email templates)

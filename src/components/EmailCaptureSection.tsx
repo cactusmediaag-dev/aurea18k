@@ -1,25 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
-import { storefrontApiRequest } from '@/lib/shopify';
-
-const CUSTOMER_CREATE_MUTATION = `
-  mutation customerCreate($input: CustomerCreateInput!) {
-    customerCreate(input: $input) {
-      customer { id email }
-      customerUserErrors { code field message }
-    }
-  }
-`;
-
-function generatePassword(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
-  let pw = '';
-  const arr = new Uint32Array(24);
-  crypto.getRandomValues(arr);
-  for (let i = 0; i < 24; i++) pw += chars[arr[i] % chars.length];
-  return pw;
-}
+import { supabase } from '@/integrations/supabase/client';
 
 const EmailCaptureSection = () => {
   const [email, setEmail] = useState('');
@@ -31,29 +13,24 @@ const EmailCaptureSection = () => {
 
     setSubmitting(true);
     try {
-      const data = await storefrontApiRequest(CUSTOMER_CREATE_MUTATION, {
-        input: {
-          email,
-          password: generatePassword(),
-        },
+      const { data, error } = await supabase.functions.invoke('subscribe-newsletter', {
+        body: { email: email.trim() },
       });
 
-      const errors = data?.data?.customerCreate?.customerUserErrors || [];
-      const alreadyExists = errors.some(
-        (err: { code: string }) => err.code === 'CUSTOMER_DISABLED' || err.code === 'TAKEN',
-      );
-
-      if (data?.data?.customerCreate?.customer || alreadyExists) {
-        toast.success("You're in! Check your inbox for 10% off.", { position: 'top-center' });
+      if (error) {
+        toast.error('Could not subscribe. Please try again.', { position: 'top-center' });
+      } else if (data?.success) {
+        toast.success(
+          data.alreadySubscribed
+            ? "You're already on the list — check your inbox for 10% off."
+            : "You're in! Check your inbox to confirm and grab 10% off.",
+          { position: 'top-center' },
+        );
         setEmail('');
-      } else if (errors.length > 0) {
-        const msg = errors[0]?.message || 'Something went wrong. Please try again.';
-        toast.error(msg, { position: 'top-center' });
       } else {
         toast.error('Could not subscribe. Please try again.', { position: 'top-center' });
       }
-    } catch (err) {
-      console.error('Newsletter signup failed:', err);
+    } catch {
       toast.error('Could not subscribe. Please try again.', { position: 'top-center' });
     } finally {
       setSubmitting(false);
