@@ -1,9 +1,9 @@
-import post1 from '@/assets/instagram/post-1.png';
-import post2 from '@/assets/instagram/post-2.png';
-import post3 from '@/assets/instagram/post-3.png';
-import post4 from '@/assets/instagram/post-4.png';
-import post5 from '@/assets/instagram/post-5.png';
-import post6 from '@/assets/instagram/post-6.png';
+import post1 from '@/assets/instagram/post-1.jpg';
+import post2 from '@/assets/instagram/post-2.jpg';
+import post3 from '@/assets/instagram/post-3.jpg';
+import post4 from '@/assets/instagram/post-4.jpg';
+import post5 from '@/assets/instagram/post-5.jpg';
+import post6 from '@/assets/instagram/post-6.jpg';
 
 const PROFILE_URL = 'https://www.instagram.com/aureajewels.18k/';
 
