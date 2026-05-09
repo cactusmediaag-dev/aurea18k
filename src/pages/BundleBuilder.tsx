@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Loader2, X, Check, ArrowRight, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
+import OptimizedImage from '@/components/OptimizedImage';
 import { useBundleEligibleProducts } from '@/hooks/useBundleEligibleProducts';
 import { getBundleConfig, getNextTier, BundleType } from '@/lib/bundles';
 import { useCartStore } from '@/stores/cartStore';
