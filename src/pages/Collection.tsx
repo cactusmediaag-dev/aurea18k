@@ -5,6 +5,7 @@ import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 import { Loader2, ShoppingBag } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
+import OptimizedImage from '@/components/OptimizedImage';
 import bannerWomens from '@/assets/banner-womens.jpg';
 import bannerMens from '@/assets/banner-mens.jpg';
 import bannerKids from '@/assets/banner-kids.jpg';
