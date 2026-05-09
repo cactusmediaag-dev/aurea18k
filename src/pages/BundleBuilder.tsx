@@ -136,6 +136,7 @@ const BundleBuilder = () => {
         selectedOptions: variant.selectedOptions,
       },
     ]);
+    setSheetCollapsed(true);
   };
 
   const removePiece = (uid: string) => {
