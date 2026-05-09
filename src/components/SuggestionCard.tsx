@@ -85,7 +85,7 @@ const SuggestionCard = ({ product, onAdded, variant = 'compact' }: SuggestionCar
   return (
     <div className="group">
       <div className="aspect-square bg-cream border border-gold/25 overflow-hidden mb-2">
-        {image && <img src={image.url} alt={product.node.title} className="w-full h-full object-cover" />}
+        {image && <OptimizedImage src={image.url} alt={product.node.title} preset="card" className="w-full h-full object-cover" />}
       </div>
       <div className="font-serif text-[13px] text-warm-black truncate">{product.node.title}</div>
       <div className="flex items-center justify-between mt-1">
