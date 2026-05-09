@@ -200,8 +200,10 @@ const BundleBuilder = () => {
                 {slot ? (
                   slot.product.node.images.edges[0]?.node && (
                     <img
-                      src={slot.product.node.images.edges[0].node.url}
+                      src={slot.product.node.images.edges[0].node.url + '?width=160'}
                       alt=""
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover"
                     />
                   )
