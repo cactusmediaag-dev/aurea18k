@@ -417,7 +417,7 @@ const BundleBuilder = () => {
               return (
                 <div key={s.uid} className="flex gap-3 p-2 bg-cream border border-gold/20">
                   <div className="w-16 h-16 bg-cream flex-shrink-0 overflow-hidden">
-                    {img && <img src={img.url} alt="" className="w-full h-full object-cover" />}
+                    {img && <img src={img.url + '?width=200'} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-serif text-sm text-dark-green leading-tight">
