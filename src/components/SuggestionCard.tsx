@@ -2,6 +2,7 @@ import { Loader2, Plus } from 'lucide-react';
 import { ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { useState } from 'react';
+import OptimizedImage from '@/components/OptimizedImage';
 
 interface SuggestionCardProps {
   product: ShopifyProduct;
