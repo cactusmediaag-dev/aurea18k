@@ -111,7 +111,7 @@ const ProductDetail = () => {
           <div>
             <div className="aspect-square bg-cream overflow-hidden mb-4">
               {images[selectedImage]?.node ? (
-                <img src={images[selectedImage].node.url} alt={images[selectedImage].node.altText || product.node.title} className="w-full h-full object-cover" />
+                <OptimizedImage src={images[selectedImage].node.url} alt={images[selectedImage].node.altText || product.node.title} preset="detail" priority className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <div className="w-20 h-20 border-2 border-gold rounded-full opacity-50" />
