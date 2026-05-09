@@ -38,6 +38,7 @@ const InstagramSection = () => {
               src={src}
               alt={`Aurea Jewels Instagram post ${i + 1}`}
               loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-dark-green/55 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-cream-light text-[22px]">

@@ -22,6 +22,7 @@ const CategoriesSection = () => (
             src={cat.image}
             alt={cat.name}
             loading="lazy"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute bottom-0 left-0 right-0 px-6 py-7" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 70%, transparent 100%)' }}>

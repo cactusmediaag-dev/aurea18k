@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
+import OptimizedImage from '@/components/OptimizedImage';
 import { getSwatchColor, isColorOption } from '@/lib/colorSwatch';
 
 const PRODUCT_BY_HANDLE_QUERY = `
@@ -110,7 +111,7 @@ const ProductDetail = () => {
           <div>
             <div className="aspect-square bg-cream overflow-hidden mb-4">
               {images[selectedImage]?.node ? (
-                <img src={images[selectedImage].node.url} alt={images[selectedImage].node.altText || product.node.title} className="w-full h-full object-cover" />
+                <OptimizedImage src={images[selectedImage].node.url} alt={images[selectedImage].node.altText || product.node.title} preset="detail" priority className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <div className="w-20 h-20 border-2 border-gold rounded-full opacity-50" />
@@ -121,7 +122,7 @@ const ProductDetail = () => {
               <div className="flex gap-2">
                 {images.map((img, i) => (
                   <button key={i} onClick={() => setSelectedImage(i)} className={`w-16 h-16 border overflow-hidden cursor-pointer bg-cream ${i === selectedImage ? 'border-gold' : 'border-gold/25'}`}>
-                    <img src={img.node.url} alt="" className="w-full h-full object-cover" />
+                    <OptimizedImage src={img.node.url} alt="" preset="thumb" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>

@@ -5,6 +5,7 @@ import { useCartStore } from '@/stores/cartStore';
 import { toast } from 'sonner';
 import { Loader2, ShoppingBag } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
+import OptimizedImage from '@/components/OptimizedImage';
 import bannerWomens from '@/assets/banner-womens.jpg';
 import bannerMens from '@/assets/banner-mens.jpg';
 import bannerKids from '@/assets/banner-kids.jpg';
@@ -174,11 +175,11 @@ const Collection = () => {
                     <Link to={`/product/${product.node.handle}`} className="block no-underline">
                       <div className="aspect-square bg-cream overflow-hidden mb-3 relative">
                         {image ? (
-                          <img
+                          <OptimizedImage
                             src={image.url}
                             alt={image.altText || product.node.title}
+                            preset="card"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            loading="lazy"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">

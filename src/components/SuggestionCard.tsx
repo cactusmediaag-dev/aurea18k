@@ -2,6 +2,7 @@ import { Loader2, Plus } from 'lucide-react';
 import { ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { useState } from 'react';
+import OptimizedImage from '@/components/OptimizedImage';
 
 interface SuggestionCardProps {
   product: ShopifyProduct;
@@ -38,7 +39,7 @@ const SuggestionCard = ({ product, onAdded, variant = 'compact' }: SuggestionCar
     return (
       <div className="flex items-center gap-3 bg-cream border border-gold/30 p-3">
         <div className="w-12 h-12 bg-cream-light flex-shrink-0 overflow-hidden border border-gold/20">
-          {image && <img src={image.url} alt={product.node.title} className="w-full h-full object-cover" />}
+          {image && <OptimizedImage src={image.url} alt={product.node.title} preset="thumb" className="w-full h-full object-cover" />}
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-[10px] tracking-[0.12em] uppercase text-gold-dark font-medium">
@@ -62,7 +63,7 @@ const SuggestionCard = ({ product, onAdded, variant = 'compact' }: SuggestionCar
     return (
       <div className="flex gap-3 items-center py-2">
         <div className="w-14 h-14 bg-cream flex-shrink-0 border border-gold/25 overflow-hidden">
-          {image && <img src={image.url} alt={product.node.title} className="w-full h-full object-cover" />}
+          {image && <OptimizedImage src={image.url} alt={product.node.title} preset="thumb" className="w-full h-full object-cover" />}
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-serif text-[13px] text-warm-black truncate">{product.node.title}</div>
@@ -84,7 +85,7 @@ const SuggestionCard = ({ product, onAdded, variant = 'compact' }: SuggestionCar
   return (
     <div className="group">
       <div className="aspect-square bg-cream border border-gold/25 overflow-hidden mb-2">
-        {image && <img src={image.url} alt={product.node.title} className="w-full h-full object-cover" />}
+        {image && <OptimizedImage src={image.url} alt={product.node.title} preset="card" className="w-full h-full object-cover" />}
       </div>
       <div className="font-serif text-[13px] text-warm-black truncate">{product.node.title}</div>
       <div className="flex items-center justify-between mt-1">

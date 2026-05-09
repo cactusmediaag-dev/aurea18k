@@ -140,7 +140,7 @@ const SearchModal = ({ open, onClose }: SearchModalProps) => {
       >
         <div className="w-14 h-14 bg-cream rounded-lg flex-shrink-0 overflow-hidden">
           {item.image ? (
-            <img src={item.image} alt={item.title} className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-300" />
+            <img src={item.image + '?width=160'} alt={item.title} loading="lazy" decoding="async" className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-300" />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               <div className="w-7 h-7 border border-gold/30 rounded-full" />
