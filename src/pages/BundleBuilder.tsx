@@ -306,7 +306,7 @@ const BundleBuilder = () => {
         </div>
       </section>
 
-      <section className="aurea-section pt-0 pb-32 lg:pb-12">
+      <section className="aurea-section pt-0 pb-24 lg:pb-12">
         <div className="grid grid-cols-[1fr_360px] gap-10 max-lg:grid-cols-1">
           {/* Product grid */}
           <div>
