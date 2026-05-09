@@ -175,11 +175,11 @@ const Collection = () => {
                     <Link to={`/product/${product.node.handle}`} className="block no-underline">
                       <div className="aspect-square bg-cream overflow-hidden mb-3 relative">
                         {image ? (
-                          <img
+                          <OptimizedImage
                             src={image.url}
                             alt={image.altText || product.node.title}
+                            preset="card"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            loading="lazy"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
