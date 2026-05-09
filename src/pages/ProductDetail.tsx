@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
+import OptimizedImage from '@/components/OptimizedImage';
 import { getSwatchColor, isColorOption } from '@/lib/colorSwatch';
 
 const PRODUCT_BY_HANDLE_QUERY = `
