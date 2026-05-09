@@ -34,7 +34,7 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
     <div className="cursor-pointer transition-transform duration-300 hover:-translate-y-1 group" onClick={() => navigate(`/product/${product.node.handle}`)}>
       <div className="relative aspect-square mb-4 overflow-hidden" style={{ background: 'hsl(var(--cream))' }}>
         {image ? (
-          <img src={image.url} alt={image.altText || product.node.title} className="w-full h-full object-cover" />
+          <OptimizedImage src={image.url} alt={image.altText || product.node.title} preset="card" className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <div className="w-[60px] h-[60px] border-2 border-gold rounded-full opacity-50" />
