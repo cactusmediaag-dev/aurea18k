@@ -1,54 +1,74 @@
 ## Problema
 
-No mobile, ao selecionar uma peça:
-1. **Sheet abre expandido** ocupando ~80% da tela — usuário não consegue continuar vendo/escolhendo produtos.
-2. **Quando minimiza**, a barra colapsada quebra: o título "YOUR THE DUO" aparece quebrado em várias linhas, "1/2" some pra baixo, e o botão "1 TO GO" fica desproporcionalmente largo, com layout visivelmente bugado.
+Os banners adicionados pesam **1.7–2.2 MB cada** (JPGs ~1774×887). Total ~15 MB. Mesmo com `loading="eager"`, o navegador demora segundos pra baixar — não é "instantâneo".
 
-## Solução
+Banners afetados em `src/assets/`:
 
-### 1. Sheet inicia colapsado (não expandido)
+- `banner-bestsellers.jpg` (1.7 MB)
+- `banner-bundles.jpg` (1.8 MB)
+- `banner-gifts.jpg` (1.8 MB)
+- `banner-kids.jpg` (2.1 MB)
+- `banner-mens.jpg` (1.9 MB)
+- `banner-newarrivals.jpg` (1.7 MB)
+- `banner-womens.jpg` (1.8 MB)
+- `about-hero.jpg` (2.2 MB)
+- `about-brazil.jpg` e `about-craft.jpg` (~2 MB cada — usados em About)
 
-Mudar o default de `sheetCollapsed` para `true`. Assim, ao selecionar a primeira peça, o rodapé sobe **já compacto**, mostrando só o resumo essencial. Usuário continua vendo o grid de produtos e pode expandir tocando no chevron quando quiser revisar/finalizar.
+Usados em: `Collection.tsx` (banner topo), `About.tsx` (hero + 2 sessões), `BrandStorySection.tsx`.
 
-Também resetar para colapsado a cada nova adição de peça (`addPiece` faz `setSheetCollapsed(true)`), pra garantir que após qualquer ação ele volta ao estado mínimo.
+## Plano
 
-### 2. Refazer o layout da barra colapsada
+### 1. Comprimir todos os banners para WebP em múltiplas larguras
 
-Trocar a estrutura atual (que está deixando o botão esticar e o título quebrar) por um layout horizontal sólido em duas colunas:
+Pra cada banner, gerar 3 versões em **WebP qualidade 78** (sem perda visível, 8–10× menor que JPG):
 
 ```text
-┌────────────────────────────────────────────────────┐
-│  ─── (grabber)                              ⌃     │
-│  Your The Duo · 1/2              [ 1 TO GO  → ]   │
-│  $37.00  save ~$5.55                              │
-└────────────────────────────────────────────────────┘
+banner-womens-800.webp    ~40–60 KB
+banner-womens-1200.webp   ~80–120 KB
+banner-womens-1800.webp   ~140–200 KB
 ```
 
-Mudanças concretas:
-- Título "Your {config.name} · X/Y" em **uma linha só** com `whitespace-nowrap truncate` no container `flex-1 min-w-0`.
-- Linha de preço logo abaixo, também `truncate`, fonte menor.
-- Botão à direita com `shrink-0`, padding compacto (`px-4 py-2.5`), texto curto (`Review →` ou `${remaining} to go`), `text-[11px] tracking-[0.1em] uppercase`.
-- Container externo: `px-4 py-2 flex items-center gap-3` — sem wrap.
-- Chevron de expand fica no canto superior direito acima do conteúdo (separado da grabber).
-- Quando colapsado, **tap em qualquer parte da barra (exceto botão) expande** — e o botão "Review" / "X to go" tem `e.stopPropagation()`.
+Reduz cada banner de ~1.8 MB → ~90 KB no desktop e ~50 KB no mobile.
 
-### 3. Sheet expandido com altura limitada e backdrop sutil
+### 2. Trocar `<img>` por `<picture>` responsivo
 
-Quando o usuário expande manualmente:
-- `max-h-[70vh]` (em vez de 75vh) e `overflow-y-auto` interno.
-- Adicionar um backdrop opcional `bg-black/20` clicável atrás do sheet expandido pra fechar (volta a colapsar).
-- Manter animação suave de altura.
+Em `Collection.tsx` e `About.tsx`, usar `<picture>` com `srcset` + `sizes` para o navegador escolher a versão certa:
 
-### 4. Padding inferior da página
+- `loading="eager"` + `fetchpriority="high"` (banners são LCP)
+- `decoding="async"`
+- `width`/`height` definidos (zero CLS — sem pulo de layout)
 
-Ajustar `pb-32 lg:pb-12` para `pb-24 lg:pb-12` — suficiente pra barra colapsada (~80px) sem desperdiçar espaço.
+### 3. Preload do banner no `<head>`
 
-## Arquivo a editar
+Adicionar `<link rel="preload" as="image" imagesrcset="...">` dinâmico via React quando entra na página de coleção. O navegador começa a baixar antes do componente renderizar.
 
-- `src/pages/BundleBuilder.tsx` — único arquivo. Mudar default state, ajustar `addPiece`, refazer JSX do bloco colapsado, adicionar backdrop opcional no expandido.
+### 4. Manter JPG original como fallback
 
-## Não muda
+O `<picture>` inclui o JPG como fallback `<source>`. Browsers modernos (97%+) pegam WebP automaticamente; legados pegam JPG.
 
-- Layout desktop (sidebar lateral sticky).
-- Conteúdo do `BundleSummaryPanel` (mesmo painel completo).
-- Lógica de seleção, dialog de Review, fluxo de checkout.
+## Detalhes técnicos
+
+- Conversão via **ImageMagick** (`-resize {w}x -quality 78 -strip`) — `-strip` remove EXIF
+- WebP suportado em 97% dos navegadores
+- Não deletar JPGs originais — ficam só como fallback (sem custo pra browsers modernos)
+
+## Impacto esperado
+
+
+| Métrica                  | Antes  | Depois |
+| ------------------------ | ------ | ------ |
+| Banner desktop (1200w)   | 1.8 MB | ~90 KB |
+| Banner mobile (800w)     | 1.8 MB | ~50 KB |
+| Download em 4G (~5 Mbps) | 2.9 s  | 0.15 s |
+| LCP típico               | 3–4 s  | < 1 s  |
+
+
+## Arquivos afetados
+
+- `src/assets/banner-*-{800,1200,1800}.webp` (24 arquivos novos)
+- `src/assets/about-hero-*.webp`, `about-brazil-*.webp`, `about-craft-*.webp` (9 novos)
+- `src/pages/Collection.tsx` — img → picture com srcset + preload
+- `src/pages/About.tsx` — mesmo tratamento nas 3 imagens
+- `src/components/BrandStorySection.tsx` — picture com srcset  
+  
+EXISTEM MAIS DE 30 BANNERS NO SITE - OTIMIZE TUDO!!!!!!!!!!!!!!!!
