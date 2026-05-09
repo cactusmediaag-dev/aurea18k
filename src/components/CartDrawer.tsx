@@ -122,7 +122,7 @@ const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                     <div key={item.variantId} className="flex gap-3.5">
                       <div className="w-[60px] h-[60px] bg-cream border border-gold/25 flex-shrink-0 overflow-hidden">
                         {item.product.node.images?.edges?.[0]?.node ? (
-                          <img src={item.product.node.images.edges[0].node.url} alt={item.product.node.title} className="w-full h-full object-cover" />
+                          <img src={item.product.node.images.edges[0].node.url + '?width=160'} alt={item.product.node.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-xl">◎</div>
                         )}
