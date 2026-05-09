@@ -19,12 +19,15 @@ import NotFound from "./pages/NotFound.tsx";
 import Collections from "./pages/Collections.tsx";
 import Collection from "./pages/Collection.tsx";
 import BundleBuilder from "./pages/BundleBuilder.tsx";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
   useCartSync();
   return (
+    <>
+    <ScrollToTop />
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/product/:handle" element={<ProductDetail />} />
