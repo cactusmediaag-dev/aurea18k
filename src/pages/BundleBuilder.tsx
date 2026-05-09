@@ -497,6 +497,16 @@ const BundleBuilder = () => {
               >
                 <div className="w-10 h-1 bg-gold/40 rounded-full mx-auto mt-2 mb-2" />
                 <div className="px-4 pb-3 flex items-center gap-3">
+                  {/* Thumbnail of first selected piece */}
+                  {selected[0]?.product.node.images.edges[0]?.node && (
+                    <div className="w-10 h-10 flex-shrink-0 overflow-hidden border border-gold/20 bg-cream">
+                      <img
+                        src={selected[0].product.node.images.edges[0].node.url}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="text-[10px] tracking-[0.15em] uppercase text-warm-gray truncate">
                       Your {config.name} · {selected.length}/{config.itemCount}
