@@ -366,11 +366,11 @@ const BundleBuilder = () => {
                     >
                       <div className="aspect-square overflow-hidden bg-cream relative">
                         {image && (
-                          <img
+                          <OptimizedImage
                             src={image.url}
                             alt={image.altText || p.node.title}
+                            preset="card"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            loading="lazy"
                           />
                         )}
                         {isSelected && (
