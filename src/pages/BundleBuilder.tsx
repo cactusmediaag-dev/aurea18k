@@ -504,8 +504,10 @@ const BundleBuilder = () => {
                   {selected[0]?.product.node.images.edges[0]?.node && (
                     <div className="w-10 h-10 flex-shrink-0 overflow-hidden border border-gold/20 bg-cream">
                       <img
-                        src={selected[0].product.node.images.edges[0].node.url}
+                        src={selected[0].product.node.images.edges[0].node.url + '?width=120'}
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                       />
                     </div>
