@@ -122,7 +122,7 @@ const ProductDetail = () => {
               <div className="flex gap-2">
                 {images.map((img, i) => (
                   <button key={i} onClick={() => setSelectedImage(i)} className={`w-16 h-16 border overflow-hidden cursor-pointer bg-cream ${i === selectedImage ? 'border-gold' : 'border-gold/25'}`}>
-                    <img src={img.node.url} alt="" className="w-full h-full object-cover" />
+                    <OptimizedImage src={img.node.url} alt="" preset="thumb" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
