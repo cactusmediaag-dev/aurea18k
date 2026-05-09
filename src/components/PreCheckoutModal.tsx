@@ -76,7 +76,7 @@ const PreCheckoutModal = ({ open, onOpenChange, onContinueToCheckout }: PreCheck
             return (
               <div key={product.node.id} className="flex items-center gap-3 bg-cream border border-gold/25 p-2.5">
                 <div className="w-14 h-14 bg-cream-light flex-shrink-0 border border-gold/20 overflow-hidden">
-                  {image && <img src={image.url} alt={product.node.title} className="w-full h-full object-cover" />}
+                  {image && <img src={image.url + '?width=160'} alt={product.node.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-serif text-[13px] leading-tight text-warm-black line-clamp-2">{product.node.title}</div>
