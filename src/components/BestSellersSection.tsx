@@ -3,6 +3,7 @@ import { useCartStore, ShopifyProduct } from '@/stores/cartStore';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import OptimizedImage from '@/components/OptimizedImage';
 
 const ProductCard = ({ product }: { product: ShopifyProduct }) => {
   const addItem = useCartStore(state => state.addItem);
