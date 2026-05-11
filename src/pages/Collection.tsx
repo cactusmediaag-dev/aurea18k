@@ -134,12 +134,13 @@ const Collection = () => {
       <div className="bg-cream-light min-h-[60vh]">
         {/* Banner / Header */}
         {banner ? (
-          <div className="w-full overflow-hidden">
+          <div className="w-full overflow-hidden border-y border-gold/15 h-[200px] max-md:h-[140px] max-sm:h-[110px]">
             <img
               src={banner}
               alt={title}
-              className="w-full h-auto block"
+              className="w-full h-full object-cover block"
               loading="eager"
+              fetchPriority="high"
             />
           </div>
         ) : (
