@@ -1,85 +1,74 @@
-# Tamanho do banner — faixa do header da categoria
+## Problema
 
-## Medida real da faixa atual
+Os banners adicionados pesam **1.7–2.2 MB cada** (JPGs ~1774×887). Total ~15 MB. Mesmo com `loading="eager"`, o navegador demora segundos pra baixar — não é "instantâneo".
 
-A "faixinha" no topo da página (entre as duas linhas douradas, contendo `AUREA JEWELS` + nome da categoria) tem hoje, no CSS de `Collection.tsx`:
+Banners afetados em `src/assets/`:
+
+- `banner-bestsellers.jpg` (1.7 MB)
+- `banner-bundles.jpg` (1.8 MB)
+- `banner-gifts.jpg` (1.8 MB)
+- `banner-kids.jpg` (2.1 MB)
+- `banner-mens.jpg` (1.9 MB)
+- `banner-newarrivals.jpg` (1.7 MB)
+- `banner-womens.jpg` (1.8 MB)
+- `about-hero.jpg` (2.2 MB)
+- `about-brazil.jpg` e `about-craft.jpg` (~2 MB cada — usados em About)
+
+Usados em: `Collection.tsx` (banner topo), `About.tsx` (hero + 2 sessões), `BrandStorySection.tsx`.
+
+## Plano
+
+### 1. Comprimir todos os banners para WebP em múltiplas larguras
+
+Pra cada banner, gerar 3 versões em **WebP qualidade 78** (sem perda visível, 8–10× menor que JPG):
 
 ```text
-<div className="text-center py-14 border-b border-gold/15">
+banner-womens-800.webp    ~40–60 KB
+banner-womens-1200.webp   ~80–120 KB
+banner-womens-1800.webp   ~140–200 KB
 ```
 
-- **Largura:** 100% da viewport (full-width, sem `max-w`)
-- **Altura renderizada:** `py-14` = 56px topo + 56px base = **112px de padding** + conteúdo (label ~18px + título ~50px) ≈ **~180–200px** no desktop
-- **Aspect ratio resultante:** em tela cheia (1920px) ≈ **~9.6 : 1** (1920 × 200)
+Reduz cada banner de ~1.8 MB → ~90 KB no desktop e ~50 KB no mobile.
 
-## Especificação final do arquivo de banner
+### 2. Trocar `<img>` por `<picture>` responsivo
 
-Para ficar nítido em telas Retina e cobrir até 2560px de largura sem perder qualidade, criar os arquivos em **resolução 2x**:
+Em `Collection.tsx` e `About.tsx`, usar `<picture>` com `srcset` + `sizes` para o navegador escolher a versão certa:
 
-| Item | Valor |
-|---|---|
-| **Dimensão do arquivo** | **2400 × 280 px** (ratio ~8.6:1) |
-| **Formato** | JPG, qualidade 80, EXIF removido (~150–250 KB) |
-| **Conteúdo** | Apenas imagem — **sem texto** |
-| **Área segura** | Manter foco visual nos 60% centrais (corte lateral em telas largas) |
-| **Renderização no site** | Full-width, `object-cover`, altura travada em `~200px` desktop / `~120px` mobile (substitui exatamente a faixinha atual, mantendo o mesmo "encaixe" entre as linhas douradas) |
+- `loading="eager"` + `fetchpriority="high"` (banners são LCP)
+- `decoding="async"`
+- `width`/`height` definidos (zero CLS — sem pulo de layout)
 
-> Observação: o usuário sugeriu "2400 × 300". Vou usar **2400 × 280** (ratio mais próximo do que a faixa renderiza hoje). Se preferir 2400×300, também funciona — a diferença é mínima e o `object-cover` ajusta.
+### 3. Preload do banner no `<head>`
 
-## Implementação no código (Collection.tsx)
+Adicionar `<link rel="preload" as="image" imagesrcset="...">` dinâmico via React quando entra na página de coleção. O navegador começa a baixar antes do componente renderizar.
 
-Substituir o bloco do banner por uma altura fixa que replica a faixa:
+### 4. Manter JPG original como fallback
 
-```tsx
-<div className="w-full overflow-hidden border-y border-gold/15 h-[200px] max-md:h-[140px] max-sm:h-[110px]">
-  <img src={banner} alt={title} className="w-full h-full object-cover block" loading="eager" fetchPriority="high" />
-</div>
-```
+O `<picture>` inclui o JPG como fallback `<source>`. Browsers modernos (97%+) pegam WebP automaticamente; legados pegam JPG.
 
-Assim qualquer banner que você criar em **2400×280** vai encaixar perfeitamente na mesma altura da faixa "AUREA JEWELS / All Jewelry" atual.
+## Detalhes técnicos
 
-## Checklist final de banners faltando (28 arquivos — todos 2400×280)
+- Conversão via **ImageMagick** (`-resize {w}x -quality 78 -strip`) — `-strip` remove EXIF
+- WebP suportado em 97% dos navegadores
+- Não deletar JPGs originais — ficam só como fallback (sem custo pra browsers modernos)
 
-**All Jewelry**
-- [ ] `banner-all-jewelry.jpg`
+## Impacto esperado
 
-**Women's (9)**
-- [ ] `banner-womens-rings.jpg`
-- [ ] `banner-womens-earrings.jpg`
-- [ ] `banner-womens-necklaces.jpg`
-- [ ] `banner-womens-bracelets.jpg`
-- [ ] `banner-womens-chokers.jpg`
-- [ ] `banner-everyday-essentials.jpg`
-- [ ] `banner-statement-pieces.jpg`
-- [ ] `banner-minimal-collection.jpg`
-- [ ] `banner-layering-pieces.jpg`
 
-**Men's (7)**
-- [ ] `banner-mens-rings.jpg`
-- [ ] `banner-mens-chains.jpg`
-- [ ] `banner-mens-bracelets.jpg`
-- [ ] `banner-mens-stud-earrings.jpg`
-- [ ] `banner-mens-scapular-necklaces.jpg`
-- [ ] `banner-minimal-men.jpg`
-- [ ] `banner-classic-collection.jpg`
+| Métrica                  | Antes  | Depois |
+| ------------------------ | ------ | ------ |
+| Banner desktop (1200w)   | 1.8 MB | ~90 KB |
+| Banner mobile (800w)     | 1.8 MB | ~50 KB |
+| Download em 4G (~5 Mbps) | 2.9 s  | 0.15 s |
+| LCP típico               | 3–4 s  | < 1 s  |
 
-**Kids (5)**
-- [ ] `banner-kids-earrings.jpg`
-- [ ] `banner-kids-necklaces.jpg`
-- [ ] `banner-kids-bracelets.jpg`
-- [ ] `banner-kids-chokers.jpg`
-- [ ] `banner-hypoallergenic-kids.jpg`
 
-**Collections / Sidebar direita (5)**
-- [ ] `banner-trending-now.jpg`
-- [ ] `banner-under-50.jpg`
-- [ ] `banner-limited-drop.jpg`
-- [ ] `banner-gift-ready.jpg`
-- [ ] `banner-his-hers-sets.jpg`
+## Arquivos afetados
 
-## O que vou fazer ao implementar
-
-1. Travar a altura do banner em `Collection.tsx` para **200px desktop / 140px tablet / 110px mobile** (replica a faixa atual).
-2. Mapear cada handle no `getCollectionBanner()` para o arquivo correspondente.
-3. Manter `loading="eager"` + `fetchPriority="high"` (LCP).
-4. Quando você subir os arquivos em `src/assets/`, é só me avisar que eu ligo cada um.
+- `src/assets/banner-*-{800,1200,1800}.webp` (24 arquivos novos)
+- `src/assets/about-hero-*.webp`, `about-brazil-*.webp`, `about-craft-*.webp` (9 novos)
+- `src/pages/Collection.tsx` — img → picture com srcset + preload
+- `src/pages/About.tsx` — mesmo tratamento nas 3 imagens
+- `src/components/BrandStorySection.tsx` — picture com srcset  
+  
+EXISTEM MAIS DE 30 BANNERS NO SITE - OTIMIZE TUDO!!!!!!!!!!!!!!!!
