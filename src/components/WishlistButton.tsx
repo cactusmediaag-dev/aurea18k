@@ -4,6 +4,7 @@ import { useWishlistStore, WishlistItem } from '@/stores/wishlistStore';
 import WishlistCaptureModal from '@/components/WishlistCaptureModal';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { trackAddToWishlist } from '@/lib/metaPixel';
 
 interface WishlistButtonProps {
   product: Omit<WishlistItem, 'addedAt'>;
@@ -24,6 +25,10 @@ const WishlistButton = ({ product, variant = 'card', className }: WishlistButton
     const added = toggle(product);
     if (added) {
       toast.success('Saved to wishlist', { description: product.title, position: 'top-center' });
+      trackAddToWishlist(
+        { id: product.productId, name: product.title, value: parseFloat(product.price) || undefined, currency: 'USD' },
+        customerEmail ? { email: customerEmail } : undefined,
+      );
       if (!customerEmail && !hasPrompted) {
         setCaptureOpen(true);
       }
