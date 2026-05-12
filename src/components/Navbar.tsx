@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ShoppingBag, Menu, X, ChevronDown, User } from 'lucide-react';
+import { Search, ShoppingBag, Menu, X, ChevronDown, User, Heart } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
+import { useWishlistStore } from '@/stores/wishlistStore';
 import SearchModal from '@/components/SearchModal';
 import logoHorizontal from '@/assets/logo-horizontal.png';
 
@@ -54,6 +55,7 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const totalItems = useCartStore(state => state.items.reduce((sum, i) => sum + i.quantity, 0));
+  const wishlistCount = useWishlistStore(state => state.items.length);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -101,9 +103,17 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
           <button onClick={() => setSearchOpen(true)} className="bg-transparent border-none cursor-pointer p-0">
             <Search className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
           </button>
-          <a href="https://hd5ps3-wc.myshopify.com/account" target="_blank" rel="noopener noreferrer" className="bg-transparent border-none cursor-pointer p-0">
+          <Link to="/account/wishlist" className="relative bg-transparent border-none cursor-pointer p-0" aria-label="Wishlist">
+            <Heart className={`w-5 h-5 opacity-70 hover:opacity-100 transition-opacity ${wishlistCount > 0 ? 'fill-gold text-gold opacity-100' : ''}`} />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-2 -right-2 w-5 h-5 bg-gold rounded-full text-[10px] font-medium text-warm-black flex items-center justify-center font-sans">
+                {wishlistCount}
+              </span>
+            )}
+          </Link>
+          <Link to="/account" className="bg-transparent border-none cursor-pointer p-0" aria-label="My account">
             <User className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
-          </a>
+          </Link>
           <button onClick={onCartOpen} className="relative bg-transparent border-none cursor-pointer p-0">
             <ShoppingBag className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
             {totalItems > 0 && (
@@ -116,9 +126,17 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
 
         {/* Mobile controls */}
         <div className="flex md:hidden items-center gap-4">
-          <a href="https://hd5ps3-wc.myshopify.com/account" target="_blank" rel="noopener noreferrer" className="p-0">
+          <Link to="/account/wishlist" className="relative p-0" aria-label="Wishlist">
+            <Heart className={`w-5 h-5 ${wishlistCount > 0 ? 'fill-gold text-gold' : ''}`} />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-2 -right-2 w-5 h-5 bg-gold rounded-full text-[10px] font-medium text-warm-black flex items-center justify-center font-sans">
+                {wishlistCount}
+              </span>
+            )}
+          </Link>
+          <Link to="/account" className="p-0" aria-label="My account">
             <User className="w-5 h-5" />
-          </a>
+          </Link>
           <button onClick={onCartOpen} className="relative bg-transparent border-none cursor-pointer p-0">
             <ShoppingBag className="w-5 h-5" />
             {totalItems > 0 && (
@@ -202,7 +220,8 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
           <Link to="/faq" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">FAQ</Link>
           <Link to="/shipping-returns" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Shipping & Returns</Link>
           <Link to="/contact" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Contact</Link>
-          <a href="https://hd5ps3-wc.myshopify.com/account" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">My Account</a>
+          <Link to="/account" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">My Account</Link>
+          <Link to="/account/wishlist" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">My Wishlist</Link>
           <Link to="/collections/all" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-gold font-medium no-underline py-2 text-left">Shop All</Link>
           <Link to="/collections" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-gold font-medium no-underline py-2 text-left">View Categories</Link>
         </div>
