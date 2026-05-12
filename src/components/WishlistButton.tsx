@@ -54,7 +54,7 @@ const WishlistButton = ({ product, variant = 'card', className }: WishlistButton
           )}
         >
           <Heart
-            className={cn('w-4 h-4 transition-all', has && 'fill-gold text-gold')}
+            className={cn('w-4 h-4 transition-all', has && 'fill-wishlist-red text-wishlist-red')}
           />
           {has ? 'Saved' : 'Save'}
         </button>
@@ -81,7 +81,7 @@ const WishlistButton = ({ product, variant = 'card', className }: WishlistButton
         <Heart
           className={cn(
             'w-4 h-4 transition-all',
-            has ? 'fill-gold text-gold scale-110' : 'text-warm-black',
+            has ? 'fill-wishlist-red text-wishlist-red scale-110' : 'text-warm-black',
           )}
         />
       </button>

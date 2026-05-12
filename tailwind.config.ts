@@ -36,6 +36,7 @@ export default {
           light: "hsl(var(--gold-light))",
           pale: "hsl(var(--gold-pale))",
         },
+        "wishlist-red": "hsl(var(--wishlist-red))",
         "warm-black": "hsl(var(--warm-black))",
         "warm-gray": "hsl(var(--warm-gray))",
         primary: {
