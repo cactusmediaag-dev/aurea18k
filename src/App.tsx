@@ -19,6 +19,9 @@ import NotFound from "./pages/NotFound.tsx";
 import Collections from "./pages/Collections.tsx";
 import Collection from "./pages/Collection.tsx";
 import BundleBuilder from "./pages/BundleBuilder.tsx";
+import Account from "./pages/Account.tsx";
+import AccountWishlist from "./pages/AccountWishlist.tsx";
+import AccountOrders from "./pages/AccountOrders.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
@@ -34,6 +37,9 @@ const AppContent = () => {
       <Route path="/collections" element={<Collections />} />
       <Route path="/collections/:handle" element={<Collection />} />
       <Route path="/bundle/:type" element={<BundleBuilder />} />
+      <Route path="/account" element={<Account />} />
+      <Route path="/account/wishlist" element={<AccountWishlist />} />
+      <Route path="/account/orders" element={<AccountOrders />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/terms" element={<TermsConditions />} />
       <Route path="/accessibility" element={<Accessibility />} />
