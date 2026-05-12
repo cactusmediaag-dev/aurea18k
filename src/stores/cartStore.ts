@@ -14,6 +14,8 @@ import {
   addLinesToShopifyCart,
   applyDiscountCodes,
 } from '@/lib/shopify';
+import { trackAddToCart } from '@/lib/metaPixel';
+import { useWishlistStore } from '@/stores/wishlistStore';
 
 export type { CartItem, ShopifyProduct };
 
@@ -83,6 +85,17 @@ export const useCartStore = create<CartStore>()(
           console.error('Failed to add item:', error);
         } finally {
           set({ isLoading: false });
+          // Fire Meta AddToCart (client + CAPI dedup'd)
+          try {
+            const email = useWishlistStore.getState().customerEmail;
+            trackAddToCart({
+              id: item.product.node.id,
+              name: item.product.node.title,
+              value: parseFloat(item.price.amount) || undefined,
+              currency: item.price.currencyCode || 'USD',
+              quantity: item.quantity,
+            }, email ? { email } : undefined);
+          } catch (e) { /* noop */ }
         }
       },
 
