@@ -13,6 +13,8 @@ import PageLayout from '@/components/PageLayout';
 import OptimizedImage from '@/components/OptimizedImage';
 import WishlistButton from '@/components/WishlistButton';
 import { getSwatchColor, isColorOption } from '@/lib/colorSwatch';
+import { trackViewContent, trackAddToCart } from '@/lib/metaPixel';
+import { useWishlistStore } from '@/stores/wishlistStore';
 
 const PRODUCT_BY_HANDLE_QUERY = `
   query GetProductByHandle($handle: String!) {
