@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Loader2, ShoppingBag } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
 import OptimizedImage from '@/components/OptimizedImage';
+import WishlistButton from '@/components/WishlistButton';
 import bannerWomens from '@/assets/banner-womens.jpg';
 import bannerMens from '@/assets/banner-mens.jpg';
 import bannerKids from '@/assets/banner-kids.jpg';
@@ -174,6 +175,15 @@ const Collection = () => {
                   <div key={product.node.id} className="group">
                     <Link to={`/product/${product.node.handle}`} className="block no-underline">
                       <div className="aspect-square bg-cream overflow-hidden mb-3 relative">
+                        <WishlistButton
+                          product={{
+                            productId: product.node.id,
+                            handle: product.node.handle,
+                            title: product.node.title,
+                            image: image?.url || null,
+                            price: product.node.priceRange.minVariantPrice.amount,
+                          }}
+                        />
                         {image ? (
                           <OptimizedImage
                             src={image.url}
