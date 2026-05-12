@@ -68,7 +68,7 @@ const WishlistCaptureModal = ({ open, onClose }: WishlistCaptureModalProps) => {
       <DialogContent className="max-w-md bg-cream-light border-gold/30">
         <DialogHeader>
           <div className="w-12 h-12 rounded-full bg-gold-pale border border-gold/40 flex items-center justify-center mx-auto mb-2">
-            <Heart className="w-5 h-5 text-gold fill-gold" />
+            <Heart className="w-5 h-5 text-wishlist-red fill-wishlist-red" />
           </div>
           <DialogTitle className="font-serif text-2xl text-dark-green text-center">
             Save your wishlist

@@ -104,7 +104,7 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
             <Search className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
           </button>
           <Link to="/account/wishlist" className="relative bg-transparent border-none cursor-pointer p-0" aria-label="Wishlist">
-            <Heart className={`w-5 h-5 opacity-70 hover:opacity-100 transition-opacity ${wishlistCount > 0 ? 'fill-gold text-gold opacity-100' : ''}`} />
+            <Heart className={`w-5 h-5 opacity-70 hover:opacity-100 transition-opacity ${wishlistCount > 0 ? 'fill-wishlist-red text-wishlist-red opacity-100' : ''}`} />
             {wishlistCount > 0 && (
               <span className="absolute -top-2 -right-2 w-5 h-5 bg-gold rounded-full text-[10px] font-medium text-warm-black flex items-center justify-center font-sans">
                 {wishlistCount}
@@ -127,7 +127,7 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
         {/* Mobile controls */}
         <div className="flex md:hidden items-center gap-4">
           <Link to="/account/wishlist" className="relative p-0" aria-label="Wishlist">
-            <Heart className={`w-5 h-5 ${wishlistCount > 0 ? 'fill-gold text-gold' : ''}`} />
+            <Heart className={`w-5 h-5 ${wishlistCount > 0 ? 'fill-wishlist-red text-wishlist-red' : ''}`} />
             {wishlistCount > 0 && (
               <span className="absolute -top-2 -right-2 w-5 h-5 bg-gold rounded-full text-[10px] font-medium text-warm-black flex items-center justify-center font-sans">
                 {wishlistCount}
