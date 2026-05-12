@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { trackLead } from '@/lib/metaPixel';
 
 const EmailCaptureSection = () => {
   const [email, setEmail] = useState('');
@@ -20,6 +21,7 @@ const EmailCaptureSection = () => {
       if (error) {
         toast.error('Could not subscribe. Please try again.', { position: 'top-center' });
       } else if (data?.success) {
+        trackLead(email.trim(), 'newsletter_footer');
         toast.success(
           data.alreadySubscribed
             ? "You're already on the list — check your inbox for 10% off."
