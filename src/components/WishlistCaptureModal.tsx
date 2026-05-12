@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Heart } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { trackLead, trackCompleteRegistration } from '@/lib/metaPixel';
 
 interface WishlistCaptureModalProps {
   open: boolean;

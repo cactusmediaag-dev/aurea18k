@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { X, Search, Loader2, TrendingUp } from 'lucide-react';
 import { storefrontApiRequest } from '@/lib/shopify';
+import { trackSearch } from '@/lib/metaPixel';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface SearchResult {
@@ -101,6 +102,7 @@ const SearchModal = ({ open, onClose }: SearchModalProps) => {
             image: e.node.images.edges[0]?.node?.url || null,
           }))
         );
+        trackSearch(query.trim());
       } catch {
         setResults([]);
       } finally {

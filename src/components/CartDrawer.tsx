@@ -13,6 +13,8 @@ import {
 import SuggestionCard from '@/components/SuggestionCard';
 import PreCheckoutModal from '@/components/PreCheckoutModal';
 import { normalizeCheckoutUrl } from '@/lib/shopify';
+import { trackInitiateCheckout } from '@/lib/metaPixel';
+import { useWishlistStore } from '@/stores/wishlistStore';
 
 interface CartDrawerProps {
   open: boolean;
@@ -46,6 +48,17 @@ const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
       toast.error('Não foi possível abrir o checkout.');
       return;
     }
+    // Fire InitiateCheckout
+    try {
+      const value = items.reduce((acc, i) => acc + parseFloat(i.price.amount) * i.quantity, 0);
+      const num_items = items.reduce((acc, i) => acc + i.quantity, 0);
+      const content_ids = items.map(i => i.product.node.id);
+      const email = useWishlistStore.getState().customerEmail;
+      trackInitiateCheckout(
+        { value, currency: items[0]?.price.currencyCode || 'USD', num_items, content_ids },
+        email ? { email } : undefined,
+      );
+    } catch { /* noop */ }
     let finalUrl = baseUrl;
     if (discountCode) {
       try {
