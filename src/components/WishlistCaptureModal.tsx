@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Heart } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { trackLead, trackCompleteRegistration } from '@/lib/metaPixel';
 
 interface WishlistCaptureModalProps {
   open: boolean;
@@ -41,12 +42,15 @@ const WishlistCaptureModal = ({ open, onClose }: WishlistCaptureModalProps) => {
       });
       if (fnError) throw fnError;
       setCustomer({ email: parsed.data.email, firstName: parsed.data.firstName, lastName: parsed.data.lastName });
+      // Meta: Lead + CompleteRegistration
+      trackLead(parsed.data.email, 'wishlist_capture');
+      trackCompleteRegistration(parsed.data.email);
       toast.success('Welcome to Aurea ✨', { description: 'Your wishlist is now saved.' });
       onClose();
     } catch (err) {
       console.error('wishlist register error', err);
-      // Save locally anyway so UX isn't blocked
       setCustomer({ email: parsed.data.email, firstName: parsed.data.firstName, lastName: parsed.data.lastName });
+      trackLead(parsed.data.email, 'wishlist_capture');
       toast.success('Wishlist saved');
       onClose();
     } finally {

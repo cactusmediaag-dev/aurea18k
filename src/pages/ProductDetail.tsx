@@ -13,6 +13,8 @@ import PageLayout from '@/components/PageLayout';
 import OptimizedImage from '@/components/OptimizedImage';
 import WishlistButton from '@/components/WishlistButton';
 import { getSwatchColor, isColorOption } from '@/lib/colorSwatch';
+import { trackViewContent } from '@/lib/metaPixel';
+import { useWishlistStore } from '@/stores/wishlistStore';
 
 const PRODUCT_BY_HANDLE_QUERY = `
   query GetProductByHandle($handle: String!) {
@@ -71,6 +73,22 @@ const ProductDetail = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedVariantIdx]);
+
+  // Track ViewContent when product loads
+  const customerEmail = useWishlistStore(s => s.customerEmail);
+  useEffect(() => {
+    if (!product || !variant) return;
+    trackViewContent(
+      {
+        id: product.node.id,
+        name: product.node.title,
+        value: parseFloat(variant.price.amount) || undefined,
+        currency: variant.price.currencyCode || 'USD',
+      },
+      customerEmail ? { email: customerEmail } : undefined,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.node.id]);
 
   if (productLoading) return (
     <div className="min-h-screen flex items-center justify-center bg-cream-light">
