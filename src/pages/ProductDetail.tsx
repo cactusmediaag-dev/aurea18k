@@ -13,7 +13,7 @@ import PageLayout from '@/components/PageLayout';
 import OptimizedImage from '@/components/OptimizedImage';
 import WishlistButton from '@/components/WishlistButton';
 import { getSwatchColor, isColorOption } from '@/lib/colorSwatch';
-import { trackViewContent, trackAddToCart } from '@/lib/metaPixel';
+import { trackViewContent } from '@/lib/metaPixel';
 import { useWishlistStore } from '@/stores/wishlistStore';
 
 const PRODUCT_BY_HANDLE_QUERY = `
@@ -111,16 +111,6 @@ const ProductDetail = () => {
       quantity: 1,
       selectedOptions: variant.selectedOptions || [],
     });
-    trackAddToCart(
-      {
-        id: product.node.id,
-        name: product.node.title,
-        value: parseFloat(variant.price.amount) || undefined,
-        currency: variant.price.currencyCode || 'USD',
-        quantity: 1,
-      },
-      customerEmail ? { email: customerEmail } : undefined,
-    );
     toast.success('Added to cart', { description: product.node.title, position: 'top-center' });
     // Open cart drawer so user immediately sees suggestions
     setTimeout(() => openCart(), 250);
