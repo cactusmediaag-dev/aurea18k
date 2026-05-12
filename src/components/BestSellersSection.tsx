@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import OptimizedImage from '@/components/OptimizedImage';
+import WishlistButton from '@/components/WishlistButton';
 
 const ProductCard = ({ product }: { product: ShopifyProduct }) => {
   const addItem = useCartStore(state => state.addItem);
@@ -40,9 +41,15 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
             <div className="w-[60px] h-[60px] border-2 border-gold rounded-full opacity-50" />
           </div>
         )}
-        <div className="absolute top-3.5 right-3.5 w-8 h-8 border border-gold/25 bg-cream-light/85 flex items-center justify-center cursor-pointer text-[13px] opacity-0 group-hover:opacity-100 transition-opacity">
-          ♡
-        </div>
+        <WishlistButton
+          product={{
+            productId: product.node.id,
+            handle: product.node.handle,
+            title: product.node.title,
+            image: image?.url || null,
+            price: price.amount,
+          }}
+        />
         <button
           onClick={handleAddToCart}
           disabled={isLoading || !variant?.availableForSale}
