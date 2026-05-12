@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
 import OptimizedImage from '@/components/OptimizedImage';
+import WishlistButton from '@/components/WishlistButton';
 import { getSwatchColor, isColorOption } from '@/lib/colorSwatch';
 
 const PRODUCT_BY_HANDLE_QUERY = `
@@ -183,13 +184,25 @@ const ProductDetail = () => {
               )
             ))}
 
-            <button
-              onClick={handleAddToCart}
-              disabled={isLoading || !variant?.availableForSale}
-              className="btn-aurea-dark mt-4 flex items-center justify-center gap-2"
-            >
-              {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : variant?.availableForSale ? 'Add to Cart' : 'Sold Out'}
-            </button>
+            <div className="mt-4 flex gap-3 max-sm:flex-col">
+              <button
+                onClick={handleAddToCart}
+                disabled={isLoading || !variant?.availableForSale}
+                className="btn-aurea-dark flex-1 flex items-center justify-center gap-2"
+              >
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : variant?.availableForSale ? 'Add to Cart' : 'Sold Out'}
+              </button>
+              <WishlistButton
+                variant="inline"
+                product={{
+                  productId: product.node.id,
+                  handle: product.node.handle,
+                  title: product.node.title,
+                  image: images[0]?.node?.url || null,
+                  price: product.node.priceRange.minVariantPrice.amount,
+                }}
+              />
+            </div>
 
             <div className="mt-8 space-y-3">
               {['✦ 18K Gold Plated', '◈ Hypoallergenic & Nickel-Free', '◇ Free Shipping on $120+'].map((item) => (

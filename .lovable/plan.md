@@ -1,74 +1,46 @@
-## Problema
+## Plano: Wishlist + Account
 
-Os banners adicionados pesam **1.7–2.2 MB cada** (JPGs ~1774×887). Total ~15 MB. Mesmo com `loading="eager"`, o navegador demora segundos pra baixar — não é "instantâneo".
+### Comportamento
 
-Banners afetados em `src/assets/`:
+**Wishlist (sem login obrigatório):**
+- Ícone de coração em cada card de produto (Collections, Home, BestSellers, Bundle Builder) e na página de detalhe.
+- Clique no coração: salva imediatamente no `localStorage` (funciona pra qualquer visitante anônimo).
+- Coração no header com badge de contador, leva pra `/account/wishlist`.
+- Animação suave (fill dourado) ao adicionar.
 
-- `banner-bestsellers.jpg` (1.7 MB)
-- `banner-bundles.jpg` (1.8 MB)
-- `banner-gifts.jpg` (1.8 MB)
-- `banner-kids.jpg` (2.1 MB)
-- `banner-mens.jpg` (1.9 MB)
-- `banner-newarrivals.jpg` (1.7 MB)
-- `banner-womens.jpg` (1.8 MB)
-- `about-hero.jpg` (2.2 MB)
-- `about-brazil.jpg` e `about-craft.jpg` (~2 MB cada — usados em About)
+**Captura de email (cria customer no Shopify):**
+- Na primeira vez que adiciona à wishlist, abre modal pedindo nome + email (opcional, com botão "Pular").
+- Se preencher: chama edge function `wishlist-register-customer` que cria/atualiza customer no Shopify Admin API com tag `wishlist-subscriber` e marketing opt-in.
+- Email salvo em `localStorage` pra não pedir de novo.
 
-Usados em: `Collection.tsx` (banner topo), `About.tsx` (hero + 2 sessões), `BrandStorySection.tsx`.
+**Página /account:**
+- `/account` — dashboard com saudação, link pra wishlist, "Meus pedidos" (lookup por email via Shopify), dados básicos.
+- `/account/wishlist` — grid dos produtos salvos, botão remover, "Add to Cart".
+- `/account/orders` — busca pedidos no Shopify pelo email salvo (Admin API).
+- Sem senha: usuário se identifica pelo email salvo. Botão "Trocar email" limpa localStorage.
 
-## Plano
+### Estrutura técnica
 
-### 1. Comprimir todos os banners para WebP em múltiplas larguras
+**Frontend (novo):**
+- `src/stores/wishlistStore.ts` — Zustand com persist (localStorage). Métodos: `add(productId, handle)`, `remove`, `toggle`, `has`, `clear`, `customerEmail`, `setCustomer`.
+- `src/components/WishlistButton.tsx` — botão coração reutilizável (variantes: card overlay, detail inline).
+- `src/components/WishlistCaptureModal.tsx` — modal de captura de email na 1ª adição.
+- `src/components/Navbar.tsx` — adicionar ícone Heart com badge.
+- `src/pages/Account.tsx`, `src/pages/AccountWishlist.tsx`, `src/pages/AccountOrders.tsx`.
+- Rotas no `App.tsx`: `/account`, `/account/wishlist`, `/account/orders`.
+- Integrar `<WishlistButton>` em: `Collection.tsx`, `BestSellersSection.tsx`, `SuggestionCard.tsx`, `BundleBuilder.tsx`, `ProductDetail.tsx`.
 
-Pra cada banner, gerar 3 versões em **WebP qualidade 78** (sem perda visível, 8–10× menor que JPG):
+**Backend (Lovable Cloud edge functions):**
+- `wishlist-register-customer` — recebe `{email, firstName, lastName}`, chama Shopify Admin `POST /customers.json` com tag `wishlist-subscriber` + `accepts_marketing: true`. Se já existe (409), atualiza tags.
+- `customer-orders` — recebe `{email}`, retorna pedidos via Admin `GET /customers/search.json?query=email:X` + `GET /customers/{id}/orders.json`.
+- Usa secret `SHOPIFY_ACCESS_TOKEN` já existente.
 
-```text
-banner-womens-800.webp    ~40–60 KB
-banner-womens-1200.webp   ~80–120 KB
-banner-womens-1800.webp   ~140–200 KB
-```
+**Wishlist no Shopify (opcional/leve):**
+- Wishlist em si fica no localStorage (sem backend de produtos salvos por enquanto — simples, rápido, zero custo).
+- O que vai pra Shopify é o **customer record** com tag `wishlist-subscriber` (assim você vê todos os interessados no admin Shopify e pode fazer email marketing pro Klaviyo/Shopify Email).
 
-Reduz cada banner de ~1.8 MB → ~90 KB no desktop e ~50 KB no mobile.
+### Considerações
 
-### 2. Trocar `<img>` por `<picture>` responsivo
-
-Em `Collection.tsx` e `About.tsx`, usar `<picture>` com `srcset` + `sizes` para o navegador escolher a versão certa:
-
-- `loading="eager"` + `fetchpriority="high"` (banners são LCP)
-- `decoding="async"`
-- `width`/`height` definidos (zero CLS — sem pulo de layout)
-
-### 3. Preload do banner no `<head>`
-
-Adicionar `<link rel="preload" as="image" imagesrcset="...">` dinâmico via React quando entra na página de coleção. O navegador começa a baixar antes do componente renderizar.
-
-### 4. Manter JPG original como fallback
-
-O `<picture>` inclui o JPG como fallback `<source>`. Browsers modernos (97%+) pegam WebP automaticamente; legados pegam JPG.
-
-## Detalhes técnicos
-
-- Conversão via **ImageMagick** (`-resize {w}x -quality 78 -strip`) — `-strip` remove EXIF
-- WebP suportado em 97% dos navegadores
-- Não deletar JPGs originais — ficam só como fallback (sem custo pra browsers modernos)
-
-## Impacto esperado
-
-
-| Métrica                  | Antes  | Depois |
-| ------------------------ | ------ | ------ |
-| Banner desktop (1200w)   | 1.8 MB | ~90 KB |
-| Banner mobile (800w)     | 1.8 MB | ~50 KB |
-| Download em 4G (~5 Mbps) | 2.9 s  | 0.15 s |
-| LCP típico               | 3–4 s  | < 1 s  |
-
-
-## Arquivos afetados
-
-- `src/assets/banner-*-{800,1200,1800}.webp` (24 arquivos novos)
-- `src/assets/about-hero-*.webp`, `about-brazil-*.webp`, `about-craft-*.webp` (9 novos)
-- `src/pages/Collection.tsx` — img → picture com srcset + preload
-- `src/pages/About.tsx` — mesmo tratamento nas 3 imagens
-- `src/components/BrandStorySection.tsx` — picture com srcset  
-  
-EXISTEM MAIS DE 30 BANNERS NO SITE - OTIMIZE TUDO!!!!!!!!!!!!!!!!
+- localStorage é por dispositivo (limitação aceita do modelo "híbrido leve"). Se quiser sync cross-device no futuro, dá pra adicionar tabela `wishlists` no Lovable Cloud usando email como chave.
+- Pedidos no /account são read-only via Admin API (lookup por email). Sem senha = sem proteção forte; mostramos só pedidos do email digitado/salvo. Aceitável pro modelo escolhido.
+- Ícone de coração usa `lucide-react` `Heart` (outline) → `Heart fill` quando salvo, na cor `gold`.
