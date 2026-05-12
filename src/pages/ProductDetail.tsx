@@ -74,6 +74,22 @@ const ProductDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedVariantIdx]);
 
+  // Track ViewContent when product loads
+  const customerEmail = useWishlistStore(s => s.customerEmail);
+  useEffect(() => {
+    if (!product || !variant) return;
+    trackViewContent(
+      {
+        id: product.node.id,
+        name: product.node.title,
+        value: parseFloat(variant.price.amount) || undefined,
+        currency: variant.price.currencyCode || 'USD',
+      },
+      customerEmail ? { email: customerEmail } : undefined,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.node.id]);
+
   if (productLoading) return (
     <div className="min-h-screen flex items-center justify-center bg-cream-light">
       <Loader2 className="w-8 h-8 animate-spin text-gold" />
@@ -95,6 +111,16 @@ const ProductDetail = () => {
       quantity: 1,
       selectedOptions: variant.selectedOptions || [],
     });
+    trackAddToCart(
+      {
+        id: product.node.id,
+        name: product.node.title,
+        value: parseFloat(variant.price.amount) || undefined,
+        currency: variant.price.currencyCode || 'USD',
+        quantity: 1,
+      },
+      customerEmail ? { email: customerEmail } : undefined,
+    );
     toast.success('Added to cart', { description: product.node.title, position: 'top-center' });
     // Open cart drawer so user immediately sees suggestions
     setTimeout(() => openCart(), 250);
