@@ -1,79 +1,38 @@
-## Plano: Meta Pixel + Conversions API (CAPI)
+# Ajuste dos descontos de Bundle
 
-### Como você fornece as credenciais
+## Novos percentuais
+- The Duo (2 peças) → **10%**
+- The Stack (3 peças) → **15%**
+- The Full Set (4 peças) → **20%**
 
-**Pixel ID** — vai direto no código (é público, aparece no `<script>` do Pixel mesmo). Vou pedir pra você colar agora no chat.
+## Mudanças no código (frontend)
+1. **`src/lib/bundles.ts`** — atualizar `BUNDLE_CONFIGS`:
+   - `duo`: discountPct `15 → 10`, discountCode `BUNDLEDUO15 → BUNDLEDUO10`, tagline "save 10%"
+   - `stack`: discountPct `20 → 15`, discountCode `BUNDLESTACK20 → BUNDLESTACK15`, tagline "save 15%"
+   - `full`: discountPct `25 → 20`, discountCode `BUNDLEFULL25 → BUNDLEFULL20`, tagline "save 20%"
+2. Verificar/atualizar quaisquer textos hardcoded ("Save 15%", "20%", "25%") em `BundleSection.tsx`, `BundleBuilder.tsx` e afins (a maioria já lê do config — confirmar na hora).
 
-**Token da Conversions API** — guardado como secret no Lovable Cloud (`META_CAPI_ACCESS_TOKEN`). Só a edge function lê. Eu disparo o prompt de secret depois que você confirmar o plano.
+## Mudanças no Shopify (back office)
+Criar 3 price rules + discount codes via API (a infra antiga BUNDLEDUO15/STACK20/FULL25 fica órfã — opcionalmente removo depois pra não confundir):
 
-Você gera o token em: **Meta Events Manager → Seu Pixel → Settings → Conversions API → Generate Access Token**.
+| Código | Tipo | Valor | Mínimo de itens |
+|---|---|---|---|
+| `BUNDLEDUO10` | percentage | -10% | 2 |
+| `BUNDLESTACK15` | percentage | -15% | 3 |
+| `BUNDLEFULL20` | percentage | -20% | 4 |
 
-### Arquitetura
+Configuração de cada price rule:
+- `customer_selection: all`
+- `target_type: line_item`, `target_selection: all`
+- `allocation_method: across`
+- `once_per_customer: false`
+- Sem data de expiração
 
-```
-Browser                                   Edge Function (Lovable Cloud)
-  │                                              │
-  ├─ fbq('track', 'Event', data, {eventID})      │
-  │                                              │
-  └─ POST /functions/meta-capi  ───────────────► fetch graph.facebook.com
-       (mesmo eventID = dedup)                   /v20.0/{PIXEL_ID}/events
-                                                 (Bearer = secret)
-```
+> Observação: o Shopify Admin API não tem campo "mínimo de quantidade" direto em todos os planos via REST simples — o builder do site já garante a quantidade correta antes de aplicar o code, então o code funciona sem prerequisite. O cupom só é aplicado quando o cliente passa pelo Bundle Builder.
 
-Toda chamada client-side dispara também server-side com o mesmo `event_id` → Meta deduplica automaticamente, batendo match quality alto.
+## Memória
+Atualizar `mem://features/bundles.md` e o índice com os novos códigos e percentuais.
 
-### O que vai ser implementado
-
-**1. Pixel (client-side) em `index.html`**
-- Snippet base do Meta Pixel com seu PIXEL_ID
-- `<noscript>` com fallback `<img>` no `<body>` (não no `<head>`)
-
-**2. Hook + helper `src/lib/metaPixel.ts`**
-- `trackEvent(name, data, userData?)` — gera `event_id` (UUID), chama `fbq()` e `fetch('/functions/meta-capi')` em paralelo
-- Helpers tipados: `trackPageView()`, `trackViewContent(product)`, `trackAddToCart(item)`, `trackInitiateCheckout(cart)`, `trackAddToWishlist(item)`, `trackLead(email)`, `trackSearch(query)`, `trackCompleteRegistration(email)`
-- Captura automática de `fbp` (cookie `_fbp`) e `fbc` (param `fbclid` na URL → cookie `_fbc`) pra mandar no CAPI
-
-**3. Edge function `meta-capi`**
-- Recebe `{ event_name, event_id, event_time, event_source_url, user_data, custom_data }`
-- Hash SHA-256 de email/phone/nome (requisito do CAPI)
-- POST `https://graph.facebook.com/v20.0/{PIXEL_ID}/events?access_token={TOKEN}`
-- Inclui `client_ip_address` (do header `x-forwarded-for`) e `client_user_agent` automaticamente
-- Validação Zod, retorno padronizado, CORS
-
-**4. Disparos integrados**
-| Evento | Onde | Dados |
-|---|---|---|
-| `PageView` | `App.tsx` (todo route change) | url, referrer |
-| `ViewContent` | `ProductDetail.tsx` (mount) | content_id, content_name, value, currency |
-| `Search` | `SearchModal.tsx` (debounce) | search_string |
-| `AddToCart` | `cartStore.addItem()` | content_id, value, currency, quantity |
-| `AddToWishlist` | `wishlistStore.add()` (via WishlistButton) | content_id, value |
-| `Lead` | `WishlistCaptureModal` (submit) + `EmailCaptureSection` | email |
-| `CompleteRegistration` | `Account.tsx` (sign-in com email) | email |
-| `InitiateCheckout` | `cartStore.checkout()` ou botão Checkout do `CartDrawer` | num_items, value |
-| `Purchase` | **Webhook Shopify** → edge function `meta-purchase-webhook` | order_id, value, currency, content_ids |
-
-**5. Webhook de Purchase (server-side, mais preciso)**
-- Edge function nova `shopify-order-webhook` que:
-  - Valida assinatura HMAC do Shopify (header `x-shopify-hmac-sha256` + secret `SHOPIFY_WEBHOOK_SECRET`)
-  - Extrai `order.id`, `email`, `total_price`, `line_items`, `customer`
-  - Chama internamente o handler do CAPI com `event_name: 'Purchase'`
-- Você precisa registrar o webhook no Shopify Admin: **Settings → Notifications → Webhooks → Create webhook → Order creation → JSON → URL: `https://xtlyyioutqiyplylkebk.supabase.co/functions/v1/shopify-order-webhook`**
-- Vou te dar o link pronto e a instrução depois do deploy
-
-**6. Identificação do usuário**
-- Quando tem email salvo (wishlist/account), passa pra todos os eventos como `user_data.em` (hashed)
-- Sempre passa `fbp`/`fbc` automaticamente
-
-### Secrets necessários
-
-- `META_CAPI_ACCESS_TOKEN` — token da Conversions API
-- `META_PIXEL_ID` — também como secret (server precisa dele pra montar a URL); o mesmo ID vai hardcoded no client/index.html
-
-(Vou pedir os dois via prompt seguro depois do plano aprovado.)
-
-### Fora do escopo
-
-- Test events / payload code do Meta (você usa o Test Events tab no Events Manager pra validar — não precisa hardcode)
-- Custom Audiences automation
-- Catalog feed (Shopify já tem catalog feed nativo via Meta channel)
+## Validação
+- Abrir `/bundle/duo`, `/bundle/stack`, `/bundle/full` e conferir badges/CTAs mostrando 10/15/20%.
+- Adicionar bundle ao carrinho e verificar que o desconto é aplicado no checkout do Shopify.
