@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import logoHorizontal from '@/assets/logo-horizontal.png';
 
 const Footer = () => (
-  <footer className="text-cream-light/60 py-[72px] px-12 max-sm:px-6" style={{ background: 'hsl(var(--warm-black))' }}>
+  <footer className="text-cream-light/60 py-[72px] px-12 max-sm:px-6" style={{ background: '#614227' }}>
     <div className="grid grid-cols-[1.8fr_1fr_1fr_1fr] gap-12 mb-14 pb-14 border-b border-cream-light/10 max-lg:grid-cols-2 max-sm:grid-cols-1">
       <div>
         <img src={logoHorizontal} alt="Aurea Jewels" className="h-14 w-auto mb-5 brightness-0 invert opacity-90" />
