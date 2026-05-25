@@ -26,13 +26,13 @@ interface SelectedSlot {
   selectedOptions: Array<{ name: string; value: string }>;
 }
 
-const CATEGORY_KEYWORDS: Record<string, string[]> = {
-  Rings: ['ring'],
-  Necklaces: ['necklace', 'choker', 'pendant'],
-  Earrings: ['earring', 'hoop', 'stud'],
-  Bracelets: ['bracelet', 'bangle'],
-  Chains: ['chain'],
-};
+const CATEGORY_KEYWORDS: Array<[string, string[]]> = [
+  ['Earrings', ['earring', 'hoop', 'stud']],
+  ['Necklaces', ['necklace', 'choker', 'pendant']],
+  ['Bracelets', ['bracelet', 'bangle']],
+  ['Chains', ['chain']],
+  ['Rings', ['ring']],
+];
 
 function detectCategory(p: ShopifyProduct): string {
   const haystack = [
@@ -42,7 +42,7 @@ function detectCategory(p: ShopifyProduct): string {
   ]
     .join(' ')
     .toLowerCase();
-  for (const [cat, keys] of Object.entries(CATEGORY_KEYWORDS)) {
+  for (const [cat, keys] of CATEGORY_KEYWORDS) {
     if (keys.some(k => haystack.includes(k))) return cat;
   }
   return 'Other';
