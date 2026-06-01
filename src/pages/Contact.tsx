@@ -1,7 +1,17 @@
 import PageLayout from '@/components/PageLayout';
+import Seo, { breadcrumbLd } from '@/components/Seo';
 
 const Contact = () => (
   <PageLayout>
+    <Seo
+      title="Contact Aurea Jewels"
+      description="Get in touch with the Aurea Jewels team — customer care, order help and styling support for our premium 18K gold plated jewelry."
+      path="/contact"
+      jsonLd={breadcrumbLd([
+        { name: 'Home', path: '/' },
+        { name: 'Contact', path: '/contact' },
+      ])}
+    />
     <div className="aurea-section bg-cream-light max-w-3xl mx-auto text-center">
       <div className="aurea-section-label">Get in Touch</div>
       <h1 className="aurea-section-title mb-10">Contact <em>Us</em></h1>
