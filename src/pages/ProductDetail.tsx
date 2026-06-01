@@ -119,8 +119,40 @@ const ProductDetail = () => {
 
   const recommendations = getRecommendations(product, pool, 4);
 
+  const firstImage = images[0]?.node?.url;
+  const priceAmount = variant ? variant.price.amount : product.node.priceRange.minVariantPrice.amount;
+  const currency = (variant?.price.currencyCode) || product.node.priceRange.minVariantPrice.currencyCode || 'USD';
+  const productLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.node.title,
+    description: product.node.description,
+    image: images.map(i => i.node.url),
+    sku: variant?.id,
+    brand: { '@type': 'Brand', name: 'Aurea Jewels' },
+    offers: {
+      '@type': 'Offer',
+      url: `${SITE_URL}/product/${product.node.handle}`,
+      priceCurrency: currency,
+      price: parseFloat(priceAmount).toFixed(2),
+      availability: variant?.availableForSale ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+    },
+  };
+
   return (
     <PageLayout>
+      <Seo
+        title={`${product.node.title} | Aurea Jewels`}
+        description={(product.node.description || `Shop ${product.node.title} from Aurea Jewels — premium 18K gold plated jewelry.`).slice(0, 160)}
+        path={`/product/${product.node.handle}`}
+        image={firstImage}
+        type="product"
+        jsonLd={[productLd, breadcrumbLd([
+          { name: 'Home', path: '/' },
+          { name: 'Shop', path: '/collections' },
+          { name: product.node.title, path: `/product/${product.node.handle}` },
+        ])]}
+      />
       <div className="bg-cream-light">
         <div className="max-w-6xl mx-auto px-12 py-16 max-sm:px-6">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-xs tracking-[0.1em] uppercase text-warm-gray mb-8 bg-transparent border-none cursor-pointer hover:text-dark-green transition-colors font-sans">

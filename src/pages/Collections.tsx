@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import PageLayout from '@/components/PageLayout';
+import Seo, { breadcrumbLd } from '@/components/Seo';
 import catWomens from '@/assets/cat-womens-collection.jpg';
 import catMens from '@/assets/cat-mens-collection.jpg';
 import catKids from '@/assets/cat-kids-collection.jpg';
