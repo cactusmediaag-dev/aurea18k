@@ -1,4 +1,5 @@
 import PageLayout from '@/components/PageLayout';
+import Seo, { breadcrumbLd } from '@/components/Seo';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const faqs = [
@@ -11,8 +12,28 @@ const faqs = [
   { q: 'How do I track my order?', a: 'Once your order ships, you will receive a confirmation email with a tracking number. You can use this to track your package on our website.' },
 ];
 
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(f => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
 const FAQ = () => (
   <PageLayout>
+    <Seo
+      title="FAQ | Aurea Jewels"
+      description="Answers about Aurea Jewels' 18K gold plated jewelry — materials, hypoallergenic care, shipping, returns and everyday wear."
+      path="/faq"
+      jsonLd={[faqLd, breadcrumbLd([
+        { name: 'Home', path: '/' },
+        { name: 'FAQ', path: '/faq' },
+      ])]}
+    />
     <div className="aurea-section bg-cream-light max-w-3xl mx-auto">
       <div className="text-center mb-16">
         <div className="aurea-section-label">Help</div>

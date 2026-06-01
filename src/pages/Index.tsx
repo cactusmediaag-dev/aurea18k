@@ -1,4 +1,5 @@
 import PageLayout from '@/components/PageLayout';
+import Seo from '@/components/Seo';
 import HeroSection from '@/components/HeroSection';
 import TrustStrip from '@/components/TrustStrip';
 import CategoriesSection from '@/components/CategoriesSection';
@@ -12,6 +13,11 @@ import EmailCaptureSection from '@/components/EmailCaptureSection';
 
 const Index = () => (
   <PageLayout>
+    <Seo
+      title="Aurea Jewels | Official Website"
+      description="Premium 18K gold plated jewelry designed for modern women. Hypoallergenic, durable and crafted for everyday elegance."
+      path="/"
+    />
     <HeroSection />
     <TrustStrip />
     <CategoriesSection />

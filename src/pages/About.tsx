@@ -1,10 +1,20 @@
 import PageLayout from '@/components/PageLayout';
+import Seo, { breadcrumbLd } from '@/components/Seo';
 import heroImg from '@/assets/about-hero.jpg';
 import brazilImg from '@/assets/about-brazil.jpg';
 import craftImg from '@/assets/about-craft.jpg';
 
 const About = () => (
   <PageLayout>
+    <Seo
+      title="Our Story | Aurea Jewels"
+      description="Discover the story behind Aurea Jewels — premium 18K gold plated jewelry, born in Brazil and crafted for the world."
+      path="/about"
+      jsonLd={breadcrumbLd([
+        { name: 'Home', path: '/' },
+        { name: 'About', path: '/about' },
+      ])}
+    />
     <div className="bg-cream-light">
       {/* Hero banner */}
       <div className="w-full overflow-hidden border-b border-gold/15">
