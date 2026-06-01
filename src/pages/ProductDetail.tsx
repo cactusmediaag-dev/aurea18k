@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
+import Seo, { breadcrumbLd, SITE_URL } from '@/components/Seo';
 import OptimizedImage from '@/components/OptimizedImage';
 import WishlistButton from '@/components/WishlistButton';
 import { getSwatchColor, isColorOption } from '@/lib/colorSwatch';
