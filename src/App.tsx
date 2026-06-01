@@ -13,6 +13,7 @@ import Accessibility from "./pages/Accessibility.tsx";
 import CookiePolicy from "./pages/CookiePolicy.tsx";
 import ReviewsPage from "./pages/Reviews.tsx";
 import About from "./pages/About.tsx";
+import AboutAureaJewels from "./pages/AboutAureaJewels.tsx";
 import Contact from "./pages/Contact.tsx";
 import FAQ from "./pages/FAQ.tsx";
 import ShippingReturns from "./pages/ShippingReturns.tsx";
@@ -48,6 +49,7 @@ const AppContent = () => {
       <Route path="/cookie-policy" element={<CookiePolicy />} />
       <Route path="/reviews" element={<ReviewsPage />} />
       <Route path="/about" element={<About />} />
+      <Route path="/about-aurea-jewels" element={<AboutAureaJewels />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/shipping-returns" element={<ShippingReturns />} />
