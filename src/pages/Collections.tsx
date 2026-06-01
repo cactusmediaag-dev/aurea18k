@@ -23,6 +23,15 @@ const categories = [
 
 const Collections = () => (
   <PageLayout>
+    <Seo
+      title="Shop by Category | Aurea Jewels"
+      description="Browse all Aurea Jewels collections — women's, men's and kids' premium 18K gold plated jewelry, bundles, gifts and best sellers."
+      path="/collections"
+      jsonLd={breadcrumbLd([
+        { name: 'Home', path: '/' },
+        { name: 'Collections', path: '/collections' },
+      ])}
+    />
     <div className="bg-cream-light min-h-[60vh]">
       <div className="text-center py-14 border-b border-gold/15">
         <div className="text-[10px] tracking-[0.3em] uppercase text-gold font-medium mb-2">Aurea Jewels</div>

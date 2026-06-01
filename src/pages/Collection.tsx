@@ -133,6 +133,16 @@ const Collection = () => {
 
   return (
     <PageLayout>
+      <Seo
+        title={`${title} | Aurea Jewels`}
+        description={`Shop ${title} from Aurea Jewels — premium 18K gold plated, hypoallergenic jewelry crafted for everyday wear.`}
+        path={`/collections/${handle}`}
+        jsonLd={breadcrumbLd([
+          { name: 'Home', path: '/' },
+          { name: 'Collections', path: '/collections' },
+          { name: title, path: `/collections/${handle}` },
+        ])}
+      />
       <div className="bg-cream-light min-h-[60vh]">
         {/* Banner / Header */}
         {banner ? (
