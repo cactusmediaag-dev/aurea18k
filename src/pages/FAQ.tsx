@@ -1,4 +1,5 @@
 import PageLayout from '@/components/PageLayout';
+import Seo, { breadcrumbLd } from '@/components/Seo';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const faqs = [
@@ -11,7 +12,6 @@ const faqs = [
   { q: 'How do I track my order?', a: 'Once your order ships, you will receive a confirmation email with a tracking number. You can use this to track your package on our website.' },
 ];
 
-import Seo, { breadcrumbLd } from '@/components/Seo';
 
 const faqLd = {
   '@context': 'https://schema.org',
