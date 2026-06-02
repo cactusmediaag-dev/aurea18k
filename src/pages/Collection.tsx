@@ -77,8 +77,9 @@ function getCollectionQuery(handle: string): string | undefined {
 }
 
 const PRODUCTS_QUERY = `
-  query GetProducts($first: Int!, $query: String) {
-    products(first: $first, query: $query) {
+  query GetProducts($first: Int!, $query: String, $after: String) {
+    products(first: $first, query: $query, after: $after) {
+      pageInfo { hasNextPage endCursor }
       edges {
         node {
           id title description handle
