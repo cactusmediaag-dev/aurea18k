@@ -263,6 +263,13 @@ const Collection = () => {
               })}
             </div>
           )}
+
+          {/* Infinite scroll sentinel */}
+          {!isLoading && products.length > 0 && (
+            <div ref={loadMoreRef} className="h-10 flex justify-center items-center mt-10">
+              {isFetchingNextPage && <Loader2 className="w-6 h-6 animate-spin text-gold" />}
+            </div>
+          )}
         </div>
       </div>
     </PageLayout>
