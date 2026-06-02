@@ -1,15 +1,13 @@
-## Situação
+Reordenar as seções na home (`src/pages/Index.tsx`):
 
-Encontrei só **1 produto de brinco** na loja:
-- **Earring** (ID: 10436253647141) — tags atuais: `womens-earrings`
-
-Por isso a categoria "Earrings" não aparece no Bundle Builder — nenhum brinco tem a tag `bundle-eligible`.
-
-## Plano
-
-1. Atualizar o produto **Earring** no Shopify adicionando a tag `bundle-eligible` (mantendo `womens-earrings`).
-2. Validar no `/bundle/duo` que a chip "Earrings · 1" passa a aparecer junto com as outras categorias.
-
-## Observação
-
-Só existe 1 brinco cadastrado. Se quiser mais variedade na categoria (studs, hoops, etc.), é preciso cadastrar novos produtos depois — me avisa que eu crio.
+Nova ordem:
+1. HeroSection
+2. TrustStrip
+3. CategoriesSection (Shop by Category)
+4. **BundleSection (Bundle & Save)** ← movida pra cá
+5. BestSellersSection
+6. BrandStorySection
+7. PromiseSection
+8. ReviewsSection
+9. InstagramSection
+10. EmailCaptureSection
