@@ -21,10 +21,10 @@ const Index = () => (
     <HeroSection />
     <TrustStrip />
     <CategoriesSection />
+    <BundleSection />
     <BestSellersSection />
     <BrandStorySection />
     <PromiseSection />
-    <BundleSection />
     <ReviewsSection />
     <InstagramSection />
     <EmailCaptureSection />
