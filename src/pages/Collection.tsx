@@ -111,13 +111,47 @@ const Collection = () => {
   const title = COLLECTION_TITLES[handle] || handle.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   const banner = getCollectionBanner(handle);
 
-  const { data: products, isLoading } = useQuery<ShopifyProduct[]>({
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['collection', handle],
-    queryFn: async () => {
-      const data = await storefrontApiRequest(PRODUCTS_QUERY, { first: 50, query });
-      return data?.data?.products?.edges || [];
+    queryFn: async ({ pageParam }) => {
+      const res = await storefrontApiRequest(PRODUCTS_QUERY, {
+        first: 40,
+        query,
+        after: pageParam ?? null,
+      });
+      return res?.data?.products ?? { edges: [], pageInfo: { hasNextPage: false, endCursor: null } };
     },
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) =>
+      lastPage?.pageInfo?.hasNextPage ? lastPage.pageInfo.endCursor : undefined,
   });
+
+  const products = useMemo<ShopifyProduct[]>(
+    () => (data?.pages ?? []).flatMap((p) => p?.edges ?? []),
+    [data]
+  );
+
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = loadMoreRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { rootMargin: '400px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleAddToCart = async (product: ShopifyProduct) => {
     const variant = product.node.variants.edges[0]?.node;
