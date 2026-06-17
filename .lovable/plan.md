@@ -1,57 +1,98 @@
-## Objetivo
+# Tags para Recomendações Aurea
 
-Em todas as páginas de coleção/categoria (`/collections/:handle`), carregar **todos** os produtos da tag correspondente via **infinite scroll automático**, em lotes de **40**, sem paginação numerada. A Home e a página índice `/collections` ficam de fora.
+Cole essas tags nos produtos do Shopify. Cada produto pode ter **várias** tags de cada tipo.
 
-## Escopo
+---
 
-- **Arquivo afetado:** `src/pages/Collection.tsx` (única página que renderiza produtos de uma categoria — cobre womens, mens, kids, best-sellers, gift-ideas, bundles-sets, new-arrivals, todas as subcategorias e a `all`).
-- **Fora do escopo:** Home (`/`), `/collections` (índice de categorias), Bundle Builder, página de produto.
+## 🎨 SET-* — "Mesma família visual" (Tier 2)
+Use quando os produtos compartilham o mesmo estilo/vibe, mesmo que não tenham sido desenhados juntos.
 
-## Como vai funcionar
-
-1. Trocar `useQuery` por **`useInfiniteQuery`** do React Query.
-2. Atualizar a `PRODUCTS_QUERY` GraphQL pra usar cursor da Shopify Storefront API:
-   - Adicionar variável `$after: String`.
-   - Pedir `pageInfo { hasNextPage endCursor }` junto com `edges`.
-   - `first: 40` por lote.
-3. `getNextPageParam` retorna `endCursor` quando `hasNextPage = true`, senão `undefined` (para o React Query).
-4. **Sentinel + IntersectionObserver:** um `<div ref={loadMoreRef}>` invisível logo abaixo do grid. Quando entra no viewport, dispara `fetchNextPage()` automaticamente.
-5. Achatar todas as `pages` num único array pra renderizar no grid existente (sem mexer no visual dos cards).
-6. Estados visuais:
-   - Loading inicial: spinner atual.
-   - Loading de próximo lote: spinner discreto centralizado abaixo do grid.
-   - Fim da lista: nada (sem mensagem) — apenas para de carregar.
-7. Cache key do React Query: `['collection', handle]` (mantido), com paginação interna gerenciada pelo `useInfiniteQuery`.
-
-## Detalhes técnicos
-
-```text
-useInfiniteQuery({
-  queryKey: ['collection', handle],
-  queryFn: ({ pageParam }) => storefrontApiRequest(PRODUCTS_QUERY, {
-    first: 40,
-    query,
-    after: pageParam ?? null,
-  }),
-  getNextPageParam: (lastPage) => {
-    const pageInfo = lastPage?.data?.products?.pageInfo;
-    return pageInfo?.hasNextPage ? pageInfo.endCursor : undefined;
-  },
-  initialPageParam: null,
-})
+```
+set-01-minimal-everyday
+set-02-classic-elegant
+set-03-bold-statement
+set-04-vintage-romantic
+set-05-modern-geometric
+set-06-boho-natural
+set-07-delicate-feminine
+set-08-edgy-rock
+set-09-celestial-mystic
+set-10-nature-floral
+set-11-pearl-classic
+set-12-chain-layering
+set-13-colored-stones
+set-14-diamond-luxe
+set-15-unisex-modern
+set-16-bridal-wedding
+set-17-occasion-party
+set-18-office-professional
+set-19-summer-beach
+set-20-new-collection-2026
 ```
 
-- `IntersectionObserver` com `rootMargin: '400px'` pra começar a carregar antes do usuário bater no fim (scroll mais fluido).
-- Guard: só chamar `fetchNextPage()` se `hasNextPage && !isFetchingNextPage`.
-- Cleanup do observer no `useEffect` return.
+**Como aplicar:** Olhe pro produto e pergunte "qual o vibe?". Aplique 1–3 tags `set-*` que descrevam o estilo.
+Ex.: Brinco de argola fina dourada → `set-01-minimal-everyday` + `set-12-chain-layering`
 
-## Validação
+---
 
-- Abrir `/collections/gift-ideas` (154 produtos) → rolar até o fim → conferir que carrega em lotes até mostrar todos.
-- Testar `/collections/womens` (query agrupada com `OR`) pra garantir que cursor funciona com queries compostas.
-- Testar categoria pequena (< 40 produtos) pra confirmar que não tenta carregar mais.
-- Confirmar que a Home e `/collections` não foram afetadas.
+## 💍 MATCH-* — "Combo intencional" (Tier 1, prioridade máxima)
+Use APENAS quando peças foram pensadas pra serem usadas/vendidas juntas (par, trio, conjunto).
 
-## Risco
+```
+match-01-hoops-everyday
+match-02-pearl-bridal-set
+match-03-chain-stack-gold
+match-04-chain-stack-silver
+match-05-star-celestial-trio
+match-06-moon-celestial-duo
+match-07-heart-romantic-set
+match-08-floral-spring-trio
+match-09-geometric-modern-duo
+match-10-vintage-victorian-set
+match-11-tennis-luxe-duo
+match-12-cross-faith-set
+match-13-evil-eye-protection
+match-14-zodiac-personal
+match-15-initial-letter-stack
+match-16-birthstone-personal
+match-17-engagement-bridal
+match-18-anniversary-gift-set
+match-19-mother-daughter-duo
+match-20-bestfriend-duo
+match-21-minimal-trio-gold
+match-22-statement-party-set
+match-23-layered-necklace-trio
+match-24-ear-stack-curated
+match-25-ring-stack-curated
+```
 
-A Shopify Storefront API tem custo de query — `first: 40` com imagens/variants está bem dentro do limite. Sem mudanças no backend.
+**Como aplicar:** As MESMAS peças do combo recebem a MESMA tag `match-*`.
+Ex.: Colar de pérolas + brinco de pérolas (vendidos como conjunto de noiva) → ambos recebem `match-02-pearl-bridal-set`
+
+---
+
+## ⚙️ Tags auxiliares obrigatórias
+
+```
+bundle-eligible           ← obrigatória pros produtos aparecerem no Bundle Builder (/bundle/duo, /stack, /full)
+gift-ideas                ← aparece em /collections/gift-ideas
+best-seller               ← aparece em /collections/best-sellers
+new-arrival               ← aparece em /collections/new-arrivals
+```
+
+---
+
+## 📋 Regra de ouro
+
+- **Mesma `set-XX`** = mesma família visual → recomendado como "Você também pode gostar"
+- **Mesma `match-XX`** = combo desenhado pra estar junto → recomendado PRIMEIRO como "Complete o look"
+- Um produto pode ter **várias** `set-*` E **várias** `match-*` ao mesmo tempo
+- Sem essas tags, o sistema cai pra recomendação genérica (mesma coleção)
+
+---
+
+## Próximo passo
+
+Depois que você aplicar as tags no Shopify, me avisa que eu testo um produto pra confirmar que as recomendações Tier 1 (match) e Tier 2 (set) estão aparecendo corretas no site.
+
+Posso também criar uma página `/admin/tags-audit` (só visível pra você) que lista quais produtos têm/não têm tags `set-*` e `match-*` — útil pra não esquecer nenhum. Quer?
