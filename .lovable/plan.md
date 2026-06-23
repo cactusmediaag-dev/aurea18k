@@ -1,98 +1,99 @@
-# Tags para Recomendações Aurea
 
-Cole essas tags nos produtos do Shopify. Cada produto pode ter **várias** tags de cada tipo.
+# Guia de Atualização Estética do Site Aurea Jewels
 
----
+## Objetivo
 
-## 🎨 SET-* — "Mesma família visual" (Tier 2)
-Use quando os produtos compartilham o mesmo estilo/vibe, mesmo que não tenham sido desenhados juntos.
+Criar **um único documento** em Markdown (`GUIA-ATUALIZACAO-SITE.md`) na raiz do projeto, escrito em português claro e direto, pensado para alguém **sem nenhum conhecimento técnico** atualizar a estética do site usando o Lovable.
 
-```
-set-01-minimal-everyday
-set-02-classic-elegant
-set-03-bold-statement
-set-04-vintage-romantic
-set-05-modern-geometric
-set-06-boho-natural
-set-07-delicate-feminine
-set-08-edgy-rock
-set-09-celestial-mystic
-set-10-nature-floral
-set-11-pearl-classic
-set-12-chain-layering
-set-13-colored-stones
-set-14-diamond-luxe
-set-15-unisex-modern
-set-16-bridal-wedding
-set-17-occasion-party
-set-18-office-professional
-set-19-summer-beach
-set-20-new-collection-2026
-```
+O arquivo pode ser aberto no Lovable, no GitHub, ou copiado pro Google Docs/Notion. Fica versionado junto com o código.
 
-**Como aplicar:** Olhe pro produto e pergunte "qual o vibe?". Aplique 1–3 tags `set-*` que descrevam o estilo.
-Ex.: Brinco de argola fina dourada → `set-01-minimal-everyday` + `set-12-chain-layering`
+## Estrutura do documento
 
----
+1. **Como funciona o Lovable (em 1 minuto)**
+   - O que é o chat, o preview, o botão de publicar
+   - Como pedir mudanças (exemplos de bons prompts vs prompts ruins)
+   - Como reverter se algo der errado (histórico de versões)
 
-## 💍 MATCH-* — "Combo intencional" (Tier 1, prioridade máxima)
-Use APENAS quando peças foram pensadas pra serem usadas/vendidas juntas (par, trio, conjunto).
+2. **Checklist rápido antes de começar**
+   - Ter as imagens prontas nos tamanhos certos
+   - Ter os textos novos já escritos
+   - Saber em qual seção vai mexer
 
-```
-match-01-hoops-everyday
-match-02-pearl-bridal-set
-match-03-chain-stack-gold
-match-04-chain-stack-silver
-match-05-star-celestial-trio
-match-06-moon-celestial-duo
-match-07-heart-romantic-set
-match-08-floral-spring-trio
-match-09-geometric-modern-duo
-match-10-vintage-victorian-set
-match-11-tennis-luxe-duo
-match-12-cross-faith-set
-match-13-evil-eye-protection
-match-14-zodiac-personal
-match-15-initial-letter-stack
-match-16-birthstone-personal
-match-17-engagement-bridal
-match-18-anniversary-gift-set
-match-19-mother-daughter-duo
-match-20-bestfriend-duo
-match-21-minimal-trio-gold
-match-22-statement-party-set
-match-23-layered-necklace-trio
-match-24-ear-stack-curated
-match-25-ring-stack-curated
-```
+3. **Banners da home (Hero)**
+   - Onde aparecem (2 slides rotativos)
+   - **Tamanhos exatos:**
+     - Desktop: 1920×1080 px (JPG, até 400 KB)
+     - Mobile: 1080×1350 px (JPG, até 300 KB)
+   - Como nomear os arquivos
+   - Prompt pronto pra colar no Lovable trocar o banner
+   - Como mudar título, subtítulo, tag e botões de cada slide
+   - Como adicionar um 3º slide
 
-**Como aplicar:** As MESMAS peças do combo recebem a MESMA tag `match-*`.
-Ex.: Colar de pérolas + brinco de pérolas (vendidos como conjunto de noiva) → ambos recebem `match-02-pearl-bridal-set`
+4. **Imagens das seções da home**
+   - Categorias (3 cards) — 800×1000 px
+   - Bundle Section — 1200×800 px
+   - Brand Story — 1000×1200 px
+   - Instagram — 600×600 px (quadradas)
+   - Prompt pronto pra cada troca
 
----
+5. **Cores, fontes e identidade visual**
+   - Onde ficam (sem precisar abrir código): `src/index.css`
+   - Lista das cores principais (verde, dourado, creme) com nome semântico
+   - Como pedir: "trocar o dourado por X", "deixar o creme mais claro"
+   - Fontes atuais (Cormorant Garamond + Jost) e como trocar
+   - **Aviso:** nunca pedir cores hardcoded tipo "bg-white" — sempre pedir via token
 
-## ⚙️ Tags auxiliares obrigatórias
+6. **Textos do site (copy)**
+   - Onde ficam os textos da home, sobre, footer
+   - Como pedir alteração sem mexer em layout
+   - Anúncio do topo (AnnouncementBar): frete grátis etc.
 
-```
-bundle-eligible           ← obrigatória pros produtos aparecerem no Bundle Builder (/bundle/duo, /stack, /full)
-gift-ideas                ← aparece em /collections/gift-ideas
-best-seller               ← aparece em /collections/best-sellers
-new-arrival               ← aparece em /collections/new-arrivals
-```
+7. **Produtos, tags e recomendações**
+   - Resumo das tags `set-XX` e `match-XX` (já decidido)
+   - Tag `bundle-eligible` pro Bundle Builder
+   - Que isso é feito no painel do Shopify, **não no Lovable**
 
----
+8. **SEO básico (título, descrição, favicon)**
+   - Onde aparece no Google
+   - Como pedir mudança de meta title/description
+   - Como trocar favicon e logo
 
-## 📋 Regra de ouro
+9. **Publicar as mudanças**
+   - Botão "Publish" canto superior direito
+   - Verificar no domínio aurea18k.com
+   - O que fazer se não atualizar (cache)
 
-- **Mesma `set-XX`** = mesma família visual → recomendado como "Você também pode gostar"
-- **Mesma `match-XX`** = combo desenhado pra estar junto → recomendado PRIMEIRO como "Complete o look"
-- Um produto pode ter **várias** `set-*` E **várias** `match-*` ao mesmo tempo
-- Sem essas tags, o sistema cai pra recomendação genérica (mesma coleção)
+10. **Modelos prontos de prompt pra colar**
+    - "Trocar banner 1 da home"
+    - "Trocar cor dourada do site"
+    - "Adicionar nova seção de depoimentos"
+    - "Mudar texto do rodapé"
+    - "Trocar fonte dos títulos"
 
----
+11. **O que NÃO fazer**
+    - Não mexer em arquivos `supabase/`, `client.ts`, `.env`
+    - Não pedir mudanças no checkout/carrinho sem avisar
+    - Não publicar sem revisar no preview
+    - Não subir imagem gigante (>2MB)
 
-## Próximo passo
+12. **Quando chamar reforço (suporte técnico)**
+    - Erros que aparecem em vermelho
+    - Site fora do ar
+    - Pagamento/checkout quebrado
 
-Depois que você aplicar as tags no Shopify, me avisa que eu testo um produto pra confirmar que as recomendações Tier 1 (match) e Tier 2 (set) estão aparecendo corretas no site.
+## Detalhes técnicos
 
-Posso também criar uma página `/admin/tags-audit` (só visível pra você) que lista quais produtos têm/não têm tags `set-*` e `match-*` — útil pra não esquecer nenhum. Quer?
+- Arquivo único: `GUIA-ATUALIZACAO-SITE.md` na raiz do projeto.
+- Markdown puro, sem dependências, sem imagens embutidas (referencia caminhos do projeto).
+- Tamanhos de banner vêm dos componentes reais: `HeroSection.tsx` usa `banner1-desktop.jpg` / `banner1-mobile.jpg` etc.
+- Lista de cores extraída de `src/index.css` (tokens semânticos verde/dourado/creme).
+- Tom: passo a passo, sem jargão, com exemplos de prompt prontos pra copiar e colar.
+- Tamanho estimado: ~400-600 linhas de Markdown.
+
+## O que NÃO entra
+
+- Nada de código novo, nada de mudança em componentes.
+- Não é deploy de página `/admin` nem tutorial visual dentro do app — é só o documento.
+- Não cobre operação do Shopify a fundo (só o que cruza com tags/produtos).
+
+Confirma que quer só esse `.md` na raiz? Se preferir que eu também gere uma versão `.docx` pra mandar por email/WhatsApp, me avisa que adiciono o passo.
