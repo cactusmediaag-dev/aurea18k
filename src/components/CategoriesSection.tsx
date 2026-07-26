@@ -145,7 +145,7 @@ const CategoriesSection = () => {
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-warm-black/60 via-warm-black/25 to-transparent" />
               <div className="absolute top-0 left-0 p-6">
                 <h3 className="font-serif text-[26px] font-light text-cream-light leading-tight">
                   {b.titleLead}<br />
