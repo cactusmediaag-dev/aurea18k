@@ -19,11 +19,11 @@ const Index = () => (
       path="/"
     />
     <HeroSection />
-    <TrustStrip />
     <CategoriesSection />
     <BundleSection />
     <BestSellersSection />
     <BrandStorySection />
+    <TrustStrip />
     <PromiseSection />
     <ReviewsSection />
     <InstagramSection />
