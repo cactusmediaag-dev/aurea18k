@@ -41,9 +41,9 @@ const EmailCaptureSection = () => {
 
   return (
     <div className="bg-dark-green py-24 px-12 text-center max-sm:px-6">
-      <div className="aurea-section-label">Join the Inner Circle</div>
-      <h2 className="aurea-section-title" style={{ color: 'hsl(var(--cream-light))' }}>
-        10% Off Your <em>First Order</em>
+      <div className="aurea-section-label">10% Off Your First Order</div>
+      <h2 className="aurea-section-title text-cream-light">
+        Join Our <em>Inner Circle</em>
       </h2>
       <p className="text-cream-light/65 text-sm leading-[1.8] mt-5 mb-10 mx-auto max-w-[440px]">
         Subscribe for early access to new drops, exclusive bundles, and styling tips delivered to your inbox.
@@ -56,7 +56,7 @@ const EmailCaptureSection = () => {
           placeholder="Your email address"
           required
           disabled={submitting}
-          className="flex-1 py-4 px-5 border border-gold/35 bg-white/5 text-cream-light font-sans text-[13px] outline-none font-light placeholder:text-cream-light/35 focus:border-gold disabled:opacity-50"
+          className="flex-1 py-4 px-5 border border-gold/35 bg-cream-light/5 text-cream-light font-sans text-[13px] outline-none font-light placeholder:text-cream-light/35 focus:border-gold disabled:opacity-50"
         />
         <button
           type="submit"
