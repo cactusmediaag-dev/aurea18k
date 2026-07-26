@@ -1,7 +1,7 @@
 import { useProducts } from '@/hooks/useProducts';
 import { useCartStore, ShopifyProduct } from '@/stores/cartStore';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ShoppingBag } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import OptimizedImage from '@/components/OptimizedImage';
 import WishlistButton from '@/components/WishlistButton';
@@ -13,6 +13,7 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
   const variant = product.node.variants.edges[0]?.node;
   const image = product.node.images?.edges?.[0]?.node;
   const price = product.node.priceRange.minVariantPrice;
+  const soldOut = !variant?.availableForSale;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -33,12 +34,12 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
 
   return (
     <div className="cursor-pointer transition-transform duration-300 hover:-translate-y-1 group" onClick={() => navigate(`/product/${product.node.handle}`)}>
-      <div className="relative aspect-square mb-4 overflow-hidden" style={{ background: 'hsl(var(--cream))' }}>
+      <div className="relative aspect-square mb-4 overflow-hidden bg-cream-light">
         {image ? (
           <OptimizedImage src={image.url} alt={image.altText || product.node.title} preset="card" className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <div className="w-[60px] h-[60px] border-2 border-gold rounded-full opacity-50" />
+            <div className="w-[60px] h-[60px] border-2 border-gold opacity-50" />
           </div>
         )}
         <WishlistButton
@@ -52,18 +53,17 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
         />
         <button
           onClick={handleAddToCart}
-          disabled={isLoading || !variant?.availableForSale}
-          className="absolute bottom-0 left-0 right-0 bg-dark-green text-gold-light text-[10px] tracking-[0.2em] uppercase font-medium py-3.5 text-center cursor-pointer translate-y-full group-hover:translate-y-0 transition-transform duration-300 border-none disabled:opacity-50"
+          disabled={isLoading || soldOut}
+          title={soldOut ? 'Sold Out' : 'Quick Add'}
+          aria-label={soldOut ? 'Sold Out' : 'Quick Add'}
+          className={`absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center bg-dark-green text-gold-light transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 ${soldOut ? 'line-through decoration-1 opacity-70 cursor-not-allowed' : ''}`}
         >
-          {isLoading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : variant?.availableForSale ? 'Quick Add' : 'Sold Out'}
+          {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />}
         </button>
       </div>
-      <div className="px-0.5">
-        <div className="font-serif text-lg font-normal text-warm-black mb-1 tracking-[0.03em]">{product.node.title}</div>
-        <div className="text-[11px] tracking-[0.1em] uppercase text-warm-gray mb-2.5 font-light">
-          {product.node.description ? product.node.description.slice(0, 40) : '18K Gold · Hypoallergenic'}
-        </div>
-        <div className="text-[15px] text-warm-black font-normal">
+      <div className="px-0.5 text-center">
+        <div className="font-serif text-[16px] font-normal text-warm-black truncate">{product.node.title}</div>
+        <div className="font-sans text-[13px] text-warm-black mt-1">
           ${parseFloat(price.amount).toFixed(2)}
         </div>
       </div>
@@ -73,16 +73,17 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
 
 const BestSellersSection = () => {
   const { data: products, isLoading } = useProducts();
+  const items = products?.slice(0, 6);
 
   return (
-    <section id="bestsellers" className="aurea-section" style={{ background: '#FAF7F0' }}>
-      <div className="flex justify-between items-end mb-13">
+    <section id="bestsellers" className="aurea-section bg-cream">
+      <div className="flex justify-between items-end mb-13 gap-6">
         <div>
-          <div className="aurea-section-label">Most Loved</div>
-          <h2 className="aurea-section-title">Best <em>Sellers</em></h2>
+          <div className="aurea-section-label">Our Signature Selection</div>
+          <h2 className="aurea-section-title">Loved <em>Most</em></h2>
         </div>
-        <Link to="/collections/all" className="text-[11px] tracking-[0.18em] uppercase text-dark-green no-underline border-b border-gold pb-0.5 font-normal hover:text-gold transition-colors">
-          View All
+        <Link to="/collections/best-sellers" className="shrink-0 font-sans text-[11px] tracking-[0.18em] uppercase text-dark-green no-underline border-b border-gold pb-0.5 hover:text-gold transition-colors">
+          View All Best Sellers →
         </Link>
       </div>
 
@@ -90,16 +91,15 @@ const BestSellersSection = () => {
         <div className="flex justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-gold" />
         </div>
-      ) : products && products.length > 0 ? (
-        <div className="grid grid-cols-4 gap-7 max-lg:grid-cols-2 max-sm:grid-cols-1">
-          {products.map((product) => (
+      ) : items && items.length > 0 ? (
+        <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-5">
+          {items.map((product) => (
             <ProductCard key={product.node.id} product={product} />
           ))}
         </div>
       ) : (
         <div className="text-center py-20">
           <p className="text-warm-gray text-lg">No products found</p>
-          <p className="text-warm-gray text-sm mt-2">Add products to your Shopify store to display them here.</p>
         </div>
       )}
     </section>

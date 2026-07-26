@@ -28,7 +28,7 @@ const cards = [
 ];
 
 const BundleSection = () => (
-  <section className="aurea-section" style={{ background: '#FAF7F0' }}>
+  <section className="aurea-section bg-cream-light">
     <div className="text-center">
       <div className="aurea-section-label">Save More, Shine More</div>
       <h2 className="aurea-section-title">Bundle <em>&amp; Save</em></h2>
@@ -40,10 +40,10 @@ const BundleSection = () => (
         <Link
           key={cfg.type}
           to={`/bundle/${cfg.type}`}
-          className={`block border p-9 px-7 relative cursor-pointer transition-all duration-300 hover:-translate-y-1 no-underline ${
+          className={`block border p-9 px-7 relative cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-gold no-underline ${
             featured
-              ? 'border-gold bg-gradient-to-br from-[#FAF5E8] to-cream-light'
-              : 'border-gold/25 bg-cream-light hover:border-gold'
+              ? 'border-gold bg-gradient-to-br from-gold-pale/40 to-cream-light'
+              : 'border-gold/25 bg-cream-light'
           }`}
         >
           {badge && (
