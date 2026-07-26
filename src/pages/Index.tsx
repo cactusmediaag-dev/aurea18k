@@ -1,7 +1,6 @@
 import PageLayout from '@/components/PageLayout';
 import Seo from '@/components/Seo';
 import HeroSection from '@/components/HeroSection';
-import TrustStrip from '@/components/TrustStrip';
 import CategoriesSection from '@/components/CategoriesSection';
 import BestSellersSection from '@/components/BestSellersSection';
 import BrandStorySection from '@/components/BrandStorySection';
@@ -20,10 +19,9 @@ const Index = () => (
     />
     <HeroSection />
     <CategoriesSection />
-    <BundleSection />
     <BestSellersSection />
+    <BundleSection />
     <BrandStorySection />
-    <TrustStrip />
     <PromiseSection />
     <ReviewsSection />
     <InstagramSection />
