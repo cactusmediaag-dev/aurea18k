@@ -56,7 +56,7 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
           disabled={isLoading || soldOut}
           title={soldOut ? 'Sold Out' : 'Quick Add'}
           aria-label={soldOut ? 'Sold Out' : 'Quick Add'}
-          className={`absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center bg-dark-green text-gold-light transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 ${soldOut ? 'line-through decoration-1 opacity-70 cursor-not-allowed' : ''}`}
+          className={`absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 ${soldOut ? 'bg-warm-gray/50 text-cream-light cursor-not-allowed' : 'bg-dark-green text-gold-light'}`}
         >
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />}
         </button>
@@ -77,7 +77,7 @@ const BestSellersSection = () => {
 
   return (
     <section id="bestsellers" className="aurea-section bg-cream">
-      <div className="flex justify-between items-end mb-13 gap-6">
+      <div className="flex justify-between items-end mb-14 gap-6">
         <div>
           <div className="aurea-section-label">Our Signature Selection</div>
           <h2 className="aurea-section-title">Loved <em>Most</em></h2>
