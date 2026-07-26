@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Instagram, Facebook, Mail } from 'lucide-react';
 import logoHorizontal from '@/assets/logo-horizontal.png';
 
 const Footer = () => (
@@ -10,14 +11,14 @@ const Footer = () => (
           18K Gold Plated jewelry crafted for real life. Hypoallergenic, durable, and beautifully affordable.
         </p>
         <div className="flex gap-3.5">
-          <a href="https://www.instagram.com/aureajewels.18k/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 border border-cream-light/10 flex items-center justify-center text-[13px] cursor-pointer transition-all hover:border-gold hover:bg-gold/10 hover:text-gold-light no-underline text-cream-light/60">
-            in
+          <a href="https://www.instagram.com/aureajewels.18k/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-9 h-9 border border-cream-light/10 flex items-center justify-center cursor-pointer transition-all hover:border-gold hover:bg-gold/10 hover:text-gold-light no-underline text-cream-light/60">
+            <Instagram size={16} strokeWidth={1.5} />
           </a>
-          <a href="https://www.facebook.com/aureajewels.18k/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 border border-cream-light/10 flex items-center justify-center text-[13px] cursor-pointer transition-all hover:border-gold hover:bg-gold/10 hover:text-gold-light no-underline text-cream-light/60">
-            fb
+          <a href="https://www.facebook.com/aureajewels.18k/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-9 h-9 border border-cream-light/10 flex items-center justify-center cursor-pointer transition-all hover:border-gold hover:bg-gold/10 hover:text-gold-light no-underline text-cream-light/60">
+            <Facebook size={16} strokeWidth={1.5} />
           </a>
-          <a href="mailto:contact@aurea18k.com" className="w-9 h-9 border border-cream-light/10 flex items-center justify-center text-[13px] cursor-pointer transition-all hover:border-gold hover:bg-gold/10 hover:text-gold-light no-underline text-cream-light/60">
-            ✉
+          <a href="mailto:contact@aurea18k.com" aria-label="Email" className="w-9 h-9 border border-cream-light/10 flex items-center justify-center cursor-pointer transition-all hover:border-gold hover:bg-gold/10 hover:text-gold-light no-underline text-cream-light/60">
+            <Mail size={16} strokeWidth={1.5} />
           </a>
         </div>
       </div>
@@ -59,7 +60,6 @@ const Footer = () => (
         <ul className="list-none space-y-3">
           {[
             { label: 'About Us', href: '/about' },
-            { label: 'Reviews', href: '/reviews' },
             { label: 'Privacy Policy', href: '/privacy-policy' },
             { label: 'Terms & Conditions', href: '/terms' },
             { label: 'Accessibility Statement', href: '/accessibility' },
@@ -72,7 +72,7 @@ const Footer = () => (
     </div>
 
     <div className="flex justify-between items-center flex-wrap gap-4">
-      <div className="text-[11px] tracking-[0.05em] text-cream-light/25">© 2025 Aurea Jewels · aurea18k.com · Ships Worldwide</div>
+      <div className="text-[11px] tracking-[0.05em] text-cream-light/25">© 2026 Aurea Jewels · aurea18k.com · Ships Worldwide</div>
       <div className="flex gap-2.5 items-center">
         {['PayPal', 'Visa', 'Mastercard', 'Amex', 'Shop Pay'].map((p) => (
           <div key={p} className="bg-cream-light/10 border border-cream-light/10 px-2.5 py-1 text-[10px] tracking-[0.1em] text-cream-light/40 uppercase">
