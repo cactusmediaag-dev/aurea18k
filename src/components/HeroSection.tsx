@@ -29,7 +29,7 @@ const HeroSection = () => {
 
   return (
     <section className="relative bg-cream">
-      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[calc(100vh-112px)]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[560px] md:h-[min(750px,92vh)]">
         {/* LEFT — content */}
         <div
           className="lg:col-span-5 flex items-center bg-cream order-2 lg:order-1 px-6 py-12 lg:pl-12 lg:pr-16"
