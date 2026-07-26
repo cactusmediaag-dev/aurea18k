@@ -48,6 +48,16 @@ const shopMenus = {
   ],
 };
 
+const customerCare = [
+  { label: 'Reviews', href: '/reviews' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Shipping & Returns', href: '/shipping-returns' },
+  { label: 'Contact', href: '/contact' },
+];
+
+const topLinkClass =
+  "relative text-[13px] tracking-[0.15em] uppercase text-warm-black font-medium hover:text-gold transition-colors duration-200 no-underline after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-gold after:transition-all after:duration-200 hover:after:w-full";
+
 const Navbar = ({ onCartOpen }: NavbarProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
@@ -68,7 +78,7 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
   }, []);
 
   return (
-    <nav ref={navRef} className="sticky top-0 z-50 bg-cream-light/95 backdrop-blur-md border-b border-gold/25">
+    <nav ref={navRef} className="sticky top-0 z-50 bg-cream-light border-b border-gold/15">
       {/* Main bar */}
       <div className="flex items-center justify-between h-[72px] px-12 max-md:px-5 max-md:h-16">
         {/* Logo — left */}
@@ -79,86 +89,84 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
         </div>
 
         {/* Center nav — desktop */}
-        <div className="hidden md:flex items-center gap-7">
+        <div className="hidden md:flex items-center gap-8">
+          <Link to="/collections/new-arrivals" className={topLinkClass}>New In</Link>
           <button
-            className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors bg-transparent border-none cursor-pointer flex items-center gap-1"
+            className={`${topLinkClass} bg-transparent border-none cursor-pointer flex items-center gap-1 p-0`}
             onClick={() => setShopOpen(!shopOpen)}
             onMouseEnter={() => setShopOpen(true)}
           >
             Shop <ChevronDown className={`w-3 h-3 transition-transform ${shopOpen ? 'rotate-180' : ''}`} />
           </button>
-          <Link to="/collections/new-arrivals" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">New Arrivals</Link>
-          <Link to="/collections/best-sellers" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">Best Sellers</Link>
-          <Link to="/collections/bundles-sets" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">Bundles & Sets</Link>
-          <Link to="/collections/gift-ideas" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">Gift Ideas</Link>
-          <Link to="/about" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">About Us</Link>
-          <Link to="/reviews" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">Reviews</Link>
-          <Link to="/faq" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">FAQ</Link>
-          <Link to="/shipping-returns" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline whitespace-nowrap">Shipping & Returns</Link>
-          <Link to="/contact" className="text-xs tracking-[0.18em] uppercase text-warm-black font-medium hover:text-gold transition-colors no-underline">Contact</Link>
+          <Link to="/collections/best-sellers" className={topLinkClass}>Best Sellers</Link>
+          <Link to="/collections/gift-ideas" className={topLinkClass}>Gifts</Link>
+          <Link to="/about" className={topLinkClass}>About Us</Link>
         </div>
 
         {/* Right icons — desktop */}
-        <div className="hidden md:flex gap-6 items-center flex-shrink-0">
-          <button onClick={() => setSearchOpen(true)} className="bg-transparent border-none cursor-pointer p-0">
-            <Search className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
+        <div className="hidden md:flex gap-5 items-center flex-shrink-0">
+          <button onClick={() => setSearchOpen(true)} className="bg-transparent border-none cursor-pointer p-0" aria-label="Search">
+            <Search className="w-5 h-5 text-warm-black hover:text-gold transition-colors duration-200" />
           </button>
+          <Link to="/account" className="bg-transparent border-none cursor-pointer p-0" aria-label="My account">
+            <User className="w-5 h-5 text-warm-black hover:text-gold transition-colors duration-200" />
+          </Link>
           <Link to="/account/wishlist" className="relative bg-transparent border-none cursor-pointer p-0" aria-label="Wishlist">
-            <Heart className={`w-5 h-5 opacity-70 hover:opacity-100 transition-opacity ${wishlistCount > 0 ? 'fill-wishlist-red text-wishlist-red opacity-100' : ''}`} />
+            <Heart className={`w-5 h-5 transition-colors duration-200 ${wishlistCount > 0 ? 'fill-wishlist-red text-wishlist-red' : 'text-warm-black hover:text-gold'}`} />
             {wishlistCount > 0 && (
               <span className="absolute -top-2 -right-2 w-5 h-5 bg-gold rounded-full text-[10px] font-medium text-warm-black flex items-center justify-center font-sans">
                 {wishlistCount}
               </span>
             )}
           </Link>
-          <Link to="/account" className="bg-transparent border-none cursor-pointer p-0" aria-label="My account">
-            <User className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
-          </Link>
-          <button onClick={onCartOpen} className="relative bg-transparent border-none cursor-pointer p-0">
-            <ShoppingBag className="w-5 h-5 opacity-70 hover:opacity-100 transition-opacity" />
+          <button onClick={onCartOpen} className="relative bg-transparent border-none cursor-pointer p-0" aria-label="Cart">
+            <ShoppingBag className="w-5 h-5 text-warm-black hover:text-gold transition-colors duration-200" />
             {totalItems > 0 && (
               <span className="absolute -top-2 -right-2 w-5 h-5 bg-gold rounded-full text-[10px] font-medium text-warm-black flex items-center justify-center font-sans">
                 {totalItems}
               </span>
             )}
           </button>
+          <Link
+            to="/collections/bundles-sets"
+            className="hidden lg:inline-block bg-gold text-primary-foreground hover:bg-gold-light transition-colors duration-200 font-sans text-[12px] uppercase tracking-[0.2em] font-medium px-6 py-3 no-underline ml-2"
+          >
+            Bundle &amp; Save
+          </Link>
         </div>
 
         {/* Mobile controls */}
         <div className="flex md:hidden items-center gap-4">
           <Link to="/account/wishlist" className="relative p-0" aria-label="Wishlist">
-            <Heart className={`w-5 h-5 ${wishlistCount > 0 ? 'fill-wishlist-red text-wishlist-red' : ''}`} />
+            <Heart className={`w-5 h-5 ${wishlistCount > 0 ? 'fill-wishlist-red text-wishlist-red' : 'text-warm-black'}`} />
             {wishlistCount > 0 && (
               <span className="absolute -top-2 -right-2 w-5 h-5 bg-gold rounded-full text-[10px] font-medium text-warm-black flex items-center justify-center font-sans">
                 {wishlistCount}
               </span>
             )}
           </Link>
-          <Link to="/account" className="p-0" aria-label="My account">
-            <User className="w-5 h-5" />
-          </Link>
-          <button onClick={onCartOpen} className="relative bg-transparent border-none cursor-pointer p-0">
-            <ShoppingBag className="w-5 h-5" />
+          <button onClick={onCartOpen} className="relative bg-transparent border-none cursor-pointer p-0" aria-label="Cart">
+            <ShoppingBag className="w-5 h-5 text-warm-black" />
             {totalItems > 0 && (
               <span className="absolute -top-2 -right-2 w-5 h-5 bg-gold rounded-full text-[10px] font-medium text-warm-black flex items-center justify-center font-sans">
                 {totalItems}
               </span>
             )}
           </button>
-          <button className="bg-transparent border-none p-0" onClick={() => { setMobileOpen(!mobileOpen); setMobileSubmenu(null); }}>
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          <button className="bg-transparent border-none p-0" onClick={() => { setMobileOpen(!mobileOpen); setMobileSubmenu(null); }} aria-label="Menu">
+            {mobileOpen ? <X className="w-5 h-5 text-warm-black" /> : <Menu className="w-5 h-5 text-warm-black" />}
           </button>
         </div>
       </div>
 
-      {/* Desktop mega menu — full width below header */}
+      {/* Desktop mega menu */}
       {shopOpen && (
         <div
           className="hidden md:block absolute left-0 right-0 top-full bg-cream-light border-b border-gold/25 shadow-lg z-50"
           onMouseLeave={() => setShopOpen(false)}
         >
-          <div className="max-w-5xl mx-auto px-12 py-10">
-            <div className="grid grid-cols-4 gap-10">
+          <div className="max-w-6xl mx-auto px-12 py-10">
+            <div className="grid grid-cols-5 gap-10">
               {Object.entries(shopMenus).map(([title, items]) => (
                 <div key={title}>
                   <div className="text-[11px] tracking-[0.25em] uppercase text-gold font-semibold mb-4">{title}</div>
@@ -177,6 +185,22 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
                   </ul>
                 </div>
               ))}
+              <div>
+                <div className="text-[11px] tracking-[0.25em] uppercase text-gold font-semibold mb-4">Customer Care</div>
+                <ul className="list-none space-y-2.5 p-0 m-0">
+                  {customerCare.map((item) => (
+                    <li key={item.label}>
+                      <Link
+                        to={item.href}
+                        className="text-[13px] text-warm-black/70 font-light hover:text-gold transition-colors no-underline block"
+                        onClick={() => setShopOpen(false)}
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
           <div className="border-t border-gold/15 py-4 flex items-center justify-center gap-8">
@@ -189,12 +213,13 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="fixed top-16 left-0 right-0 bg-cream-light border-b border-gold/25 flex flex-col items-stretch gap-1 py-6 px-5 md:hidden z-50 h-[calc(100vh-4rem)] overflow-y-auto">
-          <Link to="/" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Home</Link>
+          <Link to="/" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.15em] uppercase text-warm-black no-underline py-2 text-left">Home</Link>
+          <Link to="/collections/new-arrivals" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.15em] uppercase text-warm-black no-underline py-2 text-left">New In</Link>
 
           {Object.entries(shopMenus).map(([title, items]) => (
             <div key={title} className="w-full">
               <button
-                className="w-full text-xs tracking-[0.1em] uppercase text-warm-black bg-transparent border-none cursor-pointer py-2 flex items-center gap-1 text-left"
+                className="w-full text-xs tracking-[0.15em] uppercase text-warm-black bg-transparent border-none cursor-pointer py-2 flex items-center gap-1 text-left"
                 onClick={() => setMobileSubmenu(mobileSubmenu === title ? null : title)}
               >
                 {title} <ChevronDown className={`w-3 h-3 transition-transform ${mobileSubmenu === title ? 'rotate-180' : ''}`} />
@@ -211,19 +236,31 @@ const Navbar = ({ onCartOpen }: NavbarProps) => {
             </div>
           ))}
 
-          <Link to="/collections/new-arrivals" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">New Arrivals</Link>
-          <Link to="/collections/best-sellers" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Best Sellers</Link>
-          <Link to="/collections/bundles-sets" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Bundles & Sets</Link>
-          <Link to="/collections/gift-ideas" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Gift Ideas</Link>
-          <Link to="/about" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">About Us</Link>
-          <Link to="/reviews" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Reviews</Link>
-          <Link to="/faq" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">FAQ</Link>
-          <Link to="/shipping-returns" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Shipping & Returns</Link>
-          <Link to="/contact" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">Contact</Link>
-          <Link to="/account" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">My Account</Link>
-          <Link to="/account/wishlist" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-warm-black no-underline py-2 text-left">My Wishlist</Link>
-          <Link to="/collections/all" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-gold font-medium no-underline py-2 text-left">Shop All</Link>
-          <Link to="/collections" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.1em] uppercase text-gold font-medium no-underline py-2 text-left">View Categories</Link>
+          <Link to="/collections/best-sellers" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.15em] uppercase text-warm-black no-underline py-2 text-left">Best Sellers</Link>
+          <Link to="/collections/gift-ideas" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.15em] uppercase text-warm-black no-underline py-2 text-left">Gifts</Link>
+          <Link to="/about" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.15em] uppercase text-warm-black no-underline py-2 text-left">About Us</Link>
+
+          <div className="pt-4 mt-2 border-t border-gold/20">
+            <div className="text-[10px] tracking-[0.25em] uppercase text-gold font-semibold mb-2">Customer Care</div>
+            {customerCare.map((item) => (
+              <Link key={item.label} to={item.href} onClick={() => setMobileOpen(false)} className="text-[11px] text-warm-black/70 no-underline py-1.5 text-left block">
+                {item.label}
+              </Link>
+            ))}
+          </div>
+
+          <div className="pt-4 mt-2 border-t border-gold/20 flex flex-col gap-1">
+            <Link to="/account" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.15em] uppercase text-warm-black no-underline py-2 text-left">My Account</Link>
+            <Link to="/account/wishlist" onClick={() => setMobileOpen(false)} className="text-xs tracking-[0.15em] uppercase text-warm-black no-underline py-2 text-left">My Wishlist</Link>
+          </div>
+
+          <Link
+            to="/collections/bundles-sets"
+            onClick={() => setMobileOpen(false)}
+            className="mt-4 w-full text-center bg-gold text-primary-foreground hover:bg-gold-light transition-colors font-sans text-[12px] uppercase tracking-[0.2em] font-medium py-4 no-underline"
+          >
+            Bundle &amp; Save
+          </Link>
         </div>
       )}
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
