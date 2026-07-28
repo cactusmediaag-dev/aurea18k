@@ -13,12 +13,13 @@ const STATIC_POSTS = [post1, post2, post3, post4, post5, post6];
 const InstagramSection = () => {
   return (
     <div className="py-20 bg-cream">
-      <div className="max-w-[1400px] mx-auto px-12 pb-12 flex items-end justify-between gap-8 max-sm:flex-col max-sm:items-start max-sm:px-6">
+      <div className="max-w-[1400px] mx-auto px-12 pb-12 flex items-end justify-between gap-8 max-md:flex-col max-md:items-start max-md:gap-4 max-md:px-5 max-md:pb-8">
         <div className="text-left">
           <div className="aurea-section-label">Follow Along</div>
-          <h2 className="aurea-section-title text-dark-green">
+          <h2 className="aurea-section-title text-dark-green text-balance">
             @aureajewels.18k on <em>Instagram</em>
           </h2>
+
           <div className="font-serif text-xl font-light text-dark-green tracking-[0.15em] mt-2">
             Tag us for a chance to be featured
           </div>

@@ -70,11 +70,12 @@ const MensSection = () => {
 
   return (
     <section className="aurea-section bg-cream">
-      <div className="flex justify-between items-end mb-14 gap-6">
+      <div className="flex justify-between items-end mb-14 gap-6 max-md:flex-col max-md:items-start max-md:gap-4">
         <div>
           <div className="aurea-section-label">For Him</div>
-          <h2 className="aurea-section-title">The Men's <em>Edit</em></h2>
+          <h2 className="aurea-section-title text-balance">The Men's <em>Edit</em></h2>
         </div>
+
         <Link
           to="/collections/mens"
           className="shrink-0 font-sans text-[11px] tracking-[0.18em] uppercase text-dark-green no-underline border-b border-gold pb-0.5 hover:text-gold transition-colors"

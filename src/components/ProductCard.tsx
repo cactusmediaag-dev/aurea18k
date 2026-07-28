@@ -67,11 +67,12 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
         </button>
       </div>
       <div className="px-0.5 text-center">
-        <div className="font-serif text-[16px] font-normal text-warm-black truncate">{product.node.title}</div>
-        <div className="font-sans text-[13px] text-warm-black mt-1">
+        <div className="font-serif text-[15px] md:text-[16px] font-normal text-warm-black truncate">{product.node.title}</div>
+        <div className="font-sans text-[12px] md:text-[13px] text-warm-black mt-1">
           ${parseFloat(price.amount).toFixed(2)}
         </div>
       </div>
+
     </div>
   );
 };

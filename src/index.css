@@ -67,8 +67,9 @@
 /* Custom Aurea utilities */
 @layer components {
   .aurea-section {
-    @apply py-24 px-12;
+    @apply py-24 px-12 max-md:py-16 max-md:px-5;
   }
+
   .aurea-section-label {
     font-size: 10px;
     letter-spacing: 0.35em;
