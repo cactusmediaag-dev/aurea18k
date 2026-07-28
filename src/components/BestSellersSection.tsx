@@ -9,15 +9,16 @@ const BestSellersSection = () => {
 
   return (
     <section id="bestsellers" className="aurea-section bg-cream">
-      <div className="flex justify-between items-end mb-14 gap-6">
+      <div className="flex justify-between items-end mb-14 gap-6 max-md:flex-col max-md:items-start max-md:gap-4">
         <div>
           <div className="aurea-section-label">Our Signature Selection</div>
-          <h2 className="aurea-section-title">Loved <em>Most</em></h2>
+          <h2 className="aurea-section-title text-balance">Loved <em>Most</em></h2>
         </div>
         <Link to="/collections/best-sellers" className="shrink-0 font-sans text-[11px] tracking-[0.18em] uppercase text-dark-green no-underline border-b border-gold pb-0.5 hover:text-gold transition-colors">
           View All Best Sellers →
         </Link>
       </div>
+
 
       {isLoading ? (
         <div className="flex justify-center py-20">

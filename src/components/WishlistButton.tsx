@@ -71,7 +71,7 @@ const WishlistButton = ({ product, variant = 'card', className }: WishlistButton
         aria-label={has ? 'Remove from wishlist' : 'Add to wishlist'}
         aria-pressed={has}
         className={cn(
-          'absolute top-3 right-3 z-10 w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all border',
+          'absolute top-3 right-3 z-10 w-9 h-9 flex items-center justify-center cursor-pointer transition-all border',
           has
             ? 'bg-cream-light border-gold opacity-100'
             : 'bg-cream-light/85 border-gold/25 hover:border-gold opacity-100 md:opacity-0 md:group-hover:opacity-100',

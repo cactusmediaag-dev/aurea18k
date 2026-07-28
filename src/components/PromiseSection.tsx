@@ -10,20 +10,21 @@ const promises: { icon: LucideIcon; title: string; text: string }[] = [
 
 const PromiseSection = () => (
   <section className="aurea-section bg-cream-light">
-    <div className="grid grid-cols-2 lg:grid-cols-5 gap-5">
-      {promises.map(({ icon: Icon, title, text }, i) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-5">
+      {promises.map(({ icon: Icon, title, text }) => (
         <div
           key={title}
-          className={`bg-cream border border-gold/15 p-7 text-center transition-colors duration-300 hover:border-gold/50 ${
-            i === 4 ? 'col-span-2 lg:col-span-1 max-lg:mx-auto max-lg:w-1/2' : ''
-          }`}
+          className="bg-cream border border-gold/15 transition-colors duration-300 hover:border-gold/50 flex items-start gap-4 p-5 md:block md:p-7 md:text-center"
         >
-          <Icon size={26} strokeWidth={1.25} className="text-gold mx-auto" />
-          <div className="font-serif text-[19px] text-dark-green mt-4">{title}</div>
-          <p className="font-sans text-[12.5px] text-warm-gray leading-[1.7] mt-2">{text}</p>
+          <Icon size={22} strokeWidth={1.25} className="text-gold shrink-0 mt-1 md:w-[26px] md:h-[26px] md:mt-0 md:mx-auto" />
+          <div>
+            <div className="font-serif text-[17px] md:text-[19px] text-dark-green md:mt-4">{title}</div>
+            <p className="font-sans text-[12.5px] text-warm-gray leading-[1.6] md:leading-[1.7] mt-1 md:mt-2">{text}</p>
+          </div>
         </div>
       ))}
     </div>
+
   </section>
 );
 

@@ -70,15 +70,16 @@ const BundleSection = () => {
       </div>
 
       {/* Tier strip */}
-      <div className="grid grid-cols-3 gap-5 mt-14 max-md:grid-cols-1">
+      <div className="grid grid-cols-3 gap-5 mt-14 max-lg:grid-cols-1 max-lg:gap-6">
         {tiers.map(({ cfg, featured, badge }) => (
           <Link
             key={cfg.type}
             to={`/bundle/${cfg.type}`}
             className={`block border px-6 py-5 relative cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-gold no-underline ${
-              featured ? 'border-gold bg-gradient-to-br from-gold-pale/40 to-cream-light' : 'border-gold/25 bg-cream-light'
+              featured ? 'border-gold bg-gradient-to-br from-gold-pale/40 to-cream-light max-lg:mt-3' : 'border-gold/25 bg-cream-light'
             }`}
           >
+
             {badge && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-dark-green text-gold-light text-[9px] tracking-[0.2em] uppercase font-medium px-5 py-1.5 whitespace-nowrap">
                 {badge}
