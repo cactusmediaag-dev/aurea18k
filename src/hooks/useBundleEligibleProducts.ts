@@ -7,7 +7,7 @@ export function useBundleEligibleProducts() {
     queryFn: async () => {
       const data = await storefrontApiRequest(STOREFRONT_QUERY, {
         first: 100,
-        query: 'tag:bundle-eligible',
+        query: "tag:'bundle-eligible'",
       });
       return data?.data?.products?.edges || [];
     },

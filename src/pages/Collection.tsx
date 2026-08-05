@@ -65,15 +65,15 @@ const COLLECTION_TITLES: Record<string, string> = {
 
 // Grouped queries for top-level categories
 const GROUPED_QUERIES: Record<string, string> = {
-  'womens': 'tag:womens-earrings OR tag:womens-necklaces OR tag:womens-bracelets OR tag:womens-chokers OR tag:everyday-essentials OR tag:statement-pieces OR tag:minimal-collection OR tag:layering-pieces',
-  'mens': 'tag:mens-chains OR tag:mens-bracelets OR tag:mens-stud-earrings OR tag:mens-scapular-necklaces OR tag:minimal-men OR tag:classic-collection',
-  'kids': 'tag:kids-earrings OR tag:kids-necklaces OR tag:kids-bracelets OR tag:kids-chokers OR tag:hypoallergenic-kids',
+  'womens': "tag:'womens-earrings' OR tag:'womens-necklaces' OR tag:'womens-bracelets' OR tag:'womens-chokers' OR tag:'everyday-essentials' OR tag:'statement-pieces' OR tag:'minimal-collection' OR tag:'layering-pieces'",
+  'mens': "tag:'mens-chains' OR tag:'mens-bracelets' OR tag:'mens-stud-earrings' OR tag:'mens-scapular-necklaces' OR tag:'minimal-men' OR tag:'classic-collection'",
+  'kids': "tag:'kids-earrings' OR tag:'kids-necklaces' OR tag:'kids-bracelets' OR tag:'kids-chokers' OR tag:'hypoallergenic-kids'",
 };
 
 function getCollectionQuery(handle: string): string | undefined {
   if (handle === 'all') return undefined;
   if (GROUPED_QUERIES[handle]) return GROUPED_QUERIES[handle];
-  return `tag:${handle}`;
+  return `tag:'${handle}'`;
 }
 
 const PRODUCTS_QUERY = `
