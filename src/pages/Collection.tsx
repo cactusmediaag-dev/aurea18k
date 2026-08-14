@@ -9,6 +9,7 @@ import PageLayout from '@/components/PageLayout';
 import Seo, { breadcrumbLd } from '@/components/Seo';
 import OptimizedImage from '@/components/OptimizedImage';
 import WishlistButton from '@/components/WishlistButton';
+import { PROMO, promoBadgeLabel } from '@/lib/promo';
 import bannerWomens from '@/assets/banner-womens.jpg';
 import bannerMens from '@/assets/banner-mens.jpg';
 import bannerKids from '@/assets/banner-kids.jpg';
@@ -268,6 +269,11 @@ const Collection = () => {
                   <div key={product.node.id} className="group">
                     <Link to={`/product/${product.node.handle}`} className="block no-underline">
                       <div className="aspect-square bg-cream overflow-hidden mb-3 relative">
+                        {PROMO.active && (
+                          <span className="absolute top-3 left-3 z-10 bg-gold-pale text-dark-green text-[10px] tracking-[0.15em] uppercase font-medium px-2.5 py-1">
+                            {promoBadgeLabel}
+                          </span>
+                        )}
                         <WishlistButton
                           product={{
                             productId: product.node.id,

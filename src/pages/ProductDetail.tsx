@@ -8,7 +8,8 @@ import { getRecommendations } from '@/lib/recommendations';
 import SuggestionCard from '@/components/SuggestionCard';
 import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { Loader2, ArrowLeft, Tag } from 'lucide-react';
+import { PROMO, promoNote } from '@/lib/promo';
 import PageLayout from '@/components/PageLayout';
 import Seo, { breadcrumbLd, SITE_URL } from '@/components/Seo';
 import OptimizedImage from '@/components/OptimizedImage';
@@ -187,6 +188,13 @@ const ProductDetail = () => {
             <div className="text-2xl text-warm-black font-normal mb-6">
               ${variant ? parseFloat(variant.price.amount).toFixed(2) : parseFloat(product.node.priceRange.minVariantPrice.amount).toFixed(2)}
             </div>
+
+            {PROMO.active && (
+              <div className="flex items-center gap-2.5 border border-gold/25 bg-gold-pale/30 px-4 py-3 mb-6">
+                <Tag className="w-4 h-4 text-gold shrink-0" strokeWidth={1.5} />
+                <span className="font-sans text-[12.5px] text-dark-green tracking-[0.03em]">{promoNote}</span>
+              </div>
+            )}
 
             <p className="text-[15px] text-warm-gray leading-[1.85] font-light mb-8">{product.node.description}</p>
 

@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import OptimizedImage from '@/components/OptimizedImage';
 import WishlistButton from '@/components/WishlistButton';
+import { PROMO, promoBadgeLabel } from '@/lib/promo';
 
 const ProductCard = ({ product }: { product: ShopifyProduct }) => {
   const addItem = useCartStore(state => state.addItem);
@@ -40,6 +41,11 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
           <div className="w-full h-full flex items-center justify-center">
             <div className="w-[60px] h-[60px] border-2 border-gold opacity-50" />
           </div>
+        )}
+        {PROMO.active && !soldOut && (
+          <span className="absolute top-3 left-3 z-10 bg-gold-pale text-dark-green text-[10px] tracking-[0.15em] uppercase font-medium px-2.5 py-1">
+            {promoBadgeLabel}
+          </span>
         )}
         <WishlistButton
           product={{

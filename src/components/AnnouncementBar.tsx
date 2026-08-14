@@ -1,4 +1,7 @@
+import { PROMO, promoBarMessage } from '@/lib/promo';
+
 const MESSAGES = [
+  ...(PROMO.active ? [promoBarMessage] : []),
   'Free shipping on orders over $120',
   '18K Gold Plated · Hypoallergenic & Nickel-Free',
   'Ships Worldwide · 3–5 Business Days',
