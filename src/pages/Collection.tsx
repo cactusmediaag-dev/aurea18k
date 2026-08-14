@@ -102,13 +102,43 @@ const PRODUCTS_QUERY = `
   }
 `;
 
+// Real Shopify collections are the source of truth for category pages —
+// whatever is curated in the admin is exactly what renders here.
+const COLLECTION_PRODUCTS_QUERY = `
+  query GetCollectionProducts($handle: String!, $first: Int!, $after: String) {
+    collectionByHandle(handle: $handle) {
+      title
+      products(first: $first, after: $after) {
+        pageInfo { hasNextPage endCursor }
+        edges {
+          node {
+            id title description handle
+            priceRange { minVariantPrice { amount currencyCode } }
+            images(first: 2) { edges { node { url altText } } }
+            variants(first: 5) {
+              edges {
+                node {
+                  id title
+                  price { amount currencyCode }
+                  availableForSale
+                  selectedOptions { name value }
+                }
+              }
+            }
+            options { name values }
+          }
+        }
+      }
+    }
+  }
+`;
+
 const Collection = () => {
   const { handle = 'all' } = useParams<{ handle: string }>();
   const addItem = useCartStore(state => state.addItem);
   const isCartLoading = useCartStore(state => state.isLoading);
 
   const query = getCollectionQuery(handle);
-  const title = COLLECTION_TITLES[handle] || handle.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   const banner = getCollectionBanner(handle);
 
   const {
@@ -120,6 +150,19 @@ const Collection = () => {
   } = useInfiniteQuery({
     queryKey: ['collection', handle],
     queryFn: async ({ pageParam }) => {
+      // Primary: the real Shopify collection (mirrors the admin exactly).
+      if (handle !== 'all') {
+        const res = await storefrontApiRequest(COLLECTION_PRODUCTS_QUERY, {
+          handle,
+          first: 40,
+          after: pageParam ?? null,
+        });
+        const collection = res?.data?.collectionByHandle;
+        if (collection) {
+          return { ...collection.products, collectionTitle: collection.title };
+        }
+      }
+      // Fallback: 'all' and virtual handles that have no real collection.
       const res = await storefrontApiRequest(PRODUCTS_QUERY, {
         first: 40,
         query,
@@ -131,6 +174,9 @@ const Collection = () => {
     getNextPageParam: (lastPage) =>
       lastPage?.pageInfo?.hasNextPage ? lastPage.pageInfo.endCursor : undefined,
   });
+
+  const shopifyTitle: string | undefined = data?.pages?.[0]?.collectionTitle;
+  const title = shopifyTitle || COLLECTION_TITLES[handle] || handle.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
   const products = useMemo<ShopifyProduct[]>(
     () => (data?.pages ?? []).flatMap((p) => p?.edges ?? []),
