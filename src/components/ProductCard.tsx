@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import OptimizedImage from '@/components/OptimizedImage';
 import WishlistButton from '@/components/WishlistButton';
 import { PROMO, promoBadgeLabel } from '@/lib/promo';
+import { getSalePricing } from '@/lib/pricing';
 
 const ProductCard = ({ product }: { product: ShopifyProduct }) => {
   const addItem = useCartStore(state => state.addItem);
@@ -14,6 +15,7 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
   const image = product.node.images?.edges?.[0]?.node;
   const price = product.node.priceRange.minVariantPrice;
   const soldOut = !variant?.availableForSale;
+  const sale = getSalePricing(product);
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -42,9 +44,9 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
             <div className="w-[60px] h-[60px] border-2 border-gold opacity-50" />
           </div>
         )}
-        {PROMO.active && !soldOut && (
+        {(sale.onSale || PROMO.active) && !soldOut && (
           <span className="absolute top-3 left-3 z-10 bg-gold-pale text-dark-green text-[10px] tracking-[0.15em] uppercase font-medium px-2.5 py-1">
-            {promoBadgeLabel}
+            {sale.onSale ? `Save ${sale.pctOff}%` : promoBadgeLabel}
           </span>
         )}
         <WishlistButton
@@ -75,7 +77,10 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
       <div className="px-0.5 text-center">
         <div className="font-serif text-[15px] md:text-[16px] font-normal text-warm-black truncate">{product.node.title}</div>
         <div className="font-sans text-[12px] md:text-[13px] text-warm-black mt-1">
-          ${parseFloat(price.amount).toFixed(2)}
+          {sale.onSale && (
+            <span className="line-through text-warm-gray/70 mr-2">${sale.compareAt!.toFixed(2)}</span>
+          )}
+          ${sale.price.toFixed(2)}
         </div>
       </div>
 

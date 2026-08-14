@@ -10,6 +10,7 @@ import Seo, { breadcrumbLd } from '@/components/Seo';
 import OptimizedImage from '@/components/OptimizedImage';
 import WishlistButton from '@/components/WishlistButton';
 import { PROMO, promoBadgeLabel } from '@/lib/promo';
+import { getSalePricing } from '@/lib/pricing';
 import bannerWomens from '@/assets/banner-womens.jpg';
 import bannerMens from '@/assets/banner-mens.jpg';
 import bannerKids from '@/assets/banner-kids.jpg';
@@ -91,6 +92,7 @@ const PRODUCTS_QUERY = `
               node {
                 id title
                 price { amount currencyCode }
+                compareAtPrice { amount currencyCode }
                 availableForSale
                 selectedOptions { name value }
               }
@@ -121,6 +123,7 @@ const COLLECTION_PRODUCTS_QUERY = `
                 node {
                   id title
                   price { amount currencyCode }
+                  compareAtPrice { amount currencyCode }
                   availableForSale
                   selectedOptions { name value }
                 }
@@ -262,16 +265,16 @@ const Collection = () => {
             <div className="grid grid-cols-4 gap-8 max-lg:grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-2 max-sm:gap-4">
               {products.map((product) => {
                 const image = product.node.images.edges[0]?.node;
-                const price = parseFloat(product.node.priceRange.minVariantPrice.amount).toFixed(2);
                 const variant = product.node.variants.edges[0]?.node;
+                const sale = getSalePricing(product);
 
                 return (
                   <div key={product.node.id} className="group">
                     <Link to={`/product/${product.node.handle}`} className="block no-underline">
                       <div className="aspect-square bg-cream overflow-hidden mb-3 relative">
-                        {PROMO.active && (
+                        {(sale.onSale || PROMO.active) && (
                           <span className="absolute top-3 left-3 z-10 bg-gold-pale text-dark-green text-[10px] tracking-[0.15em] uppercase font-medium px-2.5 py-1">
-                            {promoBadgeLabel}
+                            {sale.onSale ? `Save ${sale.pctOff}%` : promoBadgeLabel}
                           </span>
                         )}
                         <WishlistButton
@@ -299,7 +302,12 @@ const Collection = () => {
                       <h3 className="text-sm font-light text-warm-black tracking-wide mb-1 group-hover:text-gold transition-colors">
                         {product.node.title}
                       </h3>
-                      <div className="text-sm text-warm-black font-medium">${price}</div>
+                      <div className="text-sm text-warm-black font-medium">
+                        {sale.onSale && (
+                          <span className="line-through text-warm-gray/70 font-light mr-2">${sale.compareAt!.toFixed(2)}</span>
+                        )}
+                        ${sale.price.toFixed(2)}
+                      </div>
                     </Link>
                     {variant?.availableForSale && (
                       <button

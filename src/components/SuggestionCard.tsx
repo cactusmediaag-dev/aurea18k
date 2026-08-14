@@ -3,6 +3,7 @@ import { ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { useState } from 'react';
 import OptimizedImage from '@/components/OptimizedImage';
+import { getSalePricing } from '@/lib/pricing';
 
 interface SuggestionCardProps {
   product: ShopifyProduct;
@@ -15,7 +16,7 @@ const SuggestionCard = ({ product, onAdded, variant = 'compact' }: SuggestionCar
   const [adding, setAdding] = useState(false);
   const variantNode = product.node.variants.edges[0]?.node;
   const image = product.node.images.edges[0]?.node;
-  const price = parseFloat(product.node.priceRange.minVariantPrice.amount);
+  const sale = getSalePricing(product);
 
   const handleAdd = async () => {
     if (!variantNode || adding) return;
@@ -46,7 +47,7 @@ const SuggestionCard = ({ product, onAdded, variant = 'compact' }: SuggestionCar
             Complete your set ✨
           </div>
           <div className="font-serif text-[13px] text-warm-black truncate">{product.node.title}</div>
-          <div className="text-[12px] text-warm-black font-medium">${price.toFixed(2)}</div>
+          <div className="text-[12px] text-warm-black font-medium">{sale.onSale && (<span className="line-through text-warm-gray/70 font-light mr-1.5">${sale.compareAt!.toFixed(2)}</span>)}${sale.price.toFixed(2)}</div>
         </div>
         <button
           onClick={handleAdd}
@@ -67,7 +68,7 @@ const SuggestionCard = ({ product, onAdded, variant = 'compact' }: SuggestionCar
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-serif text-[13px] text-warm-black truncate">{product.node.title}</div>
-          <div className="text-[12px] text-warm-black font-medium">${price.toFixed(2)}</div>
+          <div className="text-[12px] text-warm-black font-medium">{sale.onSale && (<span className="line-through text-warm-gray/70 font-light mr-1.5">${sale.compareAt!.toFixed(2)}</span>)}${sale.price.toFixed(2)}</div>
         </div>
         <button
           onClick={handleAdd}
@@ -89,7 +90,7 @@ const SuggestionCard = ({ product, onAdded, variant = 'compact' }: SuggestionCar
       </div>
       <div className="font-serif text-[13px] text-warm-black truncate">{product.node.title}</div>
       <div className="flex items-center justify-between mt-1">
-        <span className="text-[12px] text-warm-black font-medium">${price.toFixed(2)}</span>
+        <span className="text-[12px] text-warm-black font-medium">{sale.onSale && (<span className="line-through text-warm-gray/70 font-light mr-1.5">${sale.compareAt!.toFixed(2)}</span>)}${sale.price.toFixed(2)}</span>
         <button
           onClick={handleAdd}
           disabled={adding || !variantNode?.availableForSale}

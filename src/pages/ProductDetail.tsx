@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 import { Loader2, ArrowLeft, Tag } from 'lucide-react';
 import { PROMO, promoNote } from '@/lib/promo';
+import { getVariantSalePricing } from '@/lib/pricing';
 import PageLayout from '@/components/PageLayout';
 import Seo, { breadcrumbLd, SITE_URL } from '@/components/Seo';
 import OptimizedImage from '@/components/OptimizedImage';
@@ -29,6 +30,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
           node {
             id title
             price { amount currencyCode }
+            compareAtPrice { amount currencyCode }
             availableForSale
             image { url altText }
             selectedOptions { name value }
@@ -185,9 +187,22 @@ const ProductDetail = () => {
           <div>
             <div className="aurea-section-label">Aurea Jewels</div>
             <h1 className="font-serif text-4xl font-light text-dark-green mb-4">{product.node.title}</h1>
-            <div className="text-2xl text-warm-black font-normal mb-6">
-              ${variant ? parseFloat(variant.price.amount).toFixed(2) : parseFloat(product.node.priceRange.minVariantPrice.amount).toFixed(2)}
-            </div>
+            {(() => {
+              const sale = getVariantSalePricing(variant, product.node.priceRange.minVariantPrice.amount);
+              return (
+                <div className="flex items-baseline gap-3 mb-6">
+                  {sale.onSale && (
+                    <span className="text-lg text-warm-gray/70 line-through font-light">${sale.compareAt!.toFixed(2)}</span>
+                  )}
+                  <span className="text-2xl text-warm-black font-normal">${sale.price.toFixed(2)}</span>
+                  {sale.onSale && (
+                    <span className="bg-gold-pale text-dark-green text-[10px] tracking-[0.15em] uppercase font-medium px-2.5 py-1">
+                      Save {sale.pctOff}%
+                    </span>
+                  )}
+                </div>
+              );
+            })()}
 
             {PROMO.active && (
               <div className="flex items-center gap-2.5 border border-gold/25 bg-gold-pale/30 px-4 py-3 mb-6">
