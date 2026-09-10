@@ -5,6 +5,8 @@ import { storefrontApiRequest } from '@/lib/shopify';
 import { trackSearch } from '@/lib/metaPixel';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useT } from '@/i18n';
+import { applySitewide } from '@/lib/pricing';
+import { SALE } from '@/lib/promo';
 
 interface SearchResult {
   id: string;
@@ -153,7 +155,7 @@ const SearchModal = ({ open, onClose }: SearchModalProps) => {
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-sm text-warm-black font-light truncate group-hover:text-gold transition-colors">{item.title}</div>
-          <div className="text-xs text-gold font-medium mt-0.5">${item.price}</div>
+          <div className="text-xs text-gold font-medium mt-0.5">{SALE.active && <span className="line-through text-warm-gray/60 mr-1.5">${item.price}</span>}${applySitewide(parseFloat(item.price)).toFixed(2)}</div>
         </div>
       </Link>
     </motion.div>

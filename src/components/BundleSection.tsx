@@ -5,6 +5,7 @@ import { useBundleEligibleProducts } from '@/hooks/useBundleEligibleProducts';
 import { ShopifyProduct } from '@/stores/cartStore';
 import OptimizedImage from '@/components/OptimizedImage';
 import WishlistButton from '@/components/WishlistButton';
+import { getSalePricing } from '@/lib/pricing';
 import { useT } from '@/i18n';
 
 const tiers = [
@@ -17,6 +18,7 @@ const BundleProductCard = ({ product }: { product: ShopifyProduct }) => {
   const navigate = useNavigate();
   const image = product.node.images?.edges?.[0]?.node;
   const price = product.node.priceRange.minVariantPrice;
+  const sale = getSalePricing(product);
 
   return (
     <div
@@ -49,7 +51,10 @@ const BundleProductCard = ({ product }: { product: ShopifyProduct }) => {
       <div className="px-0.5 text-center">
         <div className="font-serif text-[16px] font-normal text-warm-black truncate">{product.node.title}</div>
         <div className="font-sans text-[13px] text-warm-black mt-1">
-          ${parseFloat(price.amount).toFixed(2)}
+          {sale.onSale && (
+            <span className="line-through text-warm-gray/70 mr-2">${sale.compareAt!.toFixed(2)}</span>
+          )}
+          ${sale.price.toFixed(2)}
         </div>
       </div>
     </div>

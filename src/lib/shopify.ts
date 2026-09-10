@@ -1,4 +1,15 @@
 import { toast } from 'sonner';
+import { useLanguageStore } from '@/stores/languageStore';
+
+// Translate & Adapt support: when the site is in Spanish, ask Shopify for the
+// translated content by injecting @inContext on the query operation. Falls back
+// to the default (English) content for anything not yet translated in Shopify.
+function withLanguageContext(query: string): string {
+  const lang = useLanguageStore.getState().lang;
+  if (lang === 'en' || query.includes('@inContext')) return query;
+  return query.replace(/(\bquery\s+[A-Za-z0-9_]*\s*(?:\([^)]*\))?\s*)\{/, '$1@inContext(language: ES) {');
+}
+
 
 const SHOPIFY_API_VERSION = '2025-07';
 const SHOPIFY_STORE_PERMANENT_DOMAIN = 'hd5ps3-wc.myshopify.com';
@@ -63,7 +74,7 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
       'Content-Type': 'application/json',
       'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN,
     },
-    body: JSON.stringify({ query, variables }),
+    body: JSON.stringify({ query: withLanguageContext(query), variables }),
   });
 
   if (response.status === 402) {

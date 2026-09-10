@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import LanguageSuggestionBanner from '@/components/LanguageSuggestionBanner';
+import SaleAnnouncementModal from '@/components/SaleAnnouncementModal';
 import { useUIStore } from '@/stores/uiStore';
 import { useLang } from '@/i18n';
 
@@ -28,6 +29,7 @@ const PageLayout = ({ children }: PageLayoutProps) => {
       {children}
       <Footer />
       <LanguageSuggestionBanner />
+      <SaleAnnouncementModal />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { PROMO } from '@/lib/promo';
+import { PROMO, SALE } from '@/lib/promo';
 
 // Segment of a hero headline line; `em` renders italic gold.
 export interface TitleSegment {
@@ -234,6 +234,7 @@ const en = {
     suggestComplete: 'Complete your set',
     suggestAlmost: "You're almost there",
     suggestFinish: 'Finish your order',
+    saleApplied: `${SALE.pct}% sitewide discount — applied automatically at checkout`,
   },
   precheckout: {
     title: 'Wait! Complete your set 🎁',
@@ -243,6 +244,14 @@ const en = {
     checkoutApplied: 'Checkout (10% OFF applied)',
     continue: 'Continue to Checkout →',
     noThanks: 'No thanks, take me to checkout',
+  },
+  saleModal: {
+    label: 'A Gift for You',
+    off: `${SALE.pct}% OFF`,
+    headline: 'Everything. Sitewide.',
+    body: 'Your discount is applied automatically at checkout — no code needed. For a limited time.',
+    cta: 'Shop the Sale',
+    dismiss: 'Continue browsing',
   },
   search: {
     placeholder: 'Search jewelry...',
@@ -477,6 +486,7 @@ const es: Translations = {
     suggestComplete: 'Completa tu set',
     suggestAlmost: 'Ya casi lo tienes',
     suggestFinish: 'Termina tu pedido',
+    saleApplied: `${SALE.pct}% de descuento en toda la tienda — aplicado automáticamente al pagar`,
   },
   precheckout: {
     title: '¡Espera! Completa tu set 🎁',
@@ -486,6 +496,14 @@ const es: Translations = {
     checkoutApplied: 'Pagar (10% OFF aplicado)',
     continue: 'Continuar al Pago →',
     noThanks: 'No gracias, llévame al pago',
+  },
+  saleModal: {
+    label: 'Un Regalo para Ti',
+    off: `${SALE.pct}% OFF`,
+    headline: 'En Todo. En Toda la Tienda.',
+    body: 'Tu descuento se aplica automáticamente al pagar — sin código. Por tiempo limitado.',
+    cta: 'Comprar con Descuento',
+    dismiss: 'Seguir explorando',
   },
   search: {
     placeholder: 'Buscar joyas...',

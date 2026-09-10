@@ -25,12 +25,21 @@ import Account from "./pages/Account.tsx";
 import AccountWishlist from "./pages/AccountWishlist.tsx";
 import AccountOrders from "./pages/AccountOrders.tsx";
 import ScrollToTop from "./components/ScrollToTop";
+import { useEffect, useRef } from "react";
+import { useLanguageStore } from "@/stores/languageStore";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
   useCartSync();
   useMetaPageView();
+  // Refetch Shopify content in the new language (Translate & Adapt @inContext)
+  const lang = useLanguageStore((s) => s.lang);
+  const firstLangRender = useRef(true);
+  useEffect(() => {
+    if (firstLangRender.current) { firstLangRender.current = false; return; }
+    queryClient.invalidateQueries();
+  }, [lang]);
   return (
     <>
     <ScrollToTop />

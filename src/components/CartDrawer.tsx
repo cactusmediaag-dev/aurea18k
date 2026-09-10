@@ -15,6 +15,8 @@ import PreCheckoutModal from '@/components/PreCheckoutModal';
 import { normalizeCheckoutUrl } from '@/lib/shopify';
 import { trackInitiateCheckout } from '@/lib/metaPixel';
 import { useWishlistStore } from '@/stores/wishlistStore';
+import { applySitewide } from '@/lib/pricing';
+import { SALE } from '@/lib/promo';
 import { useT } from '@/i18n';
 
 interface CartDrawerProps {
@@ -29,7 +31,8 @@ const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
   const [preCheckoutOpen, setPreCheckoutOpen] = useState(false);
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
+  // Display totals mirror the automatic sitewide discount applied at checkout.
+  const totalPrice = items.reduce((sum, item) => sum + (applySitewide(parseFloat(item.price.amount)) * item.quantity), 0);
   const freeShippingThreshold = 120;
   const progress = Math.min(100, (totalPrice / freeShippingThreshold) * 100);
   const shipping = getFreeShippingMessage(totalPrice, freeShippingThreshold);
@@ -147,7 +150,12 @@ const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                         <div className="text-[10px] text-warm-gray tracking-[0.08em] mt-0.5">
                           {item.selectedOptions.map(o => o.value).join(' · ')}
                         </div>
-                        <div className="text-sm text-warm-black font-medium mt-1.5">${parseFloat(item.price.amount).toFixed(2)}</div>
+                        <div className="text-sm text-warm-black font-medium mt-1.5">
+                          {SALE.active && (
+                            <span className="line-through text-warm-gray/60 font-light mr-1.5">${parseFloat(item.price.amount).toFixed(2)}</span>
+                          )}
+                          ${applySitewide(parseFloat(item.price.amount)).toFixed(2)}
+                        </div>
                       </div>
                       <div className="flex flex-col items-end gap-2 flex-shrink-0">
                         <button onClick={() => removeItem(item.variantId)} className="bg-transparent border-none cursor-pointer p-1 text-warm-gray hover:text-destructive">
@@ -193,6 +201,11 @@ const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                     <span className="text-xs text-warm-gray uppercase tracking-[0.1em]">{t.cart.subtotal}</span>
                     <span className="font-serif text-base font-medium text-warm-black">${totalPrice.toFixed(2)}</span>
                   </div>
+                  {SALE.active && (
+                    <p className="text-[10.5px] text-dark-green text-center bg-gold-pale/40 border border-gold/20 py-1.5 px-2 m-0">
+                      {t.cart.saleApplied}
+                    </p>
+                  )}
                   {shipping.unlocked && (
                     <p className="text-[11px] text-dark-green text-center font-medium">
                       {t.cart.unlocking}
