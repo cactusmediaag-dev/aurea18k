@@ -9,7 +9,8 @@ import SuggestionCard from '@/components/SuggestionCard';
 import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 import { Loader2, ArrowLeft, Tag } from 'lucide-react';
-import { PROMO, promoNote } from '@/lib/promo';
+import { PROMO } from '@/lib/promo';
+import { useT } from '@/i18n';
 import { getVariantSalePricing } from '@/lib/pricing';
 import PageLayout from '@/components/PageLayout';
 import Seo, { breadcrumbLd, SITE_URL } from '@/components/Seo';
@@ -43,6 +44,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
 `;
 
 const ProductDetail = () => {
+  const t = useT();
   const { handle } = useParams<{ handle: string }>();
   const navigate = useNavigate();
   const addItem = useCartStore(state => state.addItem);
@@ -115,7 +117,7 @@ const ProductDetail = () => {
       quantity: 1,
       selectedOptions: variant.selectedOptions || [],
     });
-    toast.success('Added to cart', { description: product.node.title, position: 'top-center' });
+    toast.success(t.product.addedToCart, { description: product.node.title, position: 'top-center' });
     // Open cart drawer so user immediately sees suggestions
     setTimeout(() => openCart(), 250);
   };
@@ -159,7 +161,7 @@ const ProductDetail = () => {
       <div className="bg-cream-light">
         <div className="max-w-6xl mx-auto px-12 py-16 max-sm:px-6">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-xs tracking-[0.1em] uppercase text-warm-gray mb-8 bg-transparent border-none cursor-pointer hover:text-dark-green transition-colors font-sans">
-          <ArrowLeft className="w-4 h-4" /> Back
+          <ArrowLeft className="w-4 h-4" /> {t.pdp.back}
         </button>
 
         <div className="grid grid-cols-2 gap-16 max-md:grid-cols-1">
@@ -197,7 +199,7 @@ const ProductDetail = () => {
                   <span className="text-2xl text-warm-black font-normal">${sale.price.toFixed(2)}</span>
                   {sale.onSale && (
                     <span className="bg-gold-pale text-dark-green text-[10px] tracking-[0.15em] uppercase font-medium px-2.5 py-1">
-                      Save {sale.pctOff}%
+                      {t.product.save(sale.pctOff!)}
                     </span>
                   )}
                 </div>
@@ -207,7 +209,7 @@ const ProductDetail = () => {
             {PROMO.active && (
               <div className="flex items-center gap-2.5 border border-gold/25 bg-gold-pale/30 px-4 py-3 mb-6">
                 <Tag className="w-4 h-4 text-gold shrink-0" strokeWidth={1.5} />
-                <span className="font-sans text-[12.5px] text-dark-green tracking-[0.03em]">{promoNote}</span>
+                <span className="font-sans text-[12.5px] text-dark-green tracking-[0.03em]">{t.pdp.promoNote}</span>
               </div>
             )}
 
@@ -264,7 +266,7 @@ const ProductDetail = () => {
                 disabled={isLoading || !variant?.availableForSale}
                 className="btn-aurea-dark flex-1 flex items-center justify-center gap-2"
               >
-                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : variant?.availableForSale ? 'Add to Cart' : 'Sold Out'}
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : variant?.availableForSale ? t.product.addToCart : t.product.soldOut}
               </button>
               <WishlistButton
                 variant="inline"
@@ -290,7 +292,7 @@ const ProductDetail = () => {
           <div className="mt-20 pt-12 border-t border-gold/20">
             <div className="aurea-section-label mb-2">Style it together</div>
             <h2 className="font-serif text-2xl font-light text-dark-green mb-8">
-              Complete your look
+              {t.pdp.completeLook}
             </h2>
             <div className="grid grid-cols-4 gap-6 max-md:grid-cols-2">
               {recommendations.map(p => (

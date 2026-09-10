@@ -5,6 +5,7 @@ import WishlistCaptureModal from '@/components/WishlistCaptureModal';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { trackAddToWishlist } from '@/lib/metaPixel';
+import { t as i18nT } from '@/i18n';
 
 interface WishlistButtonProps {
   product: Omit<WishlistItem, 'addedAt'>;
@@ -24,7 +25,7 @@ const WishlistButton = ({ product, variant = 'card', className }: WishlistButton
     e.preventDefault();
     const added = toggle(product);
     if (added) {
-      toast.success('Saved to wishlist', { description: product.title, position: 'top-center' });
+      toast.success(i18nT().wishlist.saved, { description: product.title, position: 'top-center' });
       trackAddToWishlist(
         { id: product.productId, name: product.title, value: parseFloat(product.price) || undefined, currency: 'USD' },
         customerEmail ? { email: customerEmail } : undefined,
@@ -33,7 +34,7 @@ const WishlistButton = ({ product, variant = 'card', className }: WishlistButton
         setCaptureOpen(true);
       }
     } else {
-      toast('Removed from wishlist', { description: product.title, position: 'top-center' });
+      toast(i18nT().wishlist.removed, { description: product.title, position: 'top-center' });
     }
   };
 
@@ -56,7 +57,7 @@ const WishlistButton = ({ product, variant = 'card', className }: WishlistButton
           <Heart
             className={cn('w-4 h-4 transition-all', has && 'fill-wishlist-red text-wishlist-red')}
           />
-          {has ? 'Saved' : 'Save'}
+          {has ? i18nT().pdp.savedWishlist : i18nT().pdp.saveWishlist}
         </button>
         <WishlistCaptureModal open={captureOpen} onClose={() => setCaptureOpen(false)} />
       </>

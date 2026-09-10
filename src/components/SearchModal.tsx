@@ -4,6 +4,7 @@ import { X, Search, Loader2, TrendingUp } from 'lucide-react';
 import { storefrontApiRequest } from '@/lib/shopify';
 import { trackSearch } from '@/lib/metaPixel';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useT } from '@/i18n';
 
 interface SearchResult {
   id: string;
@@ -47,6 +48,7 @@ interface SearchModalProps {
 }
 
 const SearchModal = ({ open, onClose }: SearchModalProps) => {
+  const t = useT();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [bestsellers, setBestsellers] = useState<SearchResult[]>([]);
@@ -187,7 +189,7 @@ const SearchModal = ({ open, onClose }: SearchModalProps) => {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search jewelry..."
+                placeholder={t.search.placeholder}
                 className="flex-1 bg-transparent border-none outline-none text-[15px] text-warm-black placeholder:text-warm-gray/40 font-sans tracking-wide"
               />
               <motion.button
@@ -214,8 +216,8 @@ const SearchModal = ({ open, onClose }: SearchModalProps) => {
               {/* No results */}
               {!loading && query.trim() && displayItems.length === 0 && (
                 <div className="text-center py-10">
-                  <p className="text-warm-gray text-sm">No results for "<span className="text-warm-black font-medium">{query}</span>"</p>
-                  <p className="text-warm-gray/50 text-xs mt-1">Try a different search term</p>
+                  <p className="text-warm-gray text-sm">{t.search.noResults} "<span className="text-warm-black font-medium">{query}</span>"</p>
+                  <p className="text-warm-gray/50 text-xs mt-1">{t.search.tryDifferent}</p>
                 </div>
               )}
 
@@ -233,7 +235,7 @@ const SearchModal = ({ open, onClose }: SearchModalProps) => {
                 <div className="py-4">
                   <div className="flex items-center gap-2 px-5 mb-3">
                     <TrendingUp className="w-3.5 h-3.5 text-gold" />
-                    <span className="text-[10px] tracking-[0.25em] uppercase text-gold font-semibold">Best Sellers</span>
+                    <span className="text-[10px] tracking-[0.25em] uppercase text-gold font-semibold">{t.search.bestSellers}</span>
                   </div>
                   {bestsellers.map((item, i) => (
                     <ProductRow key={item.id} item={item} index={i} />

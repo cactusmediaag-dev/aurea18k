@@ -1,14 +1,15 @@
-import { PROMO, promoBarMessage } from '@/lib/promo';
-
-const MESSAGES = [
-  ...(PROMO.active ? [promoBarMessage] : []),
-  'Free shipping on orders over $120',
-  '18K Gold Plated · Hypoallergenic & Nickel-Free',
-  'Ships Worldwide · 3–5 Business Days',
-];
+import { PROMO } from '@/lib/promo';
+import { useT } from '@/i18n';
 
 const AnnouncementBar = () => {
-  const doubled = [...MESSAGES, ...MESSAGES];
+  const t = useT();
+  const messages = [
+    ...(PROMO.active ? [t.announcement.promo] : []),
+    t.announcement.shipping,
+    t.announcement.plated,
+    t.announcement.worldwide,
+  ];
+  const doubled = [...messages, ...messages];
 
   return (
     <div className="bg-dark-green py-2.5 overflow-hidden">

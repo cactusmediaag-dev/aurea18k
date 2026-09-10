@@ -4,13 +4,15 @@ import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import OptimizedImage from '@/components/OptimizedImage';
 import WishlistButton from '@/components/WishlistButton';
-import { PROMO, promoBadgeLabel } from '@/lib/promo';
+import { PROMO } from '@/lib/promo';
 import { getSalePricing } from '@/lib/pricing';
+import { useT } from '@/i18n';
 
 const ProductCard = ({ product }: { product: ShopifyProduct }) => {
   const addItem = useCartStore(state => state.addItem);
   const isLoading = useCartStore(state => state.isLoading);
   const navigate = useNavigate();
+  const t = useT();
   const variant = product.node.variants.edges[0]?.node;
   const image = product.node.images?.edges?.[0]?.node;
   const price = product.node.priceRange.minVariantPrice;
@@ -28,7 +30,7 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
       quantity: 1,
       selectedOptions: variant.selectedOptions || [],
     });
-    toast.success('Added to cart', {
+    toast.success(t.product.addedToCart, {
       description: product.node.title,
       position: 'top-center',
     });
@@ -46,7 +48,7 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
         )}
         {(sale.onSale || PROMO.active) && !soldOut && (
           <span className="absolute top-3 left-3 z-10 bg-gold-pale text-dark-green text-[10px] tracking-[0.15em] uppercase font-medium px-2.5 py-1">
-            {sale.onSale ? `Save ${sale.pctOff}%` : promoBadgeLabel}
+            {sale.onSale ? t.product.save(sale.pctOff!) : t.product.promoBadge}
           </span>
         )}
         <WishlistButton
@@ -61,16 +63,16 @@ const ProductCard = ({ product }: { product: ShopifyProduct }) => {
         <button
           onClick={handleAddToCart}
           disabled={isLoading || soldOut}
-          title={soldOut ? 'Sold Out' : 'Quick Add'}
-          aria-label={soldOut ? 'Sold Out' : 'Quick Add'}
+          title={soldOut ? t.product.soldOut : t.product.quickAdd}
+          aria-label={soldOut ? t.product.soldOut : t.product.quickAdd}
           className={`absolute bottom-0 left-0 right-0 py-3.5 text-center text-[10px] tracking-[0.2em] uppercase font-medium transition-transform duration-300 translate-y-0 md:translate-y-full md:group-hover:translate-y-0 ${soldOut ? 'bg-warm-gray/50 text-cream-light cursor-not-allowed' : 'bg-dark-green text-gold-light'}`}
         >
           {isLoading ? (
             <Loader2 className="w-4 h-4 animate-spin mx-auto" />
           ) : soldOut ? (
-            'Sold Out'
+            t.product.soldOut
           ) : (
-            'Quick Add'
+            t.product.quickAdd
           )}
         </button>
       </div>

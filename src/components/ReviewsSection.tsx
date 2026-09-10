@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useT } from '@/i18n';
 
 const reviews = [
   {
@@ -21,16 +22,18 @@ const reviews = [
   },
 ];
 
-const ReviewsSection = () => (
+const ReviewsSection = () => {
+  const t = useT();
+  return (
   <section id="reviews" className="aurea-section bg-cream-light">
     <div className="text-center mb-16">
-      <div className="aurea-section-label">Kind Words</div>
-      <h2 className="aurea-section-title">Treasured by <em>Our Clients</em></h2>
+      <div className="aurea-section-label">{t.reviews.label}</div>
+      <h2 className="aurea-section-title">{t.reviews.title.pre} <em>{t.reviews.title.em}</em></h2>
       <div className="flex items-center justify-center gap-4 mt-5">
         <div className="font-serif text-5xl font-light text-dark-green leading-none">4.9</div>
         <div className="text-left">
           <div className="text-gold text-base tracking-[2px]">★★★★★</div>
-          <div className="text-[11px] text-warm-gray mt-1 tracking-[0.05em]">Based on 471 reviews</div>
+          <div className="text-[11px] text-warm-gray mt-1 tracking-[0.05em]">{t.reviews.basedOn(471)}</div>
         </div>
       </div>
     </div>
@@ -46,7 +49,7 @@ const ReviewsSection = () => (
               <div className="text-gold text-[11px] tracking-[1px] mt-1">{'★'.repeat(r.stars)}</div>
               <div className="text-[11px] text-warm-gray mt-1">{r.location}</div>
             </div>
-            <div className="text-[9px] tracking-[0.15em] uppercase text-dark-green font-normal">✓ Verified</div>
+            <div className="text-[9px] tracking-[0.15em] uppercase text-dark-green font-normal">{t.reviews.verified}</div>
           </div>
         </div>
       ))}
@@ -57,10 +60,11 @@ const ReviewsSection = () => (
         to="/reviews"
         className="font-sans text-[11px] uppercase tracking-[0.18em] text-dark-green border-b border-gold hover:text-gold transition-colors no-underline pb-1"
       >
-        Read All Reviews →
+        {t.reviews.readAll}
       </Link>
     </div>
   </section>
-);
+  );
+};
 
 export default ReviewsSection;

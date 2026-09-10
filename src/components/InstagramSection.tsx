@@ -5,23 +5,25 @@ import post3 from '@/assets/instagram/post-3.jpg';
 import post4 from '@/assets/instagram/post-4.jpg';
 import post5 from '@/assets/instagram/post-5.jpg';
 import post6 from '@/assets/instagram/post-6.jpg';
+import { useT } from '@/i18n';
 
 const PROFILE_URL = 'https://www.instagram.com/aureajewels.18k/';
 
 const STATIC_POSTS = [post1, post2, post3, post4, post5, post6];
 
 const InstagramSection = () => {
+  const t = useT();
   return (
     <div className="py-20 bg-cream">
       <div className="max-w-[1400px] mx-auto px-12 pb-12 flex items-end justify-between gap-8 max-md:flex-col max-md:items-start max-md:gap-4 max-md:px-5 max-md:pb-8">
         <div className="text-left">
-          <div className="aurea-section-label">Follow Along</div>
+          <div className="aurea-section-label">{t.instagram.label}</div>
           <h2 className="aurea-section-title text-dark-green text-balance">
-            @aureajewels.18k on <em>Instagram</em>
+            {t.instagram.title.pre} <em>{t.instagram.title.em}</em>
           </h2>
 
           <div className="font-serif text-xl font-light text-dark-green tracking-[0.15em] mt-2">
-            Tag us for a chance to be featured
+            {t.instagram.tagline}
           </div>
         </div>
         <a
@@ -30,7 +32,7 @@ const InstagramSection = () => {
           rel="noopener noreferrer"
           className="font-sans text-[11px] uppercase tracking-[0.18em] text-dark-green border-b border-gold hover:text-gold transition-colors no-underline pb-1 whitespace-nowrap"
         >
-          Follow Us →
+          {t.instagram.follow}
         </a>
       </div>
       <div className="grid grid-cols-6 max-lg:grid-cols-3">

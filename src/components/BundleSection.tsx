@@ -5,11 +5,12 @@ import { useBundleEligibleProducts } from '@/hooks/useBundleEligibleProducts';
 import { ShopifyProduct } from '@/stores/cartStore';
 import OptimizedImage from '@/components/OptimizedImage';
 import WishlistButton from '@/components/WishlistButton';
+import { useT } from '@/i18n';
 
 const tiers = [
-  { cfg: BUNDLE_CONFIGS.duo, featured: false, badge: null as string | null },
-  { cfg: BUNDLE_CONFIGS.stack, featured: true, badge: 'Most Popular' },
-  { cfg: BUNDLE_CONFIGS.full, featured: false, badge: null },
+  { cfg: BUNDLE_CONFIGS.duo, featured: false },
+  { cfg: BUNDLE_CONFIGS.stack, featured: true },
+  { cfg: BUNDLE_CONFIGS.full, featured: false },
 ];
 
 const BundleProductCard = ({ product }: { product: ShopifyProduct }) => {
@@ -57,6 +58,7 @@ const BundleProductCard = ({ product }: { product: ShopifyProduct }) => {
 
 const BundleSection = () => {
   const { data: products, isLoading } = useBundleEligibleProducts();
+  const t = useT();
   const grid = (products || [])
     .filter((p) => p.node.variants.edges[0]?.node?.availableForSale)
     .slice(0, 8);
@@ -64,14 +66,14 @@ const BundleSection = () => {
   return (
     <section className="aurea-section bg-cream-light">
       <div className="text-center">
-        <div className="aurea-section-label">Save More, Shine More</div>
-        <h2 className="aurea-section-title">Bundle <em>&amp; Save</em></h2>
-        <p className="text-warm-gray text-sm mt-3 font-light">Build your own set and unlock exclusive savings.</p>
+        <div className="aurea-section-label">{t.bundle.label}</div>
+        <h2 className="aurea-section-title">{t.bundle.title.pre} <em>{t.bundle.title.em}</em></h2>
+        <p className="text-warm-gray text-sm mt-3 font-light">{t.bundle.subtitle}</p>
       </div>
 
       {/* Tier strip */}
       <div className="grid grid-cols-3 gap-5 mt-14 max-lg:grid-cols-1 max-lg:gap-6">
-        {tiers.map(({ cfg, featured, badge }) => (
+        {tiers.map(({ cfg, featured }) => (
           <Link
             key={cfg.type}
             to={`/bundle/${cfg.type}`}
@@ -80,18 +82,18 @@ const BundleSection = () => {
             }`}
           >
 
-            {badge && (
+            {featured && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-dark-green text-gold-light text-[9px] tracking-[0.2em] uppercase font-medium px-5 py-1.5 whitespace-nowrap">
-                {badge}
+                {t.bundle.mostPopular}
               </div>
             )}
             <div className="flex items-center justify-between gap-4">
               <div className="min-w-0">
                 <div className="font-serif text-[20px] font-normal text-dark-green leading-tight">{cfg.name}</div>
-                <div className="font-sans text-[12px] text-warm-gray mt-1">Pick any {cfg.itemCount} pieces</div>
+                <div className="font-sans text-[12px] text-warm-gray mt-1">{t.bundle.pickAny(cfg.itemCount)}</div>
               </div>
               <div className="shrink-0 bg-gold-pale text-dark-green text-[10px] tracking-[0.15em] uppercase font-medium px-3 py-1">
-                Save {cfg.discountPct}%
+                {t.bundle.save(cfg.discountPct)}
               </div>
             </div>
           </Link>
@@ -112,7 +114,7 @@ const BundleSection = () => {
           </div>
           <div className="text-center mt-10">
             <Link to="/bundle/stack" className="btn-aurea-primary inline-block no-underline">
-              Build Your Bundle →
+              {t.bundle.cta}
             </Link>
           </div>
         </>

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { storefrontApiRequest } from '@/lib/shopify';
 import OptimizedImage from '@/components/OptimizedImage';
+import { useT } from '@/i18n';
 import catWomens from '@/assets/cat-womens.jpg';
 import catMens from '@/assets/cat-mens.jpg';
 import catKids from '@/assets/cat-kids.jpg';
@@ -61,38 +62,15 @@ const useCategoryTileImages = () =>
   });
 
 const banners = [
-  {
-    image: catWomens,
-    titleLead: 'For',
-    titleEm: 'Her',
-    sub: 'Pieces that celebrate her every day.',
-    href: '/collections/womens',
-  },
-  {
-    image: catMens,
-    titleLead: 'For',
-    titleEm: 'Him',
-    sub: 'Bold, refined, built to last.',
-    href: '/collections/mens',
-  },
-  {
-    image: catKids,
-    titleLead: 'Little',
-    titleEm: 'Treasures',
-    sub: 'Gentle & hypoallergenic for little ones.',
-    href: '/collections/kids',
-  },
-  {
-    image: catBestsellers,
-    titleLead: 'Most',
-    titleEm: 'Loved',
-    sub: "The pieces they can't stop wearing.",
-    href: '/collections/best-sellers',
-  },
+  { key: 'her' as const, image: catWomens, href: '/collections/womens' },
+  { key: 'him' as const, image: catMens, href: '/collections/mens' },
+  { key: 'kids' as const, image: catKids, href: '/collections/kids' },
+  { key: 'loved' as const, image: catBestsellers, href: '/collections/best-sellers' },
 ];
 
 const CategoriesSection = () => {
   const { data: tileImages } = useCategoryTileImages();
+  const t = useT();
 
   return (
     <section id="categories" className="bg-cream-light py-16 px-12 max-md:px-5">
@@ -127,7 +105,7 @@ const CategoriesSection = () => {
                 </div>
                 <div className="pb-5 flex flex-col items-center gap-2">
                   <span className="font-sans text-[12px] uppercase tracking-[0.2em] text-warm-black">
-                    {tile.name}
+                    {t.categories.tiles[tile.handle] ?? tile.name}
                   </span>
                   <span className="block w-5 h-px bg-gold" />
                 </div>
@@ -146,7 +124,7 @@ const CategoriesSection = () => {
             >
               <img
                 src={b.image}
-                alt={`${b.titleLead} ${b.titleEm}`}
+                alt={`${t.categories.banners[b.key].title.pre} ${t.categories.banners[b.key].title.em}`}
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -154,15 +132,15 @@ const CategoriesSection = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-warm-black/60 via-warm-black/25 to-transparent" />
               <div className="absolute top-0 left-0 p-6">
                 <h3 className="font-serif text-[26px] font-light text-cream-light leading-tight">
-                  {b.titleLead}<br />
-                  <em className="italic text-gold-light">{b.titleEm}</em>
+                  {t.categories.banners[b.key].title.pre}<br />
+                  <em className="italic text-gold-light">{t.categories.banners[b.key].title.em}</em>
                 </h3>
                 <p className="font-sans text-[12px] font-light text-cream-light/80 mt-2 max-w-[180px]">
-                  {b.sub}
+                  {t.categories.banners[b.key].sub}
                 </p>
               </div>
               <span className="absolute bottom-6 left-6 font-sans text-[11px] uppercase tracking-[0.2em] text-cream-light border-b border-cream-light group-hover:text-gold-light group-hover:border-gold-light transition-colors duration-300">
-                Explore →
+                {t.categories.explore}
               </span>
             </Link>
           ))}

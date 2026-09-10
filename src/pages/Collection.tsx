@@ -9,8 +9,9 @@ import PageLayout from '@/components/PageLayout';
 import Seo, { breadcrumbLd } from '@/components/Seo';
 import OptimizedImage from '@/components/OptimizedImage';
 import WishlistButton from '@/components/WishlistButton';
-import { PROMO, promoBadgeLabel } from '@/lib/promo';
+import { PROMO } from '@/lib/promo';
 import { getSalePricing } from '@/lib/pricing';
+import { useT } from '@/i18n';
 import bannerWomens from '@/assets/banner-womens.jpg';
 import bannerMens from '@/assets/banner-mens.jpg';
 import bannerKids from '@/assets/banner-kids.jpg';
@@ -143,6 +144,7 @@ const Collection = () => {
   const isCartLoading = useCartStore(state => state.isLoading);
 
   const query = getCollectionQuery(handle);
+  const t = useT();
   const banner = getCollectionBanner(handle);
 
   const {
@@ -214,7 +216,7 @@ const Collection = () => {
       quantity: 1,
       selectedOptions: variant.selectedOptions || [],
     });
-    toast.success('Added to cart', { description: product.node.title, position: 'top-center' });
+    toast.success(t.product.addedToCart, { description: product.node.title, position: 'top-center' });
   };
 
   return (
@@ -255,10 +257,10 @@ const Collection = () => {
             </div>
           ) : !products || products.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-warm-gray text-lg font-light mb-2">No products found</p>
-              <p className="text-warm-gray/60 text-sm">This collection is empty. Check back soon for new pieces.</p>
+              <p className="text-warm-gray text-lg font-light mb-2">{t.collection.empty}</p>
+              <p className="text-warm-gray/60 text-sm">{t.collection.emptyHint}</p>
               <Link to="/collections" className="inline-block mt-6 text-xs tracking-[0.15em] uppercase text-gold hover:text-dark-green transition-colors font-medium">
-                ← Browse Categories
+                {t.collection.browse}
               </Link>
             </div>
           ) : (
@@ -274,7 +276,7 @@ const Collection = () => {
                       <div className="aspect-square bg-cream overflow-hidden mb-3 relative">
                         {(sale.onSale || PROMO.active) && (
                           <span className="absolute top-3 left-3 z-10 bg-gold-pale text-dark-green text-[10px] tracking-[0.15em] uppercase font-medium px-2.5 py-1">
-                            {sale.onSale ? `Save ${sale.pctOff}%` : promoBadgeLabel}
+                            {sale.onSale ? t.product.save(sale.pctOff!) : t.product.promoBadge}
                           </span>
                         )}
                         <WishlistButton
@@ -315,7 +317,7 @@ const Collection = () => {
                         disabled={isCartLoading}
                         className="mt-2 w-full flex items-center justify-center gap-2 py-2.5 text-[10px] tracking-[0.15em] uppercase border border-gold/30 bg-transparent text-warm-black hover:bg-dark-green hover:text-gold-light hover:border-dark-green transition-all cursor-pointer font-sans"
                       >
-                        <ShoppingBag className="w-3.5 h-3.5" /> Add to Cart
+                        <ShoppingBag className="w-3.5 h-3.5" /> {t.product.addToCart}
                       </button>
                     )}
                   </div>

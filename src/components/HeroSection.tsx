@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useT, TitleSegment } from '@/i18n';
 import hero1Desktop from '@/assets/hero1-desktop.jpg';
 import hero2Desktop from '@/assets/hero2-desktop.jpg';
 import hero3Desktop from '@/assets/hero3-desktop.jpg';
@@ -11,58 +12,35 @@ type Theme = 'light' | 'dark';
 interface Slide {
   desktop: string;
   mobile: string | null;
-  tag: string;
-  title: React.ReactNode;
-  subtitle: string;
   theme: Theme;
 }
 
+// Images/theme per slide; all copy lives in the i18n dictionary (t.hero.slides,
+// same order as this array).
 const slides: Slide[] = [
-  {
-    desktop: hero1Desktop,
-    mobile: banner1Mobile,
-    tag: 'THE ART OF EVERYDAY LUXURY',
-    title: (
-      <>
-        Timeless<br />
-        <em className="italic text-gold">Elegance</em><br />
-        Redefined
-      </>
-    ),
-    subtitle: 'Exquisite 18K gold-plated pieces, hypoallergenic and crafted to be worn every day.',
-    theme: 'light',
-  },
-  {
-    desktop: hero2Desktop,
-    mobile: banner2Mobile,
-    tag: 'NEW COLLECTION · 2026',
-    title: (
-      <>
-        Wear the <em className="italic text-gold">Golden</em><br />
-        Standard
-      </>
-    ),
-    subtitle: '18K Gold Plated · Hypoallergenic · Made to Last',
-    theme: 'light',
-  },
-  {
-    desktop: hero3Desktop,
-    mobile: null,
-    tag: 'BEST SELLERS',
-    title: (
-      <>
-        Your Light.<br />
-        <em className="italic text-gold">Your Aura.</em>
-      </>
-    ),
-    subtitle: "The pieces our customers can't stop wearing.",
-    theme: 'dark',
-  },
+  { desktop: hero1Desktop, mobile: banner1Mobile, theme: 'light' },
+  { desktop: hero2Desktop, mobile: banner2Mobile, theme: 'light' },
+  { desktop: hero3Desktop, mobile: null, theme: 'dark' },
 ];
+
+const renderTitle = (lines: TitleSegment[][]) =>
+  lines.map((segments, li) => (
+    <Fragment key={li}>
+      {li > 0 && <br />}
+      {segments.map((seg, si) =>
+        seg.em ? (
+          <em key={si} className="italic text-gold">{seg.t}</em>
+        ) : (
+          <Fragment key={si}>{seg.t}</Fragment>
+        ),
+      )}
+    </Fragment>
+  ));
 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const t = useT();
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 767px)');
@@ -94,6 +72,7 @@ const HeroSection = () => {
 
   const safeIndex = Math.min(currentSlide, activeSlides.length - 1);
   const active = activeSlides[safeIndex] ?? activeSlides[0];
+  const activeCopy = t.hero.slides[slides.indexOf(active)] ?? t.hero.slides[0];
 
   return (
     <section className="relative bg-cream">
@@ -117,27 +96,27 @@ const HeroSection = () => {
           <div className="flex items-center gap-3 mb-6">
             <span className="block w-10 h-px bg-gold" />
             <span className="text-[12px] tracking-[0.35em] uppercase text-gold font-sans">
-              {active.tag}
+              {activeCopy.tag}
             </span>
           </div>
           <h1 className="font-serif font-light text-warm-black leading-[1.05] tracking-[0.01em]" style={{ fontSize: 'clamp(40px, 9vw, 56px)' }}>
-            {active.title}
+            {renderTitle(activeCopy.lines)}
           </h1>
           <p className="mt-6 font-sans text-[15px] leading-relaxed text-warm-gray max-w-[380px]">
-            {active.subtitle}
+            {activeCopy.subtitle}
           </p>
           <div className="mt-10 flex flex-col gap-4">
             <Link
               to="/collections/all"
               className="inline-flex items-center justify-center bg-gold text-primary-foreground hover:bg-gold-light transition-colors duration-200 font-sans text-[12px] uppercase tracking-[0.2em] font-medium px-8 py-4 no-underline"
             >
-              Shop the Collection →
+              {t.hero.shopCollection}
             </Link>
             <Link
               to="/about"
               className="inline-flex items-center justify-center border border-warm-black/30 text-warm-black hover:border-gold hover:text-gold transition-colors duration-200 font-sans text-[12px] uppercase tracking-[0.2em] font-medium px-8 py-4 no-underline"
             >
-              Our Story
+              {t.hero.ourStory}
             </Link>
           </div>
         </div>
@@ -178,7 +157,7 @@ const HeroSection = () => {
             <div className="flex items-center gap-3 mb-6">
               <span className={`block w-10 h-px ${active.theme === 'dark' ? 'bg-gold-light' : 'bg-gold'}`} />
               <span className={`text-[12px] tracking-[0.35em] uppercase font-sans ${active.theme === 'dark' ? 'text-gold-light' : 'text-gold'}`}>
-                {active.tag}
+                {activeCopy.tag}
               </span>
             </div>
 
@@ -186,11 +165,11 @@ const HeroSection = () => {
               className={`font-serif font-light leading-[1.05] tracking-[0.01em] ${active.theme === 'dark' ? 'text-cream-light' : 'text-warm-black'}`}
               style={{ fontSize: 'clamp(44px, 5vw, 72px)' }}
             >
-              {active.title}
+              {renderTitle(activeCopy.lines)}
             </h1>
 
             <p className={`mt-6 font-sans text-[15px] leading-relaxed max-w-[380px] ${active.theme === 'dark' ? 'text-cream-light/75' : 'text-warm-gray'}`}>
-              {active.subtitle}
+              {activeCopy.subtitle}
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
@@ -198,7 +177,7 @@ const HeroSection = () => {
                 to="/collections/all"
                 className="inline-flex items-center justify-center bg-gold text-primary-foreground hover:bg-gold-light transition-colors duration-200 font-sans text-[12px] uppercase tracking-[0.2em] font-medium px-8 py-4 no-underline"
               >
-                Shop the Collection →
+                {t.hero.shopCollection}
               </Link>
               <Link
                 to="/about"
@@ -208,7 +187,7 @@ const HeroSection = () => {
                     : 'border-warm-black/30 text-warm-black hover:border-gold hover:text-gold'
                 }`}
               >
-                Our Story
+                {t.hero.ourStory}
               </Link>
             </div>
           </div>

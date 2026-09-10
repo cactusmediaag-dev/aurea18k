@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react';
 import { storefrontApiRequest } from '@/lib/shopify';
 import { ShopifyProduct } from '@/stores/cartStore';
 import ProductCard from '@/components/ProductCard';
+import { useT } from '@/i18n';
 
 const MENS_QUERY = `
   query MensCollection {
@@ -51,6 +52,7 @@ function useMensProducts() {
 
 const MensSection = () => {
   const { data, isLoading } = useMensProducts();
+  const t = useT();
 
   const items = (data || [])
     .filter(p => p.node.variants.edges.some(v => v.node.availableForSale))
@@ -72,15 +74,15 @@ const MensSection = () => {
     <section className="aurea-section bg-cream">
       <div className="flex justify-between items-end mb-14 gap-6 max-md:flex-col max-md:items-start max-md:gap-4">
         <div>
-          <div className="aurea-section-label">For Him</div>
-          <h2 className="aurea-section-title text-balance">The Men's <em>Edit</em></h2>
+          <div className="aurea-section-label">{t.mens.label}</div>
+          <h2 className="aurea-section-title text-balance">{t.mens.title.pre} <em>{t.mens.title.em}</em></h2>
         </div>
 
         <Link
           to="/collections/mens"
           className="shrink-0 font-sans text-[11px] tracking-[0.18em] uppercase text-dark-green no-underline border-b border-gold pb-0.5 hover:text-gold transition-colors"
         >
-          View All Men's →
+          {t.mens.viewAll}
         </Link>
       </div>
 

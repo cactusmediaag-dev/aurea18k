@@ -1,4 +1,5 @@
 import { ShopifyProduct } from '@/lib/shopify';
+import { t } from '@/i18n';
 
 const IDEAL_MIN = 25;
 const IDEAL_MAX = 40;
@@ -158,31 +159,31 @@ export function getFreeShippingMessage(totalPrice: number, threshold = 120): {
 } {
   const remaining = Math.max(0, threshold - totalPrice);
   if (totalPrice >= threshold) {
-    return { message: "You've unlocked FREE shipping 🎁", remaining: 0, unlocked: true };
+    return { message: t().cart.shippingUnlocked, remaining: 0, unlocked: true };
   }
   if (totalPrice < 80) {
     return {
-      message: `Start building your set — unlock <strong>FREE shipping</strong> at <strong>$${threshold}</strong> 🎁`,
+      message: t().cart.shippingStart(threshold),
       remaining,
       unlocked: false,
     };
   }
   if (totalPrice < 110) {
     return {
-      message: `You're getting close — add <strong>$${remaining.toFixed(2)}</strong> more to unlock <strong>FREE shipping</strong> 🎁`,
+      message: t().cart.shippingClose(remaining.toFixed(2)),
       remaining,
       unlocked: false,
     };
   }
   return {
-    message: `Almost there — add <strong>$${remaining.toFixed(2)}</strong> more to unlock <strong>FREE shipping</strong> 🎁`,
+    message: t().cart.shippingAlmost(remaining.toFixed(2)),
     remaining,
     unlocked: false,
   };
 }
 
 export function getCartSuggestionConfig(totalPrice: number): { count: number; label: string } {
-  if (totalPrice < 80) return { count: 3, label: 'Complete your set' };
-  if (totalPrice < 110) return { count: 2, label: "You're almost there" };
-  return { count: 1, label: 'Finish your order' };
+  if (totalPrice < 80) return { count: 3, label: t().cart.suggestComplete };
+  if (totalPrice < 110) return { count: 2, label: t().cart.suggestAlmost };
+  return { count: 1, label: t().cart.suggestFinish };
 }

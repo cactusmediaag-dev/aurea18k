@@ -5,6 +5,7 @@ import { ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cartStore';
 import { useProducts } from '@/hooks/useProducts';
 import { getRecommendations } from '@/lib/recommendations';
+import { useT } from '@/i18n';
 
 const PRECHECKOUT_DISCOUNT_CODE = 'COMPLETESET10';
 
@@ -16,6 +17,7 @@ interface PreCheckoutModalProps {
 
 const PreCheckoutModal = ({ open, onOpenChange, onContinueToCheckout }: PreCheckoutModalProps) => {
   const { items } = useCartStore();
+  const t = useT();
   const { data: pool = [] } = useProducts(50);
   const addItem = useCartStore(s => s.addItem);
   const [adding, setAdding] = useState<string | null>(null);
@@ -59,10 +61,10 @@ const PreCheckoutModal = ({ open, onOpenChange, onContinueToCheckout }: PreCheck
       <DialogContent className="w-[calc(100%-2rem)] max-w-[420px] sm:max-w-[420px] bg-cream-light border border-gold/30 p-0 overflow-hidden gap-0 rounded-none [&>button]:text-gold-light/80 [&>button]:hover:text-gold-light [&>button]:opacity-100 [&>button]:top-3 [&>button]:right-3 [&>button]:z-20">
         <div className="bg-dark-green px-5 py-5 text-center">
           <DialogTitle className="font-serif text-lg sm:text-xl text-gold-light font-light leading-tight px-6">
-            Wait! Complete your set 🎁
+            {t.precheckout.title}
           </DialogTitle>
           <DialogDescription className="text-[10px] sm:text-[11px] tracking-[0.12em] uppercase text-gold-light/80 mt-2 font-sans">
-            Add now and get <strong className="text-gold-light">10% OFF</strong>
+            {t.precheckout.subtitlePre} <strong className="text-gold-light">10% OFF</strong>
           </DialogDescription>
         </div>
 
@@ -97,7 +99,7 @@ const PreCheckoutModal = ({ open, onOpenChange, onContinueToCheckout }: PreCheck
                       : 'bg-dark-green text-gold-light hover:bg-dark-green/90'
                   } disabled:opacity-50`}
                 >
-                  {isAdding ? <Loader2 className="w-3 h-3 animate-spin" /> : isAdded ? '✓ Added' : '+ Add'}
+                  {isAdding ? <Loader2 className="w-3 h-3 animate-spin" /> : isAdded ? t.precheckout.added : t.precheckout.add}
                 </button>
               </div>
             );
@@ -109,13 +111,13 @@ const PreCheckoutModal = ({ open, onOpenChange, onContinueToCheckout }: PreCheck
             onClick={() => onContinueToCheckout(acceptedAny ? PRECHECKOUT_DISCOUNT_CODE : undefined)}
             className="btn-aurea-dark w-full text-[11px] sm:text-[12px] py-3"
           >
-            {acceptedAny ? 'Checkout (10% OFF applied)' : 'Continue to Checkout →'}
+            {acceptedAny ? t.precheckout.checkoutApplied : t.precheckout.continue}
           </button>
           <button
             onClick={() => onContinueToCheckout()}
             className="w-full text-[10px] tracking-[0.1em] uppercase text-warm-gray hover:text-warm-black py-1.5 bg-transparent border-none cursor-pointer"
           >
-            No thanks, take me to checkout
+            {t.precheckout.noThanks}
           </button>
         </div>
       </DialogContent>

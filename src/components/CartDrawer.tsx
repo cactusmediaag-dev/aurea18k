@@ -15,6 +15,7 @@ import PreCheckoutModal from '@/components/PreCheckoutModal';
 import { normalizeCheckoutUrl } from '@/lib/shopify';
 import { trackInitiateCheckout } from '@/lib/metaPixel';
 import { useWishlistStore } from '@/stores/wishlistStore';
+import { useT } from '@/i18n';
 
 interface CartDrawerProps {
   open: boolean;
@@ -23,6 +24,7 @@ interface CartDrawerProps {
 
 const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } = useCartStore();
+  const t = useT();
   const { data: pool = [] } = useProducts(50);
   const [preCheckoutOpen, setPreCheckoutOpen] = useState(false);
 
@@ -45,7 +47,7 @@ const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
   const goToCheckout = (discountCode?: string) => {
     const baseUrl = getCheckoutUrl();
     if (!baseUrl) {
-      toast.error('Não foi possível abrir o checkout.');
+      toast.error(t.cart.checkoutError);
       return;
     }
     // Fire InitiateCheckout
@@ -91,7 +93,7 @@ const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
           <div className="bg-dark-green px-5 py-4 flex justify-between items-center flex-shrink-0">
             <div className="p-0">
               <SheetTitle className="text-[11px] tracking-[0.15em] uppercase text-gold-light font-medium font-sans">
-                Your Cart ({totalItems} {totalItems === 1 ? 'item' : 'items'})
+                {t.cart.title(totalItems)}
               </SheetTitle>
               <SheetDescription className="sr-only">
                 Review the items in your cart and continue to Shopify checkout.
@@ -125,7 +127,7 @@ const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
               <div className="flex-1 flex items-center justify-center text-center">
                 <div>
                   <div className="text-4xl mb-4">🛍</div>
-                  <p className="text-warm-gray">Your cart is empty</p>
+                  <p className="text-warm-gray">{t.cart.empty}</p>
                 </div>
               </div>
             ) : (
@@ -188,18 +190,18 @@ const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
 
                 <div className="flex-shrink-0 pt-4 border-t border-gold/25 space-y-3 mt-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-warm-gray uppercase tracking-[0.1em]">Subtotal</span>
+                    <span className="text-xs text-warm-gray uppercase tracking-[0.1em]">{t.cart.subtotal}</span>
                     <span className="font-serif text-base font-medium text-warm-black">${totalPrice.toFixed(2)}</span>
                   </div>
                   {shipping.unlocked && (
                     <p className="text-[11px] text-dark-green text-center font-medium">
-                      🎁 You're unlocking free shipping
+                      {t.cart.unlocking}
                     </p>
                   )}
                   <button onClick={handleCheckoutClick} disabled={isLoading || isSyncing} className="btn-aurea-dark flex items-center justify-center gap-2">
-                    {isLoading || isSyncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <><ExternalLink className="w-4 h-4" />Checkout Securely →</>}
+                    {isLoading || isSyncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <><ExternalLink className="w-4 h-4" />{t.cart.checkout}</>}
                   </button>
-                  <p className="text-[10px] text-center text-warm-gray tracking-[0.05em]">🔒 SSL Encrypted · Secure Checkout</p>
+                  <p className="text-[10px] text-center text-warm-gray tracking-[0.05em]">{t.cart.secure}</p>
                 </div>
               </>
             )}
