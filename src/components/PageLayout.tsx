@@ -5,8 +5,10 @@ import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import LanguageSuggestionBanner from '@/components/LanguageSuggestionBanner';
 import SaleAnnouncementModal from '@/components/SaleAnnouncementModal';
+import HalloweenEffects from '@/components/HalloweenEffects';
 import { useUIStore } from '@/stores/uiStore';
 import { useLang } from '@/i18n';
+import { HALLOWEEN } from '@/lib/seasonal';
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -21,6 +23,11 @@ const PageLayout = ({ children }: PageLayoutProps) => {
     document.documentElement.lang = lang;
   }, [lang]);
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('halloween', HALLOWEEN.active);
+    return () => document.documentElement.classList.remove('halloween');
+  }, []);
+
   return (
     <div className="min-h-screen">
       <AnnouncementBar />
@@ -30,6 +37,7 @@ const PageLayout = ({ children }: PageLayoutProps) => {
       <Footer />
       <LanguageSuggestionBanner />
       <SaleAnnouncementModal />
+      <HalloweenEffects />
     </div>
   );
 };

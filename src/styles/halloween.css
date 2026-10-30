@@ -1,0 +1,225 @@
+/* ============================================================
+   AUREA · HALLOWEEN SKIN
+   Every rule here is scoped to html.halloween, which PageLayout
+   toggles from HALLOWEEN.active in src/lib/seasonal.ts.
+   Remove the flag (active:false) and none of this applies —
+   the original theme renders untouched.
+   ============================================================ */
+
+/* ---------- Token overrides (dark velvet + ember) ---------- */
+html.halloween {
+  --cream: 264 32% 8%;
+  --cream-light: 264 28% 11%;
+  --dark-green: 268 38% 14%;
+  --dark-green-mid: 268 34% 19%;
+  --gold: 26 92% 54%;
+  --gold-light: 32 97% 64%;
+  --gold-pale: 28 48% 16%;
+  --warm-gray: 266 12% 72%;
+
+  --background: 264 32% 8%;
+  --foreground: 36 45% 92%;
+  --card: 264 28% 11%;
+  --card-foreground: 36 45% 92%;
+  --popover: 264 28% 11%;
+  --popover-foreground: 36 45% 92%;
+  --primary: 268 38% 14%;
+  --primary-foreground: 32 97% 64%;
+  --secondary: 264 32% 8%;
+  --secondary-foreground: 36 45% 92%;
+  --muted: 264 25% 14%;
+  --muted-foreground: 266 12% 72%;
+  --accent: 26 92% 54%;
+  --accent-foreground: 30 30% 7%;
+  --border: 26 92% 54% / 0.25;
+  --input: 26 92% 54% / 0.25;
+  --ring: 26 92% 54%;
+}
+
+/* Moonlit gradient behind everything */
+html.halloween body {
+  background:
+    radial-gradient(1100px 520px at 78% -140px, hsl(268 45% 20% / 0.55), transparent 70%),
+    radial-gradient(900px 600px at -120px 55%, hsl(26 80% 30% / 0.12), transparent 70%),
+    hsl(264 32% 8%);
+  background-attachment: fixed;
+}
+
+html.halloween ::selection {
+  background: hsl(26 92% 54% / 0.85);
+  color: hsl(264 32% 8%);
+}
+
+/* ---------- Text repaints (dark ink becomes candlelight) ---------- */
+/* Attribute selectors also catch opacity variants like text-warm-black/70 */
+html.halloween [class*="text-warm-black"] { color: hsl(36 45% 92%); }
+html.halloween [class*="text-dark-green"] { color: hsl(36 50% 88%); }
+html.halloween [class*="text-cream"] { color: hsl(36 42% 93%); }
+
+/* …but keep dark ink on ember (gold) surfaces for contrast.
+   bg-gold-pale is excluded: in this skin it is a DARK amber surface. */
+html.halloween [class*="bg-gold"]:not([class*="bg-gold-pale"])[class*="text-warm-black"],
+html.halloween [class*="bg-gold"]:not([class*="bg-gold-pale"])[class*="text-dark-green"] {
+  color: hsl(22 45% 9%);
+}
+
+/* Hero slides with a light photograph keep their original dark ink,
+   because the photo itself stays light (hw-ink does nothing off-season) */
+html.halloween .hw-ink { color: hsl(24 40% 10%) !important; }
+html.halloween .hw-ink-border { border-color: hsl(24 40% 10% / 0.35) !important; }
+
+/* !important: BrandStory sets this color inline from a light token */
+html.halloween .aurea-section-title { color: hsl(36 50% 88%) !important; }
+html.halloween .aurea-section-title em { color: hsl(30 95% 62%) !important; }
+
+/* Footer keeps its own hardcoded brown in the base theme; repaint it here */
+html.halloween footer { background: hsl(266 36% 10%) !important; }
+
+/* ---------- Ember buttons ---------- */
+html.halloween .btn-aurea-primary {
+  background: linear-gradient(135deg, hsl(22 94% 50%), hsl(33 97% 58%));
+  color: hsl(22 45% 9%);
+  animation: hwEmber 2.8s ease-in-out infinite;
+}
+html.halloween .btn-aurea-primary:hover {
+  background: linear-gradient(135deg, hsl(24 96% 55%), hsl(36 98% 64%));
+  transform: translateY(-2px);
+  animation-play-state: paused;
+  box-shadow: 0 0 30px hsl(26 92% 54% / 0.55);
+}
+html.halloween .btn-aurea-dark {
+  background: hsl(268 38% 14%);
+  color: hsl(32 97% 64%);
+  box-shadow: inset 0 0 0 1px hsl(26 92% 54% / 0.35);
+}
+html.halloween .btn-aurea-dark:hover {
+  background: hsl(268 34% 19%);
+  box-shadow: inset 0 0 0 1px hsl(26 92% 54% / 0.6), 0 0 18px hsl(26 92% 54% / 0.25);
+}
+html.halloween .btn-aurea-ghost:hover {
+  border-color: hsl(26 92% 54%);
+  color: hsl(32 97% 64%);
+  box-shadow: 0 0 16px hsl(26 92% 54% / 0.25);
+}
+
+/* Product imagery floats like lit frames in the dark */
+html.halloween img {
+  filter: saturate(1.02);
+}
+
+@keyframes hwEmber {
+  0%, 100% { box-shadow: 0 0 6px hsl(26 92% 54% / 0.22); }
+  50% { box-shadow: 0 0 24px hsl(26 92% 54% / 0.5); }
+}
+
+/* ---------- Decorations (HalloweenEffects.tsx) ---------- */
+.hw-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 55;
+}
+
+.hw-web {
+  position: fixed;
+  top: 0;
+  color: hsl(36 35% 82% / 0.3);
+  width: 190px;
+  height: 190px;
+}
+.hw-web--left { left: 0; }
+.hw-web--right { right: 0; transform: scaleX(-1); }
+@media (max-width: 768px) {
+  .hw-web { width: 120px; height: 120px; }
+}
+
+/* Dangling spider: drops below the header, sways, climbs back up */
+.hw-spider-drop {
+  position: fixed;
+  top: 0;
+  right: 14%;
+  width: 34px;
+  animation: hwDrop 16s ease-in-out infinite;
+}
+.hw-spider-drop .hw-thread {
+  position: absolute;
+  bottom: 34px;
+  left: 50%;
+  width: 1px;
+  height: 100vh;
+  background: linear-gradient(to bottom, transparent, hsl(36 35% 82% / 0.35));
+}
+.hw-spider-drop .hw-spider-body {
+  animation: hwSway 3.2s ease-in-out infinite;
+  transform-origin: top center;
+}
+@keyframes hwDrop {
+  0% { transform: translateY(-190px); }
+  16% { transform: translateY(96px); }
+  22% { transform: translateY(78px); }
+  60% { transform: translateY(92px); }
+  78% { transform: translateY(96px); }
+  100% { transform: translateY(-190px); }
+}
+@keyframes hwSway {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+
+/* Bats crossing the sky */
+.hw-bat {
+  position: fixed;
+  left: -8vw;
+  width: 34px;
+  color: hsl(267 22% 30%);
+  filter: drop-shadow(0 0 6px hsl(26 92% 54% / 0.12));
+  animation: hwFly linear infinite;
+}
+.hw-bat--1 { top: 16vh; animation-duration: 26s; animation-delay: 2s; }
+.hw-bat--2 { top: 30vh; width: 24px; animation-duration: 34s; animation-delay: 13s; color: hsl(267 20% 24%); }
+.hw-bat--3 { top: 9vh; width: 28px; animation-duration: 42s; animation-delay: 24s; }
+.hw-bat .hw-wing { animation: hwFlap 0.38s ease-in-out infinite alternate; }
+.hw-bat .hw-wing--l { transform-origin: 60% 50%; }
+.hw-bat .hw-wing--r { transform-origin: 40% 50%; }
+@keyframes hwFly {
+  0% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(30vw) translateY(-3vh); }
+  50% { transform: translateX(60vw) translateY(2vh); }
+  75% { transform: translateX(90vw) translateY(-2vh); }
+  100% { transform: translateX(124vw) translateY(0); }
+}
+@keyframes hwFlap {
+  from { transform: rotate(14deg); }
+  to { transform: rotate(-16deg); }
+}
+
+/* Little spider strolling along the bottom of the screen */
+.hw-crawler {
+  position: fixed;
+  bottom: 6px;
+  left: -60px;
+  width: 22px;
+  opacity: 0.8;
+  z-index: 30;
+  animation: hwCrawl 52s linear infinite;
+  animation-delay: 9s;
+}
+.hw-crawler .hw-spider-body {
+  animation: hwWiggle 0.5s ease-in-out infinite alternate;
+}
+@keyframes hwCrawl {
+  0% { transform: translateX(0) rotate(90deg); }
+  100% { transform: translateX(calc(100vw + 140px)) rotate(90deg); }
+}
+@keyframes hwWiggle {
+  from { transform: rotate(-5deg); }
+  to { transform: rotate(5deg); }
+}
+
+/* Accessibility: calm everything down when the user prefers it */
+@media (prefers-reduced-motion: reduce) {
+  .hw-bat, .hw-crawler { display: none; }
+  .hw-spider-drop { animation: none; transform: translateY(72px); }
+  .hw-spider-drop .hw-spider-body { animation: none; }
+  html.halloween .btn-aurea-primary { animation: none; }
+}

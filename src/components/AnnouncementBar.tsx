@@ -1,9 +1,11 @@
 import { PROMO } from '@/lib/promo';
+import { HALLOWEEN } from '@/lib/seasonal';
 import { useT } from '@/i18n';
 
 const AnnouncementBar = () => {
   const t = useT();
   const messages = [
+    ...(HALLOWEEN.active ? [t.announcement.halloween] : []),
     ...(PROMO.active ? [t.announcement.promo] : []),
     t.announcement.shipping,
     t.announcement.plated,

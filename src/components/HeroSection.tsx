@@ -162,13 +162,13 @@ const HeroSection = () => {
             </div>
 
             <h1
-              className={`font-serif font-light leading-[1.05] tracking-[0.01em] ${active.theme === 'dark' ? 'text-cream-light' : 'text-warm-black'}`}
+              className={`font-serif font-light leading-[1.05] tracking-[0.01em] ${active.theme === 'dark' ? 'text-cream-light' : 'text-warm-black hw-ink'}`}
               style={{ fontSize: 'clamp(44px, 5vw, 72px)' }}
             >
               {renderTitle(activeCopy.lines)}
             </h1>
 
-            <p className={`mt-6 font-sans text-[15px] leading-relaxed max-w-[380px] ${active.theme === 'dark' ? 'text-cream-light/75' : 'text-warm-gray'}`}>
+            <p className={`mt-6 font-sans text-[15px] leading-relaxed max-w-[380px] ${active.theme === 'dark' ? 'text-cream-light/75' : 'text-warm-gray hw-ink'}`}>
               {activeCopy.subtitle}
             </p>
 
@@ -184,7 +184,7 @@ const HeroSection = () => {
                 className={`inline-flex items-center justify-center border transition-colors duration-200 font-sans text-[12px] uppercase tracking-[0.2em] font-medium px-8 py-4 no-underline ${
                   active.theme === 'dark'
                     ? 'border-cream-light/40 text-cream-light hover:border-gold'
-                    : 'border-warm-black/30 text-warm-black hover:border-gold hover:text-gold'
+                    : 'border-warm-black/30 text-warm-black hover:border-gold hover:text-gold hw-ink hw-ink-border'
                 }`}
               >
                 {t.hero.ourStory}

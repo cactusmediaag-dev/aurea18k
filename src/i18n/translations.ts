@@ -15,6 +15,7 @@ export interface SectionTitle {
 
 const en = {
   announcement: {
+    halloween: 'Trick or Treat 🎃 Halloween Sale is on — shop the glow',
     promo: `${PROMO.pct}% off your first order · Code ${PROMO.code}`,
     shipping: 'Free shipping on orders over $120',
     plated: '18K Gold Plated · Hypoallergenic & Nickel-Free',
@@ -267,6 +268,7 @@ export type Translations = typeof en;
 
 const es: Translations = {
   announcement: {
+    halloween: 'Dulce o Truco 🎃 La oferta de Halloween está activa — brilla esta noche',
     promo: `${PROMO.pct}% de descuento en tu primer pedido · Código ${PROMO.code}`,
     shipping: 'Envío gratis en pedidos desde $120',
     plated: 'Baño de Oro 18K · Hipoalergénico y Libre de Níquel',
