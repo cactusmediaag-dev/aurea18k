@@ -6,6 +6,13 @@ import hero2Desktop from '@/assets/hero2-desktop.jpg';
 import hero3Desktop from '@/assets/hero3-desktop.jpg';
 import banner1Mobile from '@/assets/banner1-mobile.jpg';
 import banner2Mobile from '@/assets/banner2-mobile.jpg';
+import hero1Halloween from '@/assets/hero1-halloween.webp';
+import hero2Halloween from '@/assets/hero2-halloween.webp';
+import hero3Halloween from '@/assets/hero3-halloween.webp';
+import hero1HalloweenMobile from '@/assets/hero1-halloween-mobile.jpg';
+import hero2HalloweenMobile from '@/assets/hero2-halloween-mobile.jpg';
+import hero3HalloweenMobile from '@/assets/hero3-halloween-mobile.jpg';
+import { HALLOWEEN } from '@/lib/seasonal';
 
 type Theme = 'light' | 'dark';
 
@@ -17,11 +24,21 @@ interface Slide {
 
 // Images/theme per slide; all copy lives in the i18n dictionary (t.hero.slides,
 // same order as this array).
-const slides: Slide[] = [
+const baseSlides: Slide[] = [
   { desktop: hero1Desktop, mobile: banner1Mobile, theme: 'light' },
   { desktop: hero2Desktop, mobile: banner2Mobile, theme: 'light' },
   { desktop: hero3Desktop, mobile: null, theme: 'dark' },
 ];
+
+// Seasonal covers: shown only while HALLOWEEN.active; the base covers above
+// stay untouched and return automatically when the flag is turned off.
+const halloweenSlides: Slide[] = [
+  { desktop: hero1Halloween, mobile: hero1HalloweenMobile, theme: 'dark' },
+  { desktop: hero2Halloween, mobile: hero2HalloweenMobile, theme: 'dark' },
+  { desktop: hero3Halloween, mobile: hero3HalloweenMobile, theme: 'dark' },
+];
+
+const slides: Slide[] = HALLOWEEN.active ? halloweenSlides : baseSlides;
 
 const renderTitle = (lines: TitleSegment[][]) =>
   lines.map((segments, li) => (
