@@ -4,5 +4,5 @@
 // Set active:false to restore the original Aurea theme exactly as it was —
 // no other change is needed anywhere.
 export const HALLOWEEN = {
-  active: true,
+  active: false,
 } as const;
